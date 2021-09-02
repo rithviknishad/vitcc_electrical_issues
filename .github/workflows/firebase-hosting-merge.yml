@@ -33,7 +33,8 @@ jobs:
       - run: flutter config --enable-web
       - run: flutter pub get
 
-      - run: flutter build web
+      # Builds w/o using PWA functionality.
+      - run: flutter build web --pwa-strategy=none
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
