@@ -24,5 +24,5 @@ doc/api/
 android/app/google-services.json
 
 # flutter plugins
-.flutter_plugins
+.flutter-plugins
 .flutter-plugins-dependencies
