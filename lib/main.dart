@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:vitcc_electrical_issues/services/auth.dart' as authService;
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MaterialApp(
+      title: 'VITCC Electrical Issues',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: AppHome(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class AppHome extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SignInButton(
+              Buttons.Google,
+              onPressed: () => authService.signInWithGoogle(),
+            ),
+          ],
+        ),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
