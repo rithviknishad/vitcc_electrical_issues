@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.vitcc_electrical_issues">
+    package="com.rithviknishad.vitcc_electrical_issues.vitcc_electrical_issues">
    <application
         android:label="vitcc_electrical_issues"
         android:icon="@mipmap/ic_launcher">
