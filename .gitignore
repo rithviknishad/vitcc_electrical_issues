@@ -22,3 +22,7 @@ doc/api/
 
 # google-services.json
 android/app/google-services.json
+
+# flutter plugins
+.flutter_plugins
+.flutter-plugins-dependencies
