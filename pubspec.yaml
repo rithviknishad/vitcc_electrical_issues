@@ -20,10 +20,14 @@ dependencies:
   provider: ^6.0.0
   flutter_signin_button: ^2.0.0
   uuid: ^3.0.4
+  freezed_annotation: ^0.14.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  freezed: ^0.14.2
+  build_runner: ^2.1.2
 
 flutter:
   uses-material-design: true
