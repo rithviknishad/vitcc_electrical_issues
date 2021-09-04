@@ -27,23 +27,3 @@ class Complaint with _$Complaint {
     required int urgencyLevel,
   }) = _Complaint;
 }
-
-// class Complaint {
-//   final User user;
-
-//   final UuidValue uuid;
-
-//   final DateTime dateTime;
-
-//   final String description;
-
-//   final int urgencyLevel;
-
-//   const Complaint({
-//     required this.uuid,
-//     required this.user,
-//     required this.dateTime,
-//     required this.urgencyLevel,
-//     required this.description,
-//   });
-// }
