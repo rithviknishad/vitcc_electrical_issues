@@ -14,6 +14,11 @@ class Complaint with _$Complaint {
     required bool isImportant,
     required bool isUrgent,
 
+    // The following are specific to resolved complaints
+    required DateTime? resolvedOn,
+    required DocumentReference<Author>? resolvedBy,
+    required String? remarks,
+
     // The following are not stored in firestore
     required bool isResolved,
     required DocumentReference reference,
@@ -22,58 +27,62 @@ class Complaint with _$Complaint {
   static final _activeComplaintsRef = FirebaseFirestore.instance
       .collection('active-complaints')
       .withConverter<Complaint>(
-        fromFirestore: (snapshot, _) => Complaint._activeFrom(snapshot),
+        fromFirestore: (snapshot, _) => Complaint._fromSnapshot(
+          snapshot,
+          fromResolvedColection: false,
+        ),
         toFirestore: (complaint, _) => complaint._toFirestore(),
       );
 
   static final _resolvedComplaintsRef = FirebaseFirestore.instance
       .collection('resolved-complaints')
       .withConverter<Complaint>(
-        fromFirestore: (snapshot, _) => Complaint._resolvedFrom(snapshot),
+        fromFirestore: (snapshot, _) => Complaint._fromSnapshot(
+          snapshot,
+          fromResolvedColection: true,
+        ),
         toFirestore: (complaint, _) => complaint._toFirestore(),
       );
 
-  factory Complaint._activeFrom(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-  ) {
+  factory Complaint._fromSnapshot(
+    DocumentSnapshot<Map<String, dynamic>> snapshot, {
+    required bool fromResolvedColection,
+  }) {
     return Complaint._(
-      author: snapshot[_AuthorKey],
+      author: snapshot[_CreatedByKey],
       createdOn: snapshot[_CreatedOnKey],
       description: snapshot[_DescriptionKey],
       isImportant: snapshot[_IsImportantKey],
       isUrgent: snapshot[_IsUrgentKey],
-      isResolved: false,
+      resolvedOn: snapshot[_ResolvedOnKey],
+      resolvedBy: snapshot[_ResolvedByKey],
+      remarks: snapshot[_RemarksKey],
+      isResolved: fromResolvedColection,
       reference: snapshot.reference,
     );
   }
 
-  factory Complaint._resolvedFrom(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-  ) {
-    return Complaint._(
-      author: snapshot[_AuthorKey],
-      createdOn: snapshot[_CreatedOnKey],
-      description: snapshot[_DescriptionKey],
-      isImportant: snapshot[_IsImportantKey],
-      isUrgent: snapshot[_IsUrgentKey],
-      isResolved: true,
-      reference: snapshot.reference,
-    );
-  }
-
-  Map<String, Object> _toFirestore() => {
-        _AuthorKey: author,
+  Map<String, Object?> _toFirestore() => {
+        _CreatedByKey: author,
         _CreatedOnKey: createdOn,
         _DescriptionKey: description,
         _IsImportantKey: isImportant,
         _IsUrgentKey: isUrgent,
+        _ResolvedOnKey: resolvedOn,
+        _ResolvedByKey: resolvedBy,
+        _RemarksKey: remarks,
       };
 
-  static const _AuthorKey = 'author';
+  static const _CreatedByKey = 'created-by';
   static const _CreatedOnKey = 'created-on';
   static const _DescriptionKey = 'description';
   static const _IsImportantKey = 'is-important';
   static const _IsUrgentKey = 'is-urgent';
+  static const _ResolvedOnKey = 'resolved-on';
+  static const _ResolvedByKey = 'resolved-by';
+  static const _RemarksKey = 'remarks';
+  // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
+  // method.
 
   static final activeComplaints = _activeComplaintsRef.snapshots();
 
@@ -94,6 +103,9 @@ class Complaint with _$Complaint {
         description: description,
         isImportant: isImportant,
         isUrgent: isUrgent,
+        resolvedBy: null,
+        resolvedOn: null,
+        remarks: null,
         isResolved: false,
         reference: doc,
       ),
