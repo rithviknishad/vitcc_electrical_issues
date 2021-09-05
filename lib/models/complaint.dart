@@ -7,6 +7,8 @@ part 'complaint.freezed.dart';
 
 @freezed
 class Complaint with _$Complaint {
+  const Complaint._freezed();
+
   const factory Complaint._({
     required DocumentReference<Author> author,
     required DateTime createdOn,
