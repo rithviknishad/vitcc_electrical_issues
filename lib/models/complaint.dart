@@ -13,8 +13,7 @@ class Complaint with _$Complaint {
     required String description,
     required bool isImportant,
     required bool isUrgent,
-
-    // not stored in firestore. evaluated by collection origin.
+    // Not stored in firestore, evaluated by collection origin.
     required bool isActive,
   }) = _Complaint;
 
@@ -40,8 +39,8 @@ class Complaint with _$Complaint {
   static const AuthorKey = 'author';
   static const CreatedOnKey = 'created-on';
   static const DescriptionKey = 'description';
-  static const IsImportantKey = 'isImportant';
-  static const IsUrgentKey = 'isUrgent';
+  static const IsImportantKey = 'is-important';
+  static const IsUrgentKey = 'is-urgent';
 
   static final activeComplaints =
       _activeComplaintsCollectionReference.snapshots();
