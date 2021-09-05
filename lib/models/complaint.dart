@@ -55,5 +55,5 @@ class ResolvedComplaint with _$ResolvedComplaint {
 }
 
 void test() {
-  ResolvedComplaint()
+  ResolvedComplaint();
 }
