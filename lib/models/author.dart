@@ -37,17 +37,9 @@ class AuthorScope {
 @freezed
 class Author with _$Author {
   const factory Author({
-    /// The user who issued the complaint.
     @JsonKey(ignore: true) required User user,
-
-    /// The display name of the user.
     required String displayName,
-
-    /// Description of this complaint.
     required String email,
-
-    /// How important this complaint is.
-
     required UnmodifiableListView<AuthorScope> scopes,
   }) = _Author;
 
