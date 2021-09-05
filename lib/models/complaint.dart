@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:vitcc_electrical_issues/models/complaint_priority.dart';
 
 import 'author.dart';
 
@@ -9,11 +8,13 @@ part 'complaint.g.dart';
 
 @freezed
 class Complaint with _$Complaint {
+  /// Complaint created by [author] on [dateTime]
   const factory Complaint({
-    required Author author,
-    required DateTime dateTime,
+    required DocumentSnapshot<Author> author,
+    required DateTime createdOn,
     required String description,
-    required ComplaintPriority priority,
+    required bool isImportant,
+    required bool isUrgent,
   }) = _Complaint;
 
   static Future<void> add() async {}
