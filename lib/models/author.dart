@@ -5,12 +5,33 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'author.freezed.dart';
 part 'author.g.dart';
 
-enum AuthorScope {
-  createComplaint,
-  purgeComplaint,
-  resolveComplaint,
-  viewActiveComplaints,
-  viewResolvedComplaints,
+class AuthorScope {
+  static const createComplaint = AuthorScope._(
+    'Create Complaint',
+  );
+
+  static const purgeComplaint = AuthorScope._(
+    'Purge Complaint',
+  );
+
+  static const resolveComplaint = AuthorScope._(
+    'Resolve Complaint',
+  );
+
+  static const viewActiveComplaint = AuthorScope._(
+    'View Active Complaints',
+  );
+
+  static const viewResolvedComplaint = AuthorScope._(
+    'View Resolved Complaints',
+  );
+
+  const AuthorScope._(this.label);
+
+  final String label;
+
+  @override
+  String toString() => label;
 }
 
 @freezed
