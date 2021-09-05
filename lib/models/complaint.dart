@@ -5,6 +5,7 @@ import 'package:vitcc_electrical_issues/models/complaint_priority.dart';
 import 'author.dart';
 
 part 'complaint.freezed.dart';
+part 'complaint.g.dart';
 
 @freezed
 class Complaint with _$Complaint {
