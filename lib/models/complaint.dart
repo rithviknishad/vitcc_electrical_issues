@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:vitcc_electrical_issues/models/complaint_priority.dart';
 
 import 'author.dart';
 
@@ -7,10 +8,6 @@ part 'complaint.freezed.dart';
 
 @freezed
 class Complaint with _$Complaint {
-  @Assert(
-    'urgencyLevel >= 0 && urgencyLevel < 5',
-    'Urgency level must be in between 0 and 5!',
-  )
   const factory Complaint({
     /// The user who issued the complaint.
     required Author author,
@@ -22,15 +19,17 @@ class Complaint with _$Complaint {
     required String description,
 
     /// How important this complaint is.
-    required int urgencyLevel,
+    required ComplaintPriority priority,
   }) = _Complaint;
 
-  static final reference = FirebaseFirestore.instance
+  static final collectionReference = FirebaseFirestore.instance
       .collection('active-complaints')
       .withConverter<Complaint>(
         fromFirestore: (snapshot, _) => Complaint.fromJson(snapshot.data()!),
         toFirestore: (complaint, _) => complaint.toJson(),
       );
+
+  static final collectionStream = collectionReference.snapshots();
 
   factory Complaint.fromJson(Map<String, dynamic> json) =>
       _$ComplaintFromJson(json);
@@ -40,14 +39,14 @@ class Complaint with _$Complaint {
 class ResolvedComplaint with _$ResolvedComplaint {
   const factory ResolvedComplaint._({
     required Complaint complaint,
-
     required DateTime resolvedDataTime,
   }) = _ResolvedComplaint;
 
   static final reference = FirebaseFirestore.instance
       .collection('resolved-complaints')
       .withConverter<ResolvedComplaint>(
-        fromFirestore: (snapshot, _) => ResolvedComplaint.fromJson(snapshot.data()!),
+        fromFirestore: (snapshot, _) =>
+            ResolvedComplaint.fromJson(snapshot.data()!),
         toFirestore: (complaint, _) => complaint.toJson(),
       );
 
