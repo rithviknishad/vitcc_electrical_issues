@@ -17,6 +17,16 @@ class Complaint with _$Complaint {
     required bool isUrgent,
   }) = _Complaint;
 
+  static Future<void> add() async {}
+
+  static Future<void> remove() async {}
+
+  static Future<ResolvedComplaint> resolve(Complaint complaint) async =>
+      ResolvedComplaint._(
+        complaint: complaint,
+        resolvedDataTime: DateTime.now(),
+      );
+
   static final collectionReference = FirebaseFirestore.instance
       .collection('active-complaints')
       .withConverter<Complaint>(
@@ -44,6 +54,9 @@ class ResolvedComplaint with _$ResolvedComplaint {
             ResolvedComplaint.fromJson(snapshot.data()!),
         toFirestore: (complaint, _) => complaint.toJson(),
       );
+
+  static Future<Complaint> revoke(ResolvedComplaint resolvedComplaint) async =>
+      resolvedComplaint.complaint;
 
   factory ResolvedComplaint.fromJson(Map<String, dynamic> json) =>
       _$ResolvedComplaintFromJson(json);
