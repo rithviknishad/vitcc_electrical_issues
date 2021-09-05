@@ -38,15 +38,16 @@ class Complaint with _$Complaint {
 
 @freezed
 class ResolvedComplaint with _$ResolvedComplaint {
-  @Implements(Complaint)
-  const factory ResolvedComplaint({
+  const factory ResolvedComplaint._({
+    required Complaint complaint,
+
     required DateTime resolvedDataTime,
   }) = _ResolvedComplaint;
 
   static final reference = FirebaseFirestore.instance
       .collection('resolved-complaints')
-      .withConverter<Complaint>(
-        fromFirestore: (snapshot, _) => Complaint.fromJson(snapshot.data()!),
+      .withConverter<ResolvedComplaint>(
+        fromFirestore: (snapshot, _) => ResolvedComplaint.fromJson(snapshot.data()!),
         toFirestore: (complaint, _) => complaint.toJson(),
       );
 
@@ -54,6 +55,4 @@ class ResolvedComplaint with _$ResolvedComplaint {
       _$ResolvedComplaintFromJson(json);
 }
 
-void test() {
-  ResolvedComplaint();
-}
+void test() {}
