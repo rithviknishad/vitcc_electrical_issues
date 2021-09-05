@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'author.dart';
 
 part 'complaint.freezed.dart';
+part 'complaint.g.dart';
 
 @freezed
 class Complaint with _$Complaint {
