@@ -29,3 +29,4 @@ android/app/google-services.json
 
 # freezed dart code gen
 *.freezed.dart
+*.g.dart
