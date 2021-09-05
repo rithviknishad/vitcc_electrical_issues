@@ -26,3 +26,7 @@ android/app/google-services.json
 # flutter plugins
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# freezed dart code gen
+*.freezed.dart
+*.g.dart
