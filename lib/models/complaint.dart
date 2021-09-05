@@ -77,7 +77,30 @@ class Complaint with _$Complaint {
 
   static final activeComplaints = _activeComplaintsRef.snapshots();
 
-  static Future<void> create() async {}
+  /// Creates a complaint stored in `active-collection` and returns the created
+  /// reference.
+  static Future<DocumentReference<Complaint>> create({
+    required DocumentReference<Author> author,
+    required String description,
+    required bool isImportant,
+    required bool isUrgent,
+  }) async {
+    final doc = _activeComplaintsRef.doc();
+
+    await doc.set(
+      Complaint._(
+        author: author,
+        createdOn: DateTime.now(),
+        description: description,
+        isImportant: isImportant,
+        isUrgent: isUrgent,
+        isResolved: false,
+        reference: doc,
+      ),
+    );
+
+    return doc;
+  }
 
   /// Purges an active complaint. Returns `true` if purge was successfull, else
   /// `false`.
@@ -104,7 +127,7 @@ class Complaint with _$Complaint {
       // Delete complaint from active collection
       await reference.delete();
 
-      // TODO: return the newly created document's reference
+      // TODO: return the newly created document's ref.
     }
   }
 
@@ -112,6 +135,12 @@ class Complaint with _$Complaint {
   ///
   /// Does nothing if already in active complaints collection.
   Future<void> revoke() async {
-    if (isResolved) {}
+    if (isResolved) {
+      // TODO: write to active collection
+
+      await reference.delete();
+
+      // TODO: return the newly created document's ref.
+    }
   }
 }
