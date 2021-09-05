@@ -4,60 +4,51 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'author.dart';
 
 part 'complaint.freezed.dart';
-part 'complaint.g.dart';
 
 @freezed
 class Complaint with _$Complaint {
-  /// Complaint created by [author] on [dateTime]
   const factory Complaint({
-    required DocumentSnapshot<Author> author,
+    required DocumentReference<Author> author,
     required DateTime createdOn,
     required String description,
     required bool isImportant,
     required bool isUrgent,
+
+    // not stored in firestore. evaluated by collection origin.
+    required bool isActive,
   }) = _Complaint;
+
+  static final _activeComplaintsCollectionReference =
+      FirebaseFirestore.instance.collection('active-complaints').withConverter(
+            fromFirestore: (snapshot, _) => Complaint(
+              author: snapshot[AuthorKey],
+              createdOn: snapshot[CreatedOnKey],
+              description: snapshot[DescriptionKey],
+              isImportant: snapshot[IsImportantKey],
+              isUrgent: snapshot[IsUrgentKey],
+              isActive: true,
+            ),
+            toFirestore: (complaint, _) => {
+              AuthorKey: complaint.author,
+              CreatedOnKey: complaint.createdOn,
+              DescriptionKey: complaint.description,
+              IsImportantKey: complaint.isImportant,
+              IsUrgentKey: complaint.isUrgent,
+            },
+          );
+
+  static const AuthorKey = 'author';
+  static const CreatedOnKey = 'created-on';
+  static const DescriptionKey = 'description';
+  static const IsImportantKey = 'isImportant';
+  static const IsUrgentKey = 'isUrgent';
+
+  static final activeComplaints =
+      _activeComplaintsCollectionReference.snapshots();
 
   static Future<void> add() async {}
 
   static Future<void> remove() async {}
 
-  static Future<ResolvedComplaint> resolve(Complaint complaint) async =>
-      ResolvedComplaint._(
-        complaint: complaint,
-        resolvedDataTime: DateTime.now(),
-      );
-
-  static final collectionReference = FirebaseFirestore.instance
-      .collection('active-complaints')
-      .withConverter<Complaint>(
-        fromFirestore: (snapshot, _) => Complaint.fromJson(snapshot.data()!),
-        toFirestore: (complaint, _) => complaint.toJson(),
-      );
-
-  static final collectionStream = collectionReference.snapshots();
-
-  factory Complaint.fromJson(Map<String, dynamic> json) =>
-      _$ComplaintFromJson(json);
-}
-
-@freezed
-class ResolvedComplaint with _$ResolvedComplaint {
-  const factory ResolvedComplaint._({
-    required Complaint complaint,
-    required DateTime resolvedDataTime,
-  }) = _ResolvedComplaint;
-
-  static final reference = FirebaseFirestore.instance
-      .collection('resolved-complaints')
-      .withConverter<ResolvedComplaint>(
-        fromFirestore: (snapshot, _) =>
-            ResolvedComplaint.fromJson(snapshot.data()!),
-        toFirestore: (complaint, _) => complaint.toJson(),
-      );
-
-  static Future<Complaint> revoke(ResolvedComplaint resolvedComplaint) async =>
-      resolvedComplaint.complaint;
-
-  factory ResolvedComplaint.fromJson(Map<String, dynamic> json) =>
-      _$ResolvedComplaintFromJson(json);
+  static Future<void> resolve(Complaint complaint) async {}
 }
