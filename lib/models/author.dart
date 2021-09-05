@@ -15,7 +15,7 @@ enum AuthorScope {
 @freezed
 class Author with _$Author {
   @Assert(
-    'Author.mailRegEx.hasMatch(mail)',
+    'Author.mailRegEx.hasMatch(email)',
     'Invalid mail address!',
   )
   const factory Author({

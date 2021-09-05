@@ -53,7 +53,3 @@ class ResolvedComplaint with _$ResolvedComplaint {
   factory ResolvedComplaint.fromJson(Map<String, dynamic> json) =>
       _$ResolvedComplaintFromJson(json);
 }
-
-void test() {
-  ResolvedComplaint();
-}
