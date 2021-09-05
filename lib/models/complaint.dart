@@ -7,9 +7,9 @@ part 'complaint.freezed.dart';
 
 @freezed
 class Complaint with _$Complaint {
-  const Complaint._freezed();
+  const Complaint._();
 
-  const factory Complaint._({
+  const factory Complaint.__({
     required DocumentReference<Author> author,
     required DateTime createdOn,
     required String description,
@@ -50,7 +50,7 @@ class Complaint with _$Complaint {
     DocumentSnapshot<Map<String, dynamic>> snapshot, {
     required bool fromResolvedColection,
   }) {
-    return Complaint._(
+    return Complaint.__(
       author: snapshot[_CreatedByKey],
       createdOn: snapshot[_CreatedOnKey],
       description: snapshot[_DescriptionKey],
@@ -99,7 +99,7 @@ class Complaint with _$Complaint {
     final doc = _activeComplaintsRef.doc();
 
     await doc.set(
-      Complaint._(
+      Complaint.__(
         author: author,
         createdOn: DateTime.now(),
         description: description,
