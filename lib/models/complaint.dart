@@ -13,67 +13,67 @@ class Complaint with _$Complaint {
     required String description,
     required bool isImportant,
     required bool isUrgent,
-    // Not stored in firestore, evaluated by collection origin.
+
+    // The following are not stored in firestore
     required bool isResolved,
     required DocumentReference reference,
   }) = _Complaint;
 
-  static final _activeComplaintsRef =
-      FirebaseFirestore.instance.collection('active-complaints').withConverter(
-            fromFirestore: (snapshot, _) =>
-                Complaint._activeComplaintFromFirestore(snapshot),
-            toFirestore: (complaint, _) => complaint._toFirestore(),
-          );
-
-  static final _resolvedComplaintsRef = FirebaseFirestore.instance
-      .collection('resolved-complaints')
-      .withConverter(
-        fromFirestore: (snapshot, _) =>
-            Complaint._resolvedComplaintFromFirestore(snapshot),
+  static final _activeComplaintsRef = FirebaseFirestore.instance
+      .collection('active-complaints')
+      .withConverter<Complaint>(
+        fromFirestore: (snapshot, _) => Complaint._activeFrom(snapshot),
         toFirestore: (complaint, _) => complaint._toFirestore(),
       );
 
-  factory Complaint._activeComplaintFromFirestore(
+  static final _resolvedComplaintsRef = FirebaseFirestore.instance
+      .collection('resolved-complaints')
+      .withConverter<Complaint>(
+        fromFirestore: (snapshot, _) => Complaint._resolvedFrom(snapshot),
+        toFirestore: (complaint, _) => complaint._toFirestore(),
+      );
+
+  factory Complaint._activeFrom(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return Complaint._(
-      author: snapshot[AuthorKey],
-      createdOn: snapshot[CreatedOnKey],
-      description: snapshot[DescriptionKey],
-      isImportant: snapshot[IsImportantKey],
-      isUrgent: snapshot[IsUrgentKey],
+      author: snapshot[_AuthorKey],
+      createdOn: snapshot[_CreatedOnKey],
+      description: snapshot[_DescriptionKey],
+      isImportant: snapshot[_IsImportantKey],
+      isUrgent: snapshot[_IsUrgentKey],
       isResolved: false,
       reference: snapshot.reference,
     );
   }
 
-  factory Complaint._resolvedComplaintFromFirestore(
+  factory Complaint._resolvedFrom(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
   ) {
     return Complaint._(
-      author: snapshot[AuthorKey],
-      createdOn: snapshot[CreatedOnKey],
-      description: snapshot[DescriptionKey],
-      isImportant: snapshot[IsImportantKey],
-      isUrgent: snapshot[IsUrgentKey],
-      isResolved: false,
+      author: snapshot[_AuthorKey],
+      createdOn: snapshot[_CreatedOnKey],
+      description: snapshot[_DescriptionKey],
+      isImportant: snapshot[_IsImportantKey],
+      isUrgent: snapshot[_IsUrgentKey],
+      isResolved: true,
       reference: snapshot.reference,
     );
   }
 
   Map<String, Object> _toFirestore() => {
-        AuthorKey: author,
-        CreatedOnKey: createdOn,
-        DescriptionKey: description,
-        IsImportantKey: isImportant,
-        IsUrgentKey: isUrgent,
+        _AuthorKey: author,
+        _CreatedOnKey: createdOn,
+        _DescriptionKey: description,
+        _IsImportantKey: isImportant,
+        _IsUrgentKey: isUrgent,
       };
 
-  static const AuthorKey = 'author';
-  static const CreatedOnKey = 'created-on';
-  static const DescriptionKey = 'description';
-  static const IsImportantKey = 'is-important';
-  static const IsUrgentKey = 'is-urgent';
+  static const _AuthorKey = 'author';
+  static const _CreatedOnKey = 'created-on';
+  static const _DescriptionKey = 'description';
+  static const _IsImportantKey = 'is-important';
+  static const _IsUrgentKey = 'is-urgent';
 
   static final activeComplaints = _activeComplaintsRef.snapshots();
 
@@ -109,6 +109,7 @@ class Complaint with _$Complaint {
   Future<bool> purge() async {
     if (isResolved) {
       // Purge operation not allowed on resolved complaints.
+      // TODO: in firestore rules, disallow delete for this collection
       return false;
     } else {
       await reference.delete();
