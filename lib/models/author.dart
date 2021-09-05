@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'author.freezed.dart';
 
-enum Permission {
+enum AuthorScope {
   createComplaint,
   purgeComplaint,
   resolveComplaint,
@@ -29,7 +29,8 @@ class Author with _$Author {
     required String email,
 
     /// How important this complaint is.
-    required List<Permission> scopes,
+
+    required UnmodifiableListView<AuthorScope> scopes,
   }) = _Author;
 
   static final mailRegEx = RegExp(
