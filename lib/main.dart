@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:vitcc_electrical_issues/routes/dashboard.dart';
 import 'package:vitcc_electrical_issues/services/auth.dart';
 
 Future<void> main() async {
@@ -14,7 +15,7 @@ Future<void> main() async {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AppHome(),
+      home: DashboardPage(),
     ),
   );
 }

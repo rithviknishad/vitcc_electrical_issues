@@ -8,7 +8,13 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Center(),
+        child: Center(
+          child: Column(
+            children: [
+              Text("Hi")
+            ],
+          ),
+        ),
       ),
     );
   }
