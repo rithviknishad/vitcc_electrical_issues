@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'author.dart';
+import 'user.dart';
 
 part 'complaint.freezed.dart';
 
@@ -9,8 +9,8 @@ part 'complaint.freezed.dart';
 class Complaint with _$Complaint {
   const Complaint._();
 
-  const factory Complaint.__({
-    required DocumentReference<Author> author,
+  const factory Complaint._createObject({
+    required DocumentReference<PlatformUser> author,
     required DateTime createdOn,
     required String description,
     required bool isImportant,
@@ -18,7 +18,7 @@ class Complaint with _$Complaint {
 
     // The following are specific to resolved complaints
     required DateTime? resolvedOn,
-    required DocumentReference<Author>? resolvedBy,
+    required DocumentReference<PlatformUser>? resolvedBy,
     required String? remarks,
 
     // The following are not stored in firestore
@@ -29,9 +29,9 @@ class Complaint with _$Complaint {
   static final _activeComplaintsRef = FirebaseFirestore.instance
       .collection('active-complaints')
       .withConverter<Complaint>(
-        fromFirestore: (snapshot, _) => Complaint._fromSnapshot(
+        fromFirestore: (snapshot, _) => Complaint._fromFirestore(
           snapshot,
-          fromResolvedColection: false,
+          resolved: false,
         ),
         toFirestore: (complaint, _) => complaint._toFirestore(),
       );
@@ -39,18 +39,18 @@ class Complaint with _$Complaint {
   static final _resolvedComplaintsRef = FirebaseFirestore.instance
       .collection('resolved-complaints')
       .withConverter<Complaint>(
-        fromFirestore: (snapshot, _) => Complaint._fromSnapshot(
+        fromFirestore: (snapshot, _) => Complaint._fromFirestore(
           snapshot,
-          fromResolvedColection: true,
+          resolved: true,
         ),
         toFirestore: (complaint, _) => complaint._toFirestore(),
       );
 
-  factory Complaint._fromSnapshot(
+  factory Complaint._fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot, {
-    required bool fromResolvedColection,
+    required bool resolved,
   }) {
-    return Complaint.__(
+    return Complaint._createObject(
       author: snapshot[_CreatedByKey],
       createdOn: snapshot[_CreatedOnKey],
       description: snapshot[_DescriptionKey],
@@ -59,7 +59,7 @@ class Complaint with _$Complaint {
       resolvedOn: snapshot[_ResolvedOnKey],
       resolvedBy: snapshot[_ResolvedByKey],
       remarks: snapshot[_RemarksKey],
-      isResolved: fromResolvedColection,
+      isResolved: resolved,
       reference: snapshot.reference,
     );
   }
@@ -91,7 +91,7 @@ class Complaint with _$Complaint {
   /// Creates a complaint stored in `active-collection` and returns the created
   /// reference.
   static Future<DocumentReference<Complaint>> create({
-    required DocumentReference<Author> author,
+    required DocumentReference<PlatformUser> author,
     required String description,
     required bool isImportant,
     required bool isUrgent,
@@ -99,7 +99,7 @@ class Complaint with _$Complaint {
     final doc = _activeComplaintsRef.doc();
 
     await doc.set(
-      Complaint.__(
+      Complaint._createObject(
         author: author,
         createdOn: DateTime.now(),
         description: description,
