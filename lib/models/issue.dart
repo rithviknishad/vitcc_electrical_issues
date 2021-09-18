@@ -86,14 +86,14 @@ class Issue with _$Issue {
   ///
   /// Returns the created issue. If user has no permission to create an issue,
   /// returns null.
-  static Future<Issue?> create({
+  static Future<IssueSnapshot?> create({
     required UserSnapshot creatorSnapshot,
     required String description,
     required bool isImportant,
     required bool isUrgent,
   }) async {
     // Prevent creating issue if user has no permission to create.
-    if (creatorSnapshot.data()!.scope.canCreateIssue == false) {
+    if (creatorSnapshot.user.scope.canCreateIssue == false) {
       return null;
     }
 
@@ -112,11 +112,9 @@ class Issue with _$Issue {
       ),
     );
 
-    await creatorSnapshot.reference.update({
-      PlatformUser.ActiveIssuesKey: FieldValue.arrayUnion([doc]),
-    });
+    await creatorSnapshot.addActiveIssue(doc);
 
-    return (await doc.get()).data()!;
+    return doc.get();
   }
 }
 
@@ -141,13 +139,18 @@ extension IssueSnapshotExtension on IssueSnapshot {
     bool permitted = userSnapshot.reference == issue.raisedBy;
 
     // Permit if user has permission to delete any issue.
-    permitted |= userSnapshot.data()!.scope.canPurgeIssue;
+    permitted |= userSnapshot.user.scope.canPurgeIssue;
 
     if (!permitted) {
       throw Exception(
         'This account does not have enough permissions to perform this operation. You shall either be the creator of this issue or have enough permissions to purge issues not owned by the creator.',
       );
     }
+
+    // Remove reference from user's document issues index.
+    issue.raisedBy.update({
+      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([reference]),
+    });
 
     await reference.delete();
   }
@@ -160,13 +163,13 @@ extension IssueSnapshotExtension on IssueSnapshot {
   ///
   /// This future may throw an exception if [resolverSnapshot] does not have enough
   /// permission to resolve the issue.
-  Future<Issue> resolve({
+  Future<IssueSnapshot> resolve({
     required UserSnapshot resolverSnapshot,
     required String remarks,
   }) async {
     // Return self if already resolved.
     if (isResolved) {
-      return issue;
+      return this;
     }
 
     // Throw exception if resolver has no permission to resolve the issue.
@@ -191,10 +194,10 @@ extension IssueSnapshotExtension on IssueSnapshot {
     });
 
     // Delete the issue from active issues collection.
-    await reference.delete();
+    await this.reference.delete();
 
     // Returns the newly created resolved issue.
-    return (await doc.get()).data()!;
+    return doc.get();
   }
 
   /// Revokes a resolved issue back to an active issue.
