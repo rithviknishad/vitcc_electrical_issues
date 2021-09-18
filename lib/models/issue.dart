@@ -3,44 +3,49 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'user.dart';
 
-part 'complaint.freezed.dart';
+part 'issue.freezed.dart';
 
 @freezed
-class Complaint with _$Complaint {
-  const Complaint._();
+class Issue with _$Issue {
+  const Issue._();
 
-  const factory Complaint._createObject({
+  const factory Issue._createObject({
     required String creatorId,
     required DateTime raisedOn,
     required String description,
     required bool isImportant,
     required bool isUrgent,
 
-    // The following are specific to resolved complaints
+    // The following are specific to resolved issues.
     required DateTime? resolvedOn,
     required DocumentReference<PlatformUser>? resolvedBy,
     required String? remarks,
 
-    // The following are not stored in firestore
+    // The following are not stored in firestore.
     required bool isResolved,
     required DocumentReference reference,
-  }) = _Complaint;
+  }) = _Issue;
 
-  static final _activeRef =
-      _convert(FirebaseFirestore.instance.collection('active-complaints'));
+  static const _ActiveIssuesKey = 'active-issues';
+  static const _ResolvedIssuesKey = 'resolved-issues';
 
-  static final _resolvedRef =
-      _convert(FirebaseFirestore.instance.collection('resolved-complaints'));
+  static final _activeRef = _convert(
+    collection: FirebaseFirestore.instance.collection(_ActiveIssuesKey),
+  );
 
-  static CollectionReference<Complaint> _convert(
-    CollectionReference<Map<String, dynamic>> collection,
-  ) =>
-      collection.withConverter<Complaint>(
-        // Map<String, dynamic> -> Complaint
+  static final _resolvedRef = _convert(
+    collection: FirebaseFirestore.instance.collection(_ResolvedIssuesKey),
+  );
+
+  static CollectionReference<Issue> _convert({
+    required CollectionReference<Map<String, dynamic>> collection,
+  }) =>
+      collection.withConverter<Issue>(
+        // Map<String, dynamic> -> Issue
         fromFirestore: (snapshot, snapshotOptions) {
           final data = snapshot.data()!;
 
-          return Complaint._createObject(
+          return Issue._createObject(
             creatorId: data[_CreatorIdKey],
             raisedOn: data[_CreatedOnKey],
             description: data[_DescriptionKey],
@@ -50,10 +55,10 @@ class Complaint with _$Complaint {
             resolvedBy: data[_ResolvedByKey],
             remarks: data[_RemarksKey],
             reference: snapshot.reference,
-            isResolved: snapshot.reference.parent.id == 'resolved-complaints',
+            isResolved: snapshot.reference.parent.id == _ResolvedIssuesKey,
           );
         },
-        // Complaint -> Map<String, dynamic>
+        // Issue -> Map<String, dynamic>
         toFirestore: (object, setOptions) {
           return {
             _CreatorIdKey: object.creatorId,
@@ -68,7 +73,7 @@ class Complaint with _$Complaint {
         },
       );
 
-  // Stream<DocumentSnapshot<Complaint>> listen() {}
+  bool get isNotResolved => !isResolved;
 
   static const _CreatorIdKey = 'creator-id';
   static const _CreatedOnKey = 'raised-on';
@@ -81,11 +86,10 @@ class Complaint with _$Complaint {
   // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
   // method.
 
-  static final activeComplaints = _activeRef.snapshots();
+  static final activeIssues = _activeRef.snapshots();
 
-  /// Creates a complaint stored in `active-collection` and returns the created
-  /// reference.
-  static Future<DocumentReference<Complaint>> create({
+  /// Creates a new active issue.
+  static Future<Issue> create({
     required DocumentReference<PlatformUser> creatorRef,
     required String description,
     required bool isImportant,
@@ -94,7 +98,7 @@ class Complaint with _$Complaint {
     final doc = _activeRef.doc();
 
     await doc.set(
-      Complaint._createObject(
+      Issue._createObject(
         creatorId: creatorRef.id,
         raisedOn: DateTime.now(),
         description: description,
@@ -108,51 +112,60 @@ class Complaint with _$Complaint {
       ),
     );
 
-    return doc;
+    return (await doc.get()).data()!;
   }
 
-  /// Purges an active complaint. Returns `true` if purge was successfull, else
-  /// `false`.
+  /// Purges an active issue.
   ///
-  /// Purging a resolved complaint is not allowed. Therefore, returns `false`.
-  Future<bool> purge(PlatformUser user) async {
-    // Permit if user has permission to delete complaints not owned by the user.
-    bool permitted = user.scope.canPurgeComplaint;
-
-    // Permit if the complaint being purged is owned by the user.
-    permitted |= user.user.uid == this.creatorId;
-
-    if (isResolved || !permitted) {
-      // TODO: in firestore rules, disallow delete for this collection
-      assert(!isResolved, '`purge` invoked on a resolved complaint.');
-      return false;
-    } else {
-      await reference.delete();
-      return true;
-    }
-  }
-
-  /// Resolves the complaint by moving the document from `active-collection`
-  /// to `resolved-collection`.
-  ///
-  /// Does nothing if already resolved.
-  Future<DocumentReference<Complaint>?> resolve() async {
+  /// This future completes with `null` if purging was succesfull. Otherwise
+  /// returns a `String` stating the reason why this operation failed.
+  Future<String?> purge(PlatformUser user) async {
     if (isResolved) {
-      assert(false, '`resolve` invoked on an already resolved complaint.');
-      return null;
+      return "A resolved issue cannot be purged.";
     }
 
-    final doc = _resolvedRef.doc(reference.id);
-    await doc.set(this);
+    // Permit if the issue being purged is owned by the user.
+    bool permitted = user.user.uid == creatorId;
+
+    // Permit if user has permission to delete any issue.
+    permitted |= user.scope.canPurgeIssue;
+
+    if (!permitted) {
+      return """
+This account does not have enough permissions to perform this operation.
+You shall either be the author of this issue, or have enough permissions to purge other issues.""";
+    }
 
     await reference.delete();
-
-    return doc;
   }
 
-  /// Revokes a resolved complaint back to an active complaint.
+  /// Resolves the issue by moving the document from `active-issues` collection
+  /// to `resolved-issues` collection.
   ///
-  /// Does nothing if already in active complaints collection.
+  /// Returns this instance if already resolved otherwise returns the newly
+  /// created resolved issue.
+  Future<Issue> resolve() async {
+    // Return self if already resolved.
+    if (isResolved) {
+      return this;
+    }
+
+    // Creates a document ref. in resolved issues collection with same ID.
+    final doc = _resolvedRef.doc(reference.id);
+
+    // Set's the new ref. with issue details.
+    await doc.set(this);
+
+    // Delete the issue from active issues collection.
+    await reference.delete();
+
+    // Returns the newly created resolved issue.
+    return (await doc.get()).data()!;
+  }
+
+  /// Revokes a resolved issue back to an active issue.
+  ///
+  /// Does nothing if already in active issues collection.
   Future<void> revoke() async {
     if (isResolved) {
       // TODO: write to active collection
