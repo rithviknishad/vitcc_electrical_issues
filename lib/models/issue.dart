@@ -151,6 +151,7 @@ extension IssueSnapshotExtension on IssueSnapshot {
     // Permit if user has permission to delete any issue.
     permitted |= userSnapshot.user.scope.canPurgeIssue;
 
+    // Throws exception if user has no permission to perform this operation.
     if (!permitted) {
       throw Exception(
         'This account does not have enough permissions to perform this operation. You shall either be the creator of this issue or have enough permissions to purge issues not owned by the creator.',
