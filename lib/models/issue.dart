@@ -5,12 +5,14 @@ import 'user.dart';
 
 part 'issue.freezed.dart';
 
+typedef IssueSnapshot = DocumentSnapshot<Issue>;
+
 @freezed
 class Issue with _$Issue {
   const Issue._();
 
   const factory Issue._createObject({
-    required String creatorId,
+    required DocumentReference raisedBy,
     required DateTime raisedOn,
     required String description,
     required bool isImportant,
@@ -18,12 +20,8 @@ class Issue with _$Issue {
 
     // The following are specific to resolved issues.
     required DateTime? resolvedOn,
-    required DocumentReference<PlatformUser>? resolvedBy,
+    required DocumentReference? resolvedBy,
     required String? remarks,
-
-    // The following are not stored in firestore.
-    required bool isResolved,
-    required DocumentReference reference,
   }) = _Issue;
 
   static const _ActiveIssuesKey = 'active-issues';
@@ -46,23 +44,21 @@ class Issue with _$Issue {
           final data = snapshot.data()!;
 
           return Issue._createObject(
-            creatorId: data[_CreatorIdKey],
-            raisedOn: data[_CreatedOnKey],
+            raisedBy: data[_RaisedByKey],
+            raisedOn: data[_RaisedOnKey],
             description: data[_DescriptionKey],
             isImportant: data[_IsImportantKey],
             isUrgent: data[_IsUrgentKey],
             resolvedOn: data[_ResolvedOnKey],
             resolvedBy: data[_ResolvedByKey],
             remarks: data[_RemarksKey],
-            reference: snapshot.reference,
-            isResolved: snapshot.reference.parent.id == _ResolvedIssuesKey,
           );
         },
         // Issue -> Map<String, dynamic>
         toFirestore: (object, setOptions) {
           return {
-            _CreatorIdKey: object.creatorId,
-            _CreatedOnKey: object.raisedOn,
+            _RaisedByKey: object.raisedBy,
+            _RaisedOnKey: object.raisedOn,
             _DescriptionKey: object.description,
             _IsImportantKey: object.isImportant,
             _IsUrgentKey: object.isUrgent,
@@ -73,10 +69,8 @@ class Issue with _$Issue {
         },
       );
 
-  bool get isNotResolved => !isResolved;
-
-  static const _CreatorIdKey = 'creator-id';
-  static const _CreatedOnKey = 'raised-on';
+  static const _RaisedByKey = 'raised-by';
+  static const _RaisedOnKey = 'raised-on';
   static const _DescriptionKey = 'description';
   static const _IsImportantKey = 'is-important';
   static const _IsUrgentKey = 'is-urgent';
@@ -89,17 +83,25 @@ class Issue with _$Issue {
   static final activeIssues = _activeRef.snapshots();
 
   /// Creates a new active issue.
-  static Future<Issue> create({
-    required DocumentReference<PlatformUser> creatorRef,
+  ///
+  /// Returns the created issue. If user has no permission to create an issue,
+  /// returns null.
+  static Future<Issue?> create({
+    required UserSnapshot creatorSnapshot,
     required String description,
     required bool isImportant,
     required bool isUrgent,
   }) async {
+    // Prevent creating issue if user has no permission to create.
+    if (creatorSnapshot.data()!.scope.canCreateIssue == false) {
+      return null;
+    }
+
     final doc = _activeRef.doc();
 
     await doc.set(
       Issue._createObject(
-        creatorId: creatorRef.id,
+        raisedBy: creatorSnapshot.reference,
         raisedOn: DateTime.now(),
         description: description,
         isImportant: isImportant,
@@ -107,33 +109,44 @@ class Issue with _$Issue {
         resolvedBy: null,
         resolvedOn: null,
         remarks: null,
-        isResolved: false,
-        reference: doc,
       ),
     );
 
+    await creatorSnapshot.reference.update({
+      PlatformUser.ActiveIssuesKey: FieldValue.arrayUnion([doc]),
+    });
+
     return (await doc.get()).data()!;
   }
+}
+
+extension IssueSnapshotExtension on IssueSnapshot {
+  Issue get issue => this.data()!;
+
+  bool get isResolved => this.reference.parent.id == Issue._ResolvedIssuesKey;
+
+  bool get isNotResolved => !isResolved;
 
   /// Purges an active issue.
   ///
-  /// This future completes with `null` if purging was succesfull. Otherwise
-  /// returns a `String` stating the reason why this operation failed.
-  Future<String?> purge(PlatformUser user) async {
-    if (isResolved) {
-      return "A resolved issue cannot be purged.";
+  /// This future can throw exception if purge operation was forbidden.
+  Future<void> purge(UserSnapshot userSnapshot) async {
+    if (this.isResolved) {
+      throw Exception(
+        'A resolved issue cannot be purged.',
+      );
     }
 
     // Permit if the issue being purged is owned by the user.
-    bool permitted = user.user.uid == creatorId;
+    bool permitted = userSnapshot.reference == issue.raisedBy;
 
     // Permit if user has permission to delete any issue.
-    permitted |= user.scope.canPurgeIssue;
+    permitted |= userSnapshot.data()!.scope.canPurgeIssue;
 
     if (!permitted) {
-      return """
-This account does not have enough permissions to perform this operation.
-You shall either be the author of this issue, or have enough permissions to purge other issues.""";
+      throw Exception(
+        'This account does not have enough permissions to perform this operation. You shall either be the creator of this issue or have enough permissions to purge issues not owned by the creator.',
+      );
     }
 
     await reference.delete();
@@ -144,17 +157,38 @@ You shall either be the author of this issue, or have enough permissions to purg
   ///
   /// Returns this instance if already resolved otherwise returns the newly
   /// created resolved issue.
-  Future<Issue> resolve() async {
+  ///
+  /// This future may throw an exception if [resolverSnapshot] does not have enough
+  /// permission to resolve the issue.
+  Future<Issue> resolve({
+    required UserSnapshot resolverSnapshot,
+    required String remarks,
+  }) async {
     // Return self if already resolved.
     if (isResolved) {
-      return this;
+      return issue;
+    }
+
+    // Throw exception if resolver has no permission to resolve the issue.
+    if (resolverSnapshot.user.scope.canResolveIssue == false) {
+      throw Exception('Not enough permission to resolve this issue.');
     }
 
     // Creates a document ref. in resolved issues collection with same ID.
-    final doc = _resolvedRef.doc(reference.id);
+    final doc = Issue._resolvedRef.doc(reference.id);
 
-    // Set's the new ref. with issue details.
-    await doc.set(this);
+    // Set's the new ref. with issue details along with resolve details.
+    await doc.set(issue.copyWith(
+      resolvedOn: DateTime.now(),
+      resolvedBy: resolverSnapshot.reference,
+      remarks: remarks,
+    ));
+
+    // Updates the user's document with change in issue from active to resolved.
+    await issue.raisedBy.update({
+      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([this.reference]),
+      PlatformUser.ResolvedIssuesKey: FieldValue.arrayUnion([doc]),
+    });
 
     // Delete the issue from active issues collection.
     await reference.delete();
@@ -167,6 +201,8 @@ You shall either be the author of this issue, or have enough permissions to purg
   ///
   /// Does nothing if already in active issues collection.
   Future<void> revoke() async {
+    throw UnimplementedError();
+
     if (isResolved) {
       // TODO: write to active collection
 
