@@ -1,40 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:vitcc_electrical_issues/models/user_scope.dart';
 
 part 'user.freezed.dart';
-
-class UserScope {
-  final int _value;
-
-  static const BitPosCreateComplaint = 0;
-  static const BitPosViewActiveComplaint = 1;
-  static const BitPosViewResolvedComplaint = 2;
-  static const BitPosResolveComplaint = 3;
-  static const BitPosPurgeAnyComplaint = 4;
-
-  bool _check(int permissions) => (_value & (1 << permissions)) != 0;
-
-  bool get canCreateComplaint => _check(BitPosCreateComplaint);
-  bool get canViewActiveComplaint => _check(BitPosViewActiveComplaint);
-  bool get canViewResolvedComplaint => _check(BitPosViewResolvedComplaint);
-  bool get canResolveComplaint => _check(BitPosResolveComplaint);
-  bool get canPurgeComplaint => _check(BitPosPurgeAnyComplaint);
-
-  const UserScope._(this._value);
-
-  static const defaultPermissions = UserScope._(1 << BitPosCreateComplaint);
-
-  // Do not include code that can manipulate access to other permissions.
-  // Should be handled by Admin Console / Firestore DB directly.
-
-  int toJson() => _value;
-
-  factory UserScope.fromJson(int value) = UserScope._;
-
-  @override
-  String toString() => 'UserScope: $_value';
-}
 
 @freezed
 class PlatformUser with _$PlatformUser {
@@ -43,30 +12,37 @@ class PlatformUser with _$PlatformUser {
     required UserScope scope,
   }) = _PlatformUser;
 
-  static Future<PlatformUser?> get(User user) async {
+  static Future<PlatformUser> get(User user) async {
+    // The document reference w/ converter of the user.
     final doc = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .withConverter<PlatformUser>(
-          // decode from firestore map
-          fromFirestore: (snapshot, _) {
+          fromFirestore: (snapshot, snapshotOptions) {
             return PlatformUser._createObject(
               user: user,
-              scope: UserScope._(snapshot[_ScopeKey] ?? 1),
+              scope: UserScope(snapshot['scope'] as int),
             );
           },
-          // encode to firestore map
-          toFirestore: (obj, _) => {
-            _ScopeKey: obj.scope.toJson(),
+          toFirestore: (user, setOptions) => {
+            'scope': user.scope.value,
           },
         );
 
-    final snapshot = await doc.get();
+    var snapshot = await doc.get();
 
-    return snapshot.data();
+    // Checks if document associated w/ user exists.
+    if (snapshot.exists) {
+      return snapshot.data()!;
+    }
+
+    await doc.set(PlatformUser._createObject(
+      user: user,
+      scope: UserScope.defaultScope,
+    ));
+
+    return (await doc.get()).data()!;
   }
-
-  static const _ScopeKey = 'scope';
   // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
   // method.
 
