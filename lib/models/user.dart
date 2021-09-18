@@ -17,7 +17,7 @@ class PlatformUser with _$PlatformUser {
     required Iterable<DocumentReference> resolvedIssues,
   }) = _PlatformUser;
 
-  static Future<DocumentSnapshot<PlatformUser>> get(User user) async {
+  static Future<UserSnapshot> get(User user) async {
     // The document reference w/ converter of the user.
     final doc = FirebaseFirestore.instance
         .collection('users')

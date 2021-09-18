@@ -117,7 +117,7 @@ class Issue with _$Issue {
 
     // Updates the document w/ server timestamp for 'rasied-on' attribute.
     await doc.update({
-      _RaisedByKey: FieldValue.serverTimestamp(),
+      _RaisedOnKey: FieldValue.serverTimestamp(),
     });
 
     // Update's the creator's active issues index w/ the newly created doc. ref.
