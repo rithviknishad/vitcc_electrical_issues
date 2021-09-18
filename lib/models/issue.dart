@@ -82,23 +82,25 @@ class Issue with _$Issue {
 
   static final activeIssues = _activeRef.snapshots();
 
-  /// Creates a new active issue.
+  /// Creates a new active issue and returns a snapshot of it.
   ///
-  /// Returns the created issue. If user has no permission to create an issue,
-  /// returns null.
-  static Future<IssueSnapshot?> create({
+  /// This future throws an exception if the user has no permission to create
+  /// an issue.
+  static Future<IssueSnapshot> create({
     required UserSnapshot creatorSnapshot,
     required String description,
     required bool isImportant,
     required bool isUrgent,
   }) async {
-    // Prevent creating issue if user has no permission to create.
+    // Throw exception if user has no permission to create an issue.
     if (creatorSnapshot.user.scope.canCreateIssue == false) {
-      return null;
+      throw Exception('Not enough permission to create an issue.');
     }
 
+    // Creates a document ref. w/ auto generated id in active issues collection.
     final doc = _activeRef.doc();
 
+    // Sets the issue document w/ the specified info.
     await doc.set(
       Issue._createObject(
         raisedBy: creatorSnapshot.reference,
@@ -106,14 +108,17 @@ class Issue with _$Issue {
         description: description,
         isImportant: isImportant,
         isUrgent: isUrgent,
+        // Resolved issue attributes are null, as this is an active issue.
         resolvedBy: null,
         resolvedOn: null,
         remarks: null,
       ),
     );
 
+    // Update's the creator's active issues index w/ the newly created doc. ref.
     await creatorSnapshot.addActiveIssue(doc);
 
+    // Returns the document snapshot.
     return doc.get();
   }
 }
@@ -121,14 +126,14 @@ class Issue with _$Issue {
 extension IssueSnapshotExtension on IssueSnapshot {
   Issue get issue => this.data()!;
 
+  /// Whether this issue belongs to resolved issues collection or not.
   bool get isResolved => this.reference.parent.id == Issue._ResolvedIssuesKey;
-
-  bool get isNotResolved => !isResolved;
 
   /// Purges an active issue.
   ///
   /// This future can throw exception if purge operation was forbidden.
   Future<void> purge(UserSnapshot userSnapshot) async {
+    // Disallow purge for resolved issued.
     if (this.isResolved) {
       throw Exception(
         'A resolved issue cannot be purged.',
