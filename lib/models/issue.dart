@@ -192,9 +192,15 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Set's the new ref. with issue details along with resolve details.
     await doc.set(issue.copyWith(
+      resolvedOn: Timestamp.now(),
       resolvedBy: resolverSnapshot.reference,
       remarks: remarks,
     ));
+
+    // Updates the document w/ server timestamp for 'resolved-on' attribute.
+    await doc.update({
+      Issue._ResolvedOnKey: FieldValue.serverTimestamp(),
+    });
 
     // Updates the user's document with change in issue from active to resolved.
     await issue.raisedBy.update({
@@ -203,7 +209,7 @@ extension IssueSnapshotExtension on IssueSnapshot {
     });
 
     // Delete the issue from active issues collection.
-    await this.reference.delete();
+    await reference.delete();
 
     // Returns the newly created resolved issue.
     return doc.get();
