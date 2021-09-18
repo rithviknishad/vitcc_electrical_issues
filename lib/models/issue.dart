@@ -13,13 +13,13 @@ class Issue with _$Issue {
 
   const factory Issue._create({
     required DocumentReference raisedBy,
-    required DateTime raisedOn,
+    required Timestamp raisedOn,
     required String description,
     required bool isImportant,
     required bool isUrgent,
 
     // The following are specific to resolved issues.
-    required DateTime? resolvedOn,
+    required Timestamp? resolvedOn,
     required DocumentReference? resolvedBy,
     required String? remarks,
   }) = _Issue;
@@ -55,16 +55,16 @@ class Issue with _$Issue {
           );
         },
         // Issue -> Map<String, dynamic>
-        toFirestore: (object, setOptions) {
+        toFirestore: (issue, setOptions) {
           return {
-            _RaisedByKey: object.raisedBy,
-            _RaisedOnKey: object.raisedOn,
-            _DescriptionKey: object.description,
-            _IsImportantKey: object.isImportant,
-            _IsUrgentKey: object.isUrgent,
-            _ResolvedOnKey: object.resolvedOn,
-            _ResolvedByKey: object.resolvedBy,
-            _RemarksKey: object.remarks,
+            _RaisedByKey: issue.raisedBy,
+            _RaisedOnKey: issue.raisedOn,
+            _DescriptionKey: issue.description,
+            _IsImportantKey: issue.isImportant,
+            _IsUrgentKey: issue.isUrgent,
+            _ResolvedOnKey: issue.resolvedOn,
+            _ResolvedByKey: issue.resolvedBy,
+            _RemarksKey: issue.remarks,
           };
         },
       );
@@ -104,7 +104,7 @@ class Issue with _$Issue {
     await doc.set(
       Issue._create(
         raisedBy: creatorSnapshot.reference,
-        raisedOn: DateTime.now(),
+        raisedOn: Timestamp.now(),
         description: description,
         isImportant: isImportant,
         isUrgent: isUrgent,
@@ -114,6 +114,11 @@ class Issue with _$Issue {
         remarks: null,
       ),
     );
+
+    // Updates the document w/ server timestamp for 'rasied-on' attribute.
+    await doc.update({
+      _RaisedByKey: FieldValue.serverTimestamp(),
+    });
 
     // Update's the creator's active issues index w/ the newly created doc. ref.
     await creatorSnapshot.addActiveIssue(doc);
@@ -187,7 +192,6 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Set's the new ref. with issue details along with resolve details.
     await doc.set(issue.copyWith(
-      resolvedOn: DateTime.now(),
       resolvedBy: resolverSnapshot.reference,
       remarks: remarks,
     ));
