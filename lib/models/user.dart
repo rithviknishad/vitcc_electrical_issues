@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/user_scope.dart';
 
 part 'user.freezed.dart';
@@ -67,4 +68,10 @@ class PlatformUser with _$PlatformUser {
 
 extension UserSnapshotExtension on UserSnapshot {
   PlatformUser get user => this.data()!;
+
+  Future<void> addActiveIssue(DocumentReference<Issue> issueReference) {
+    return reference.update({
+      PlatformUser.ActiveIssuesKey: FieldValue.arrayUnion([issueReference])
+    });
+  }
 }
