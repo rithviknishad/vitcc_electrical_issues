@@ -11,7 +11,7 @@ typedef IssueSnapshot = DocumentSnapshot<Issue>;
 class Issue with _$Issue {
   const Issue._();
 
-  const factory Issue._createObject({
+  const factory Issue._create({
     required DocumentReference raisedBy,
     required DateTime raisedOn,
     required String description,
@@ -43,7 +43,7 @@ class Issue with _$Issue {
         fromFirestore: (snapshot, snapshotOptions) {
           final data = snapshot.data()!;
 
-          return Issue._createObject(
+          return Issue._create(
             raisedBy: data[_RaisedByKey],
             raisedOn: data[_RaisedOnKey],
             description: data[_DescriptionKey],
@@ -102,7 +102,7 @@ class Issue with _$Issue {
 
     // Sets the issue document w/ the specified info.
     await doc.set(
-      Issue._createObject(
+      Issue._create(
         raisedBy: creatorSnapshot.reference,
         raisedOn: DateTime.now(),
         description: description,
