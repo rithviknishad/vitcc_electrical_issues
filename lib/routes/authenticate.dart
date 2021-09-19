@@ -6,15 +6,17 @@ import 'package:vitcc_electrical_issues/shared/wave_widget.dart';
 
 class Authenticate extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.white30,
-          systemNavigationBarIconBrightness: Brightness.dark,
-        ),
-        child: AuthenticateView(),
-      );
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.white30,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: AuthenticateView(),
+    );
+  }
 }
 
 class AuthenticateView extends StatefulWidget {
