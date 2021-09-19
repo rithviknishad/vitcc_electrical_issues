@@ -1,16 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vitcc_electrical_issues/models/user.dart';
 
 class AuthService {
-  final _auth = FirebaseAuth.instance;
-  final _db = FirebaseFirestore.instance;
+  static Stream<UserSnapshot?> get user =>
+      FirebaseAuth.instance.authStateChanges().asyncMap((user) {
+        if (user != null) {
+          return PlatformUser.get(user);
+        }
+      });
 
-  Stream<User?> get user => _auth.authStateChanges();
+  static User? get currentUser => FirebaseAuth.instance.currentUser;
 
-  User? get currentUser => _auth.currentUser;
-
-  Future<UserCredential?> signInWithGoogle() async {
+  static Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow
     final googleUser = await GoogleSignIn().signIn();
 
@@ -29,17 +33,12 @@ class AuthService {
     );
 
     // Once signed in, return the UserCredential
-    return await _auth.signInWithCredential(credential);
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  void updateUserData(User user) async {}
-
   /// Signs out the current user and notifies [user] stream.
-  Future<void> signOut() => _auth.signOut();
+  static Future<void> signOut() => FirebaseAuth.instance.signOut();
 
+  // Avoid attempting to instantiate objects of this class.
   AuthService._();
-
-  static final instance = AuthService._();
-
-  factory AuthService() => instance;
 }
