@@ -32,8 +32,7 @@ class _AuthenticateViewState extends State<AuthenticateView> {
   bool isLoading = false;
 
   final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  String errorMessage = '';
+  String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -93,46 +92,35 @@ class _AuthenticateViewState extends State<AuthenticateView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  // Email Address Field
                   TextFieldWidget(
                     controller: emailController,
-                    hintText: 'Email',
+                    hintText: 'VIT Email',
                     obscureText: false,
                     prefixIconData: FontAwesome5.id_badge,
                     suffixIconData: viewModel.emailIsValid ? Icons.check : null,
                     onChanged: (value) => viewModel.isValidEmail(value),
-                    validator:
-                        EmailValidator(errorText: 'Invalid Email Address'),
+                    validator: MultiValidator([
+                      EmailValidator(errorText: 'Invalid email address'),
+                      PatternValidator(AuthenticateViewModel.vitEmailPattern,
+                          errorText: 'Email shall belong to VIT domain')
+                    ]),
                     keyboardType: TextInputType.emailAddress,
                     // autofillHints: [AutofillHints.email],
                   ),
-                  SizedBox(height: 10),
-                  TextFieldWidget(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    obscureText: !viewModel.passwordIsVisible,
-                    prefixIconData: Icons.lock_outline,
-                    suffixIconData: viewModel.passwordIsVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    onSuffixIconTap: () => viewModel.passwordIsVisible =
-                        !viewModel.passwordIsVisible,
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: 'Enter a password'),
-                      MinLengthValidator(
-                        4,
-                        errorText: 'Password must be at least 4 characters',
-                      ),
-                      //PatternValidator(r'(?=.*?[#?!@$%^&*-])', errorText: 'passwords must have at least one special character')
-                    ]),
-                    autofillHints: [AutofillHints.password],
-                  ),
-                  if (errorMessage != '') SizedBox(height: 12.0),
-                  if (errorMessage != '')
+
+                  // Error Message
+                  if (errorMessage != null) ...[
+                    SizedBox(height: 12.0),
                     Text(
-                      errorMessage,
+                      errorMessage!,
                       style: TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
+                  ],
+
                   SizedBox(height: 20),
+
+                  // Authenticate Button
                   _Button(
                     text: 'Authenticate',
                     hasBorder: false,
@@ -166,7 +154,6 @@ class _AuthenticateViewState extends State<AuthenticateView> {
   @override
   void dispose() {
     emailController.dispose();
-    passwordController.dispose();
     super.dispose();
   }
 }
@@ -180,14 +167,19 @@ class AuthenticateViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  static const emailPattern =
+  static final emailPattern =
       r"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$";
+
+  static final vitEmailPattern = r"@(vitstudent.ac.in|vit.ac.in)$";
 
   bool _emailIsValid = false;
 
-  get emailIsValid => _emailIsValid;
+  bool get emailIsValid => _emailIsValid;
+
   void isValidEmail(String input) async {
-    _emailIsValid = RegExp(emailPattern).hasMatch(input);
+    _emailIsValid = RegExp(emailPattern).hasMatch(input) &&
+        RegExp(vitEmailPattern).hasMatch(input);
+
     notifyListeners();
   }
 }
