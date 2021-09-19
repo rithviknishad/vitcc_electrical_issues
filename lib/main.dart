@@ -31,19 +31,20 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
 
           // Loading screen, when attempting to authenticate w/ firebase.
           return StreamBuilder<UserSnapshot?>(
-              stream: AuthService.user,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Loading();
-                }
+            stream: AuthService.user,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Loading();
+              }
 
-                // Authenitcated
-                if (snapshot.data is UserSnapshot) {
-                  return DashboardPage();
-                }
+              // Authenitcated
+              if (snapshot.data is UserSnapshot) {
+                return DashboardPage();
+              }
 
-                return Authenticate();
-              });
+              return Authenticate();
+            },
+          );
         },
       ),
     );
