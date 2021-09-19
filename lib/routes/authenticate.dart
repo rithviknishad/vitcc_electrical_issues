@@ -177,10 +177,15 @@ class AuthenticateViewModel extends ChangeNotifier {
   bool get emailIsValid => _emailIsValid;
 
   void isValidEmail(String input) async {
-    _emailIsValid = RegExp(emailPattern).hasMatch(input) &&
-        RegExp(vitEmailPattern).hasMatch(input);
+    bool isValid = true;
 
-    notifyListeners();
+    isValid &= RegExp(emailPattern).hasMatch(input);
+    isValid &= RegExp(vitEmailPattern).hasMatch(input);
+
+    if (_emailIsValid != isValid) {
+      _emailIsValid = isValid;
+      notifyListeners();
+    }
   }
 }
 
