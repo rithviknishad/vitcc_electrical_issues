@@ -27,8 +27,6 @@ class AuthenticateView extends StatefulWidget {
 class _AuthenticateViewState extends State<AuthenticateView> {
   bool isLoading = false;
 
-  String? errorMessage;
-
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
