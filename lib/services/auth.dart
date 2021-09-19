@@ -18,32 +18,27 @@ class AuthService {
   static User? get currentUser => firebaseAuth.currentUser;
 
   /// Sign in w/ Google Account.
-  static Future<UserCredential?> signInWithGoogle() async {
-    // Maybe the user is already signed in. Who knows?
+  static Future<void> signInWithGoogle() async {
+    // Try fetching the currently signed-in account.
     var currentUser = googleSignIn.currentUser;
 
-    // Sneaky Peeky, try to get inside seamlessly.
+    // Try signing in silently if previously signed in.
     currentUser ??= await googleSignIn.signInSilently();
 
-    // Oho! Maybe we should ask the user again.
+    // Try interactive sign in.
     currentUser ??= await googleSignIn.signIn();
 
-    // Let's go back home :(
-    if (currentUser == null) {
-      return null;
-    }
+    // If failed to get google account, stop proceeding.
+    if (currentUser == null) return;
 
-    // Retrieve the google sign in authentication of the user.
     final googleAuth = await currentUser.authentication;
 
-    // Constructs a credential
     final credential = GoogleAuthProvider.credential(
       idToken: googleAuth.idToken,
       accessToken: googleAuth.accessToken,
     );
 
-    // Once signed in, return the UserCredential
-    return await firebaseAuth.signInWithCredential(credential);
+    await firebaseAuth.signInWithCredential(credential);
   }
 
   // TODO: handle deep links later
@@ -63,8 +58,10 @@ class AuthService {
 
   /// Signs out the current user and notifies [user] stream.
   static Future<void> signOut() async {
+    // sign out from firebase
     await firebaseAuth.signOut();
 
+    // sign out from google, if signed in using google sign-in.
     if (await googleSignIn.isSignedIn()) {
       await googleSignIn.signOut();
     }
