@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vitcc_electrical_issues/services/auth.dart';
+import 'package:vitcc_electrical_issues/services/auth_service.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 import 'package:vitcc_electrical_issues/shared/wave_widget.dart';
 
