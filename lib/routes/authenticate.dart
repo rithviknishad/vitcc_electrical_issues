@@ -161,10 +161,13 @@ class _AuthenticateViewState extends State<AuthenticateView> {
 class AuthenticateViewModel extends ChangeNotifier {
   bool _passwordIsVisible = false;
 
-  get passwordIsVisible => _passwordIsVisible;
-  set passwordIsVisible(value) {
-    _passwordIsVisible = value;
-    notifyListeners();
+  bool get passwordIsVisible => _passwordIsVisible;
+
+  set passwordIsVisible(bool value) {
+    if (passwordIsVisible != value) {
+      _passwordIsVisible = value;
+      notifyListeners();
+    }
   }
 
   static final emailPattern =
@@ -182,7 +185,7 @@ class AuthenticateViewModel extends ChangeNotifier {
     isValid &= RegExp(emailPattern).hasMatch(input);
     isValid &= RegExp(vitEmailPattern).hasMatch(input);
 
-    if (_emailIsValid != isValid) {
+    if (emailIsValid != isValid) {
       _emailIsValid = isValid;
       notifyListeners();
     }
