@@ -10,7 +10,7 @@ typedef UserSnapshot = DocumentSnapshot<PlatformUser>;
 
 @freezed
 class PlatformUser with _$PlatformUser {
-  const factory PlatformUser._createObject({
+  const factory PlatformUser._create({
     required User user,
     required UserScope scope,
     required Iterable<DocumentReference> activeIssues,
@@ -23,14 +23,16 @@ class PlatformUser with _$PlatformUser {
         .collection('users')
         .doc(user.uid)
         .withConverter<PlatformUser>(
+          // Map<String, dynamic> -> PlatformUser
           fromFirestore: (snapshot, snapshotOptions) {
-            return PlatformUser._createObject(
+            return PlatformUser._create(
               user: user,
               scope: UserScope(snapshot[_ScopeKey] as int),
               activeIssues: snapshot[ActiveIssuesKey],
               resolvedIssues: snapshot[ResolvedIssuesKey],
             );
           },
+          // PlatformUser -> Map<String, dynamic>
           toFirestore: (user, setOptions) => {
             _ScopeKey: user.scope.value,
             ActiveIssuesKey: user.activeIssues,
@@ -46,14 +48,14 @@ class PlatformUser with _$PlatformUser {
     }
 
     // Creates a new document if document does not exist for the user.
-    await doc.set(PlatformUser._createObject(
+    await doc.set(PlatformUser._create(
       user: user,
       scope: UserScope.defaultScope,
       activeIssues: Iterable.empty(),
       resolvedIssues: Iterable.empty(),
     ));
 
-    return (await doc.get());
+    return await doc.get();
   }
 
   static const _ScopeKey = 'scope';
