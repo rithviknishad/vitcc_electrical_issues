@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/routes/authenticate.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard.dart';
@@ -38,6 +39,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
                 return DashboardPage();
               }
 
+              // Show authentication page if not signed in.
               return Authenticate();
             },
           );
@@ -49,17 +51,26 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
   static const _primary = Color.fromARGB(255, 0, 38, 70);
   static const _accent = Color.fromARGB(255, 245, 248, 253);
   static const _secondary = Color(0xFFFFCA28);
+  static const _fontFamily = 'Ubuntu';
 
   static final _theme = ThemeData(
-    fontFamily: 'Ubuntu',
+    fontFamily: _fontFamily,
     brightness: Brightness.light,
+
     primaryColor: _primary,
     accentColor: _accent,
+
     appBarTheme: AppBarTheme(
-      brightness: Brightness.light,
       color: Colors.white,
       elevation: 0,
-      actionsIconTheme: const IconThemeData(color: _primary),
+      actionsIconTheme: const IconThemeData(
+        color: _primary,
+      ),
+      titleTextStyle: TextStyle(
+        fontFamily: _fontFamily,
+        fontSize: 18,
+        color: _primary,
+      ),
     ),
     iconTheme: const IconThemeData(color: _primary),
 
