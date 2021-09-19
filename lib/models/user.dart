@@ -51,8 +51,8 @@ class PlatformUser with _$PlatformUser {
     await doc.set(PlatformUser._create(
       user: user,
       scope: UserScope.defaultScope,
-      activeIssues: Iterable.empty(),
-      resolvedIssues: Iterable.empty(),
+      activeIssues: List.empty(),
+      resolvedIssues: List.empty(),
     ));
 
     return await doc.get();
