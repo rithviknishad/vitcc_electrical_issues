@@ -42,8 +42,8 @@ class UserScope {
   /// The default user scope of new users.
   static const defaultScope = UserScope(createIssue);
 
-  // Do not include code that can manipulate access to other permissions.
-  // Should be handled by Admin Console / Firestore DB directly.
+  // NOTE: Do not include code that can manipulate access to other permissions.
+  //       Should be handled by Admin Console / Firestore DB directly.
 
   @override
   String toString() => 'UserScope($value)';
