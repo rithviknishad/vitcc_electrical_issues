@@ -14,6 +14,7 @@ class AuthService {
 
   static User? get currentUser => FirebaseAuth.instance.currentUser;
 
+  /// Sign in w/ Google Account.
   static Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow
     final googleUser = await GoogleSignIn().signIn();
@@ -35,6 +36,21 @@ class AuthService {
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  // TODO: handle deep links later
+  // NOTE: Temprorily disabled at firebase console.
+  static Future<void> signInWithVitEmail(String email) async {
+    await FirebaseAuth.instance.sendSignInLinkToEmail(
+      email: email,
+      actionCodeSettings: ActionCodeSettings(
+        url: _authDomain,
+        handleCodeInApp: true,
+      ),
+    );
+  }
+
+  /// Authorized domain of this app.
+  static const _authDomain = 'https://vitcc-electrical-issues.firebaseapp.com';
 
   /// Signs out the current user and notifies [user] stream.
   static Future<void> signOut() => FirebaseAuth.instance.signOut();
