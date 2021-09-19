@@ -6,11 +6,7 @@ import 'package:vitcc_electrical_issues/routes/dashboard.dart';
 import 'package:vitcc_electrical_issues/services/auth.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(ElectricalIssueTrackerApp());
-}
+void main() => runApp(ElectricalIssueTrackerApp());
 
 class ElectricalIssueTrackerApp extends StatelessWidget {
   const ElectricalIssueTrackerApp({Key? key}) : super(key: key);
