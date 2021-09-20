@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
+import 'package:vitcc_electrical_issues/main.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -32,11 +33,7 @@ class _DashboardPageState extends State<DashboardPage> {
               milliseconds: 400,
             ),
           ),
-          child: Text(
-            'Bookings',
-            style: TextStyle(
-                fontWeight: FontWeight.w400, color: theme.primaryColor),
-          ),
+          child: Text(ElectricalIssueTrackerApp.title),
         ),
       ),
       body: SingleChildScrollView(
