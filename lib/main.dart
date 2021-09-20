@@ -10,13 +10,15 @@ import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 void main() => runApp(ElectricalIssueTrackerApp());
 
 class ElectricalIssueTrackerApp extends StatelessWidget {
+  static const title = 'Electrical Issue Tracker';
+
   const ElectricalIssueTrackerApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'VITCC Electrical Issue Tracker',
+      title: title,
       theme: _theme,
       home: FutureBuilder<FirebaseApp>(
         future: Firebase.initializeApp(),
