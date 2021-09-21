@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:vitcc_electrical_issues/main.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -25,7 +26,6 @@ class _DashboardPageState extends State<DashboardPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.accentColor,
       appBar: AppBar(
         title: FadeInLeft(
           preferences: const AnimationPreferences(
@@ -41,6 +41,21 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [],
         ),
       ),
+      floatingActionButton: _RaiseANewIssueFAB(),
+    );
+  }
+}
+
+class _RaiseANewIssueFAB extends StatelessWidget {
+  const _RaiseANewIssueFAB({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () {},
+      tooltip: 'Click to raise a new issue.',
+      label: Text('Raise a new issue'),
+      icon: Icon(FontAwesome5.feather),
     );
   }
 }
