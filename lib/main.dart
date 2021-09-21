@@ -75,6 +75,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
           color: Colors.white,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
           ),
           elevation: 0,
           actionsIconTheme: const IconThemeData(
