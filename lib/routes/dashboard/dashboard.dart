@@ -29,9 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         title: FadeInLeft(
           preferences: const AnimationPreferences(
-            duration: Duration(
-              milliseconds: 400,
-            ),
+            duration: Duration(milliseconds: 400),
           ),
           child: Text(ElectricalIssueTrackerApp.title),
         ),
