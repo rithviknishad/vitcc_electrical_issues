@@ -103,6 +103,27 @@ class Issue with _$Issue {
     );
   }
 
+  /// Read the specified issue reference.
+  ///
+  /// Throws exception if [ref] does not belong to active or resolved issue
+  /// collection.
+  static Future<IssueSnapshot> read(DocumentReference ref) {
+    // Check if ref belongs to active issues.
+    if (ref.parent == _activeRef) {
+      return _activeRef.doc(ref.id).get();
+    }
+
+    // Check if ref belongs to resolved issues.
+    if (ref.parent == _resolvedRef) {
+      return _resolvedRef.doc(ref.id).get();
+    }
+
+    // If the passed ref does not belong to any of the supported collections.
+    throw Exception(
+      "$ref's parent is not $_activeRef or $_resolvedRef. Unable to decide how to watch $ref.",
+    );
+  }
+
   /// Creates a new active issue and returns a snapshot of it.
   ///
   /// This future throws an exception if the user has no permission to create
