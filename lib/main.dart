@@ -55,79 +55,93 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
   static const _secondary = Color(0xFFFFCA28);
   static const _fontFamily = 'Ubuntu';
 
-  static final _theme = ThemeData(
-    fontFamily: _fontFamily,
-    brightness: Brightness.light,
-
-    primaryColor: _primary,
-    accentColor: _accent,
-
-    appBarTheme: AppBarTheme(
-      color: Colors.white,
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-      ),
-      elevation: 0,
-      actionsIconTheme: const IconThemeData(
-        color: _primary,
-      ),
-      titleTextStyle: TextStyle(
+  static get _theme => ThemeData(
         fontFamily: _fontFamily,
-        fontSize: 18,
-        color: _primary,
-      ),
-    ),
-    iconTheme: const IconThemeData(color: _primary),
+        brightness: Brightness.light,
 
-    scaffoldBackgroundColor: _accent,
-    snackBarTheme: const SnackBarThemeData(
-      backgroundColor: _primary,
-      actionTextColor: _secondary,
-      disabledActionTextColor: Colors.grey,
-      contentTextStyle: TextStyle(color: Colors.white),
-    ),
+        primaryColor: _primary,
 
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(_primary),
-        textStyle: MaterialStateProperty.all(TextStyle(
-          fontFamily: 'Ubuntu',
-          color: _accent,
-          fontWeight: FontWeight.w500,
-        )),
-      ),
-    ),
+        colorScheme: ColorScheme.light(
+          primary: _primary,
+          onPrimary: _accent,
+          secondary: _secondary,
+          surface: _accent,
+          onSurface: _primary,
+        ),
 
-    // Bottom Navigation Bar Theme
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: _primary,
-      selectedItemColor: _secondary,
-      unselectedItemColor: Colors.blueGrey,
-      type: BottomNavigationBarType.fixed,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: _accent,
-      enabledBorder: UnderlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: _primary),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.red),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.red),
-      ),
-      labelStyle: const TextStyle(color: _primary, fontSize: 14),
-      focusColor: _primary,
-    ),
-  );
+        scaffoldBackgroundColor: _accent,
+
+        appBarTheme: AppBarTheme(
+          color: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+          ),
+          elevation: 0,
+          actionsIconTheme: const IconThemeData(
+            color: _primary,
+          ),
+          titleTextStyle: TextStyle(
+            fontFamily: _fontFamily,
+            fontSize: 18,
+            color: _primary,
+          ),
+        ),
+
+        iconTheme: const IconThemeData(color: _primary),
+
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: _primary,
+          foregroundColor: _accent,
+        ),
+
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: _primary,
+          actionTextColor: _secondary,
+          disabledActionTextColor: Colors.grey,
+          contentTextStyle: TextStyle(color: Colors.white),
+        ),
+
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(_primary),
+            textStyle: MaterialStateProperty.all(TextStyle(
+              fontFamily: 'Ubuntu',
+              color: _accent,
+              fontWeight: FontWeight.w500,
+            )),
+          ),
+        ),
+
+        // Bottom Navigation Bar Theme
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: _primary,
+          selectedItemColor: _secondary,
+          unselectedItemColor: Colors.blueGrey,
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: _accent,
+          enabledBorder: UnderlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: _primary),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          labelStyle: const TextStyle(color: _primary, fontSize: 14),
+          focusColor: _primary,
+        ),
+      );
 }
