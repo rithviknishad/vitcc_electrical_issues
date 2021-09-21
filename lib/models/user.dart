@@ -10,11 +10,13 @@ typedef UserSnapshot = DocumentSnapshot<PlatformUser>;
 
 @freezed
 class PlatformUser with _$PlatformUser {
+  const PlatformUser._();
+
   const factory PlatformUser._create({
     required User user,
     required UserScope scope,
-    required Iterable<DocumentReference> activeIssues,
-    required Iterable<DocumentReference> resolvedIssues,
+    required Iterable<DocumentReference> activeIssueRefs,
+    required Iterable<DocumentReference> resolvedIssueRefs,
   }) = _PlatformUser;
 
   static Future<UserSnapshot> get(User user) async {
@@ -28,15 +30,15 @@ class PlatformUser with _$PlatformUser {
             return PlatformUser._create(
               user: user,
               scope: UserScope(snapshot[_ScopeKey] as int),
-              activeIssues: snapshot[ActiveIssuesKey],
-              resolvedIssues: snapshot[ResolvedIssuesKey],
+              activeIssueRefs: snapshot[ActiveIssuesKey],
+              resolvedIssueRefs: snapshot[ResolvedIssuesKey],
             );
           },
           // PlatformUser -> Map<String, dynamic>
           toFirestore: (user, setOptions) => {
             _ScopeKey: user.scope.value,
-            ActiveIssuesKey: user.activeIssues,
-            ResolvedIssuesKey: user.resolvedIssues,
+            ActiveIssuesKey: user.activeIssueRefs,
+            ResolvedIssuesKey: user.resolvedIssueRefs,
           },
         );
 
@@ -51,8 +53,8 @@ class PlatformUser with _$PlatformUser {
     await doc.set(PlatformUser._create(
       user: user,
       scope: UserScope.defaultScope,
-      activeIssues: List.empty(),
-      resolvedIssues: List.empty(),
+      activeIssueRefs: List.empty(),
+      resolvedIssueRefs: List.empty(),
     ));
 
     return await doc.get();
@@ -63,6 +65,14 @@ class PlatformUser with _$PlatformUser {
   static const ResolvedIssuesKey = 'resolved-issues';
   // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
   // method.
+
+  /// Get watch streams of all active issues of this user.
+  Iterable<Stream<IssueSnapshot>> get activeIssues =>
+      activeIssueRefs.map(Issue.watch);
+
+  /// Read all resolved issues of this user.
+  Iterable<Future<IssueSnapshot>> get resolvedIssues =>
+      resolvedIssueRefs.map(Issue.read);
 }
 
 extension UserSnapshotExtension on UserSnapshot {
