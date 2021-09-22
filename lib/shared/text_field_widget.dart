@@ -18,6 +18,8 @@ class TextFieldWidget extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final List<TextInputFormatter>? inputFormatters;
   final bool readOnly;
+  final int? minLines;
+  final int? maxLines;
 
   const TextFieldWidget({
     required this.hintText,
@@ -36,6 +38,8 @@ class TextFieldWidget extends StatelessWidget {
     this.autofillHints,
     this.inputFormatters,
     this.readOnly = false,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   @override
@@ -71,6 +75,8 @@ class TextFieldWidget extends StatelessWidget {
         color: theme.primaryColor,
         fontSize: 14.0,
       ),
+      minLines: minLines,
+      maxLines: maxLines,
       cursorColor: theme.primaryColor,
       obscureText: obscureText,
       decoration: InputDecoration(
