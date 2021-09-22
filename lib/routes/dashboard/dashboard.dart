@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:vitcc_electrical_issues/main.dart';
+import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -34,7 +36,11 @@ class _DashboardPageState extends State<DashboardPage> {
           preferences: const AnimationPreferences(
             duration: Duration(milliseconds: 400),
           ),
-          child: Text(ElectricalIssueTrackerApp.title),
+          child: Text(
+            _raiseNewIssueFormIsShown
+                ? 'Raise an issue'
+                : ElectricalIssueTrackerApp.title,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -53,7 +59,10 @@ class _DashboardPageState extends State<DashboardPage> {
                     setState(() => _raiseNewIssueFormIsShown = true);
 
                     await Scaffold.of(context)
-                        .showBottomSheet((_) => _RaiseNewIssueBottomSheet())
+                        .showBottomSheet(
+                          (_) => _RaiseNewIssueBottomSheet(),
+                          backgroundColor: theme.appBarTheme.backgroundColor,
+                        )
                         .closed;
 
                     setState(() => _raiseNewIssueFormIsShown = false);
@@ -77,53 +86,70 @@ class _RaiseNewIssueBottomSheet extends StatefulWidget {
 }
 
 class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
+  final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+
+  bool isImportant = false;
+  bool isUrgent = false;
+
+  IssueLocation issueLocation = IssueLocation(
+    block: '',
+    floor: '',
+    room: '',
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(15, 5, 15, 0),
-      height: 450,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 400,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 10,
-                  color: Colors.grey.shade300,
-                  spreadRadius: 5,
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: TextFieldWidget(
-                    controller: descriptionController,
-                    hintText: 'Describe the issue',
-                    minLines: 4,
-                    maxLines: null,
-                  ),
-                ),
+    final theme = Theme.of(context);
 
-                // Tips on describing an issue
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    'Tips to describe an issue\n1. Check if appliance has power',
-                  ),
-                )
-              ],
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Title of the issue
+            TextFieldWidget(
+              controller: titleController,
+              hintText: 'What is the issue?',
+              validator: RequiredValidator(
+                errorText: 'Describe the issue in short',
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'e.g. "Air Conditioner not working"',
+                  style: theme.textTheme.caption,
+                ),
+              ),
+            ),
+
+            SizedBox(height: 8),
+
+            // Describe the issue
+            TextFieldWidget(
+              controller: descriptionController,
+              hintText: 'Describe the issue',
+            ),
+
+            // Tips on describing an issue
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'Tips to describe an issue\n1. Check if appliance has power',
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
