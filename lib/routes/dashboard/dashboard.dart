@@ -3,7 +3,6 @@ import 'package:flutter_animator/flutter_animator.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:vitcc_electrical_issues/main.dart';
-import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -86,24 +85,23 @@ class _RaiseNewIssueBottomSheet extends StatefulWidget {
 }
 
 class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
-  final titleController = TextEditingController();
-  final descriptionController = TextEditingController();
+  final title = TextEditingController();
+  final description = TextEditingController();
 
   bool isImportant = false;
   bool isUrgent = false;
 
-  IssueLocation issueLocation = IssueLocation(
-    block: '',
-    floor: '',
-    room: '',
-  );
+  final locationBlock = TextEditingController();
+  final locationFloor = TextEditingController();
+  final locationRoom = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
 
     return SizedBox(
-      height: MediaQuery.of(context).size.height,
+      height: size.height,
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(
@@ -116,7 +114,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
           children: [
             // Title of the issue
             TextFieldWidget(
-              controller: titleController,
+              controller: title,
               hintText: 'What is the issue?',
               validator: RequiredValidator(
                 errorText: 'Describe the issue in short',
@@ -135,9 +133,74 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
 
             SizedBox(height: 8),
 
+            // Issue Priority
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Is this issue important or urgent?',
+                  style: TextStyle(
+                    color: theme.primaryColor,
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                SizedBox(width: 8),
+                ActionChip(
+                  backgroundColor: isImportant
+                      ? theme.primaryColor
+                      : theme.colorScheme.surface,
+                  label: Text(
+                    '${isImportant ? '' : 'Not'} Important',
+                    style: TextStyle(
+                      color: isImportant
+                          ? theme.colorScheme.surface
+                          : theme.primaryColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onPressed: () => setState(() => isImportant = !isImportant),
+                  elevation: 0,
+                  pressElevation: 0,
+                ),
+                SizedBox(width: 8),
+                ActionChip(
+                  backgroundColor:
+                      isUrgent ? theme.primaryColor : theme.colorScheme.surface,
+                  label: Text(
+                    '${isUrgent ? '' : 'Not'} Urgent',
+                    style: TextStyle(
+                      color: isUrgent
+                          ? theme.colorScheme.surface
+                          : theme.primaryColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onPressed: () => setState(() => isUrgent = !isUrgent),
+                  elevation: 0,
+                  pressElevation: 0,
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Click the chips to toggle between selection states',
+                  style: theme.textTheme.caption,
+                ),
+              ),
+            ),
+
             // Describe the issue
             TextFieldWidget(
-              controller: descriptionController,
+              controller: description,
               hintText: 'Describe the issue',
             ),
 
