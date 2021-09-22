@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:vitcc_electrical_issues/models/issue_location.dart';
 
 import 'user.dart';
 
@@ -16,7 +17,7 @@ class Issue with _$Issue {
     required Timestamp raisedOn,
     required String title,
     required String description,
-    required Map<String, String> location,
+    required IssueLocation location,
     required bool isImportant,
     required bool isUrgent,
 
@@ -50,7 +51,7 @@ class Issue with _$Issue {
             raisedOn: data[_RaisedOnKey],
             title: data[_TitleKey],
             description: data[_DescriptionKey],
-            location: data[_LocationKey],
+            location: IssueLocation.fromJson(data[_LocationKey]),
             isImportant: data[_IsImportantKey],
             isUrgent: data[_IsUrgentKey],
             resolvedOn: data[_ResolvedOnKey],
@@ -65,7 +66,7 @@ class Issue with _$Issue {
             _RaisedOnKey: issue.raisedOn,
             _TitleKey: issue.title,
             _DescriptionKey: issue.description,
-            _LocationKey: issue.location,
+            _LocationKey: issue.location.toJson(),
             _IsImportantKey: issue.isImportant,
             _IsUrgentKey: issue.isUrgent,
             _ResolvedOnKey: issue.resolvedOn,
@@ -140,7 +141,7 @@ class Issue with _$Issue {
     required UserSnapshot creatorSnapshot,
     required String title,
     required String description,
-    required Map<String, String> location,
+    required IssueLocation location,
     required bool isImportant,
     required bool isUrgent,
   }) async {
