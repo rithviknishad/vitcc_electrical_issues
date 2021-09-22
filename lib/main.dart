@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/routes/authenticate.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/dashboard.dart';
@@ -38,7 +40,15 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
 
               // Authenitcated
               if (snapshot.data is UserSnapshot) {
-                return DashboardPage();
+                return MultiProvider(
+                  providers: [
+                    StreamProvider<MiscSnapshot?>.value(
+                      value: Misc.watch,
+                      initialData: null,
+                    ),
+                  ],
+                  child: DashboardPage(),
+                );
               }
 
               // Show authentication page if not signed in.
