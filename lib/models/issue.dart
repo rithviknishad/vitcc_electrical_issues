@@ -14,7 +14,9 @@ class Issue with _$Issue {
   const factory Issue._create({
     required DocumentReference raisedBy,
     required Timestamp raisedOn,
+    required String title,
     required String description,
+    required Map<String, String> location,
     required bool isImportant,
     required bool isUrgent,
 
@@ -46,7 +48,9 @@ class Issue with _$Issue {
           return Issue._create(
             raisedBy: data[_RaisedByKey],
             raisedOn: data[_RaisedOnKey],
+            title: data[_TitleKey],
             description: data[_DescriptionKey],
+            location: data[_LocationKey],
             isImportant: data[_IsImportantKey],
             isUrgent: data[_IsUrgentKey],
             resolvedOn: data[_ResolvedOnKey],
@@ -59,7 +63,9 @@ class Issue with _$Issue {
           return {
             _RaisedByKey: issue.raisedBy,
             _RaisedOnKey: issue.raisedOn,
+            _TitleKey: issue.title,
             _DescriptionKey: issue.description,
+            _LocationKey: issue.location,
             _IsImportantKey: issue.isImportant,
             _IsUrgentKey: issue.isUrgent,
             _ResolvedOnKey: issue.resolvedOn,
@@ -71,7 +77,9 @@ class Issue with _$Issue {
 
   static const _RaisedByKey = 'raised-by';
   static const _RaisedOnKey = 'raised-on';
+  static const _TitleKey = 'title';
   static const _DescriptionKey = 'description';
+  static const _LocationKey = 'location';
   static const _IsImportantKey = 'is-important';
   static const _IsUrgentKey = 'is-urgent';
   static const _ResolvedOnKey = 'resolved-on';
@@ -130,7 +138,9 @@ class Issue with _$Issue {
   /// an issue.
   static Future<IssueSnapshot> create({
     required UserSnapshot creatorSnapshot,
+    required String title,
     required String description,
+    required Map<String, String> location,
     required bool isImportant,
     required bool isUrgent,
   }) async {
@@ -147,7 +157,9 @@ class Issue with _$Issue {
       Issue._create(
         raisedBy: creatorSnapshot.reference,
         raisedOn: Timestamp.now(),
+        title: title,
         description: description,
+        location: location,
         isImportant: isImportant,
         isUrgent: isUrgent,
         // Resolved issue attributes are null, as this is an active issue.
