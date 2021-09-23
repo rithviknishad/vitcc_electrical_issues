@@ -140,7 +140,7 @@ class Issue with _$Issue {
     // Sets the issue document w/ the specified info.
     await doc.set(
       Issue._create(
-        raisedBy: creatorSnapshot.reference,
+        raisedBy: creatorSnapshot.originalReference,
         raisedOn: Timestamp.now(),
         title: title,
         description: description,
@@ -285,7 +285,7 @@ extension IssueSnapshotExtension on IssueSnapshot {
     // Set's the new ref. with issue details along with resolve details.
     await doc.set(issue.copyWith(
       resolvedOn: Timestamp.now(),
-      resolvedBy: resolverSnapshot.reference,
+      resolvedBy: resolverSnapshot.originalReference,
       remarks: remarks,
     ));
 
