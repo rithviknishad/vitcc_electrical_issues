@@ -46,6 +46,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
                       value: Misc.watch,
                       initialData: null,
                     ),
+                    Provider.value(value: snapshot.data!),
                   ],
                   child: DashboardPage(),
                 );
