@@ -30,8 +30,10 @@ class PlatformUser with _$PlatformUser {
             return PlatformUser._create(
               user: user,
               scope: UserScope(snapshot[_ScopeKey] as int),
-              activeIssueRefs: snapshot[ActiveIssuesKey],
-              resolvedIssueRefs: snapshot[ResolvedIssuesKey],
+              activeIssueRefs:
+                  (snapshot[ActiveIssuesKey] as List).cast<DocumentReference>(),
+              resolvedIssueRefs: (snapshot[ResolvedIssuesKey] as List)
+                  .cast<DocumentReference>(),
             );
           },
           // PlatformUser -> Map<String, dynamic>
@@ -77,6 +79,9 @@ class PlatformUser with _$PlatformUser {
 
 extension UserSnapshotExtension on UserSnapshot {
   PlatformUser get user => this.data()!;
+
+  DocumentReference get originalReference =>
+      FirebaseFirestore.instance.collection('users').doc(id);
 
   Future<void> addActiveIssue(DocumentReference<Issue> issueReference) {
     return reference.update({
