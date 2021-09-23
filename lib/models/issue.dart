@@ -27,15 +27,12 @@ class Issue with _$Issue {
     required String? remarks,
   }) = _Issue;
 
-  static const _ActiveIssuesKey = 'active-issues';
-  static const _ResolvedIssuesKey = 'resolved-issues';
-
   static final _activeRef = _convert(
-    collection: FirebaseFirestore.instance.collection(_ActiveIssuesKey),
+    collection: FirebaseFirestore.instance.collection(IssueKeys.activeIssues),
   );
 
   static final _resolvedRef = _convert(
-    collection: FirebaseFirestore.instance.collection(_ResolvedIssuesKey),
+    collection: FirebaseFirestore.instance.collection(IssueKeys.resolvedIssues),
   );
 
   static CollectionReference<Issue> _convert({
@@ -47,47 +44,34 @@ class Issue with _$Issue {
           final data = snapshot.data()!;
 
           return Issue._create(
-            raisedBy: data[_RaisedByKey],
-            raisedOn: data[_RaisedOnKey],
-            title: data[_TitleKey],
-            description: data[_DescriptionKey],
-            location: IssueLocation.fromJson(data[_LocationKey]),
-            isImportant: data[_IsImportantKey],
-            isUrgent: data[_IsUrgentKey],
-            resolvedOn: data[_ResolvedOnKey],
-            resolvedBy: data[_ResolvedByKey],
-            remarks: data[_RemarksKey],
+            raisedBy: data[IssueKeys.raisedBy],
+            raisedOn: data[IssueKeys.raisedOn],
+            title: data[IssueKeys.title],
+            description: data[IssueKeys.description],
+            location: IssueLocation.fromJson(data[IssueKeys.location]),
+            isImportant: data[IssueKeys.isImportant],
+            isUrgent: data[IssueKeys.isUrgent],
+            resolvedOn: data[IssueKeys.resolvedOn],
+            resolvedBy: data[IssueKeys.resolvedBy],
+            remarks: data[IssueKeys.remarks],
           );
         },
         // Issue -> Map<String, dynamic>
         toFirestore: (issue, setOptions) {
           return {
-            _RaisedByKey: issue.raisedBy,
-            _RaisedOnKey: issue.raisedOn,
-            _TitleKey: issue.title,
-            _DescriptionKey: issue.description,
-            _LocationKey: issue.location.toJson(),
-            _IsImportantKey: issue.isImportant,
-            _IsUrgentKey: issue.isUrgent,
-            _ResolvedOnKey: issue.resolvedOn,
-            _ResolvedByKey: issue.resolvedBy,
-            _RemarksKey: issue.remarks,
+            IssueKeys.raisedBy: issue.raisedBy,
+            IssueKeys.raisedOn: issue.raisedOn,
+            IssueKeys.title: issue.title,
+            IssueKeys.description: issue.description,
+            IssueKeys.location: issue.location.toJson(),
+            IssueKeys.isImportant: issue.isImportant,
+            IssueKeys.isUrgent: issue.isUrgent,
+            IssueKeys.resolvedOn: issue.resolvedOn,
+            IssueKeys.resolvedBy: issue.resolvedBy,
+            IssueKeys.remarks: issue.remarks,
           };
         },
       );
-
-  static const _RaisedByKey = 'raised-by';
-  static const _RaisedOnKey = 'raised-on';
-  static const _TitleKey = 'title';
-  static const _DescriptionKey = 'description';
-  static const _LocationKey = 'location';
-  static const _IsImportantKey = 'is-important';
-  static const _IsUrgentKey = 'is-urgent';
-  static const _ResolvedOnKey = 'resolved-on';
-  static const _ResolvedByKey = 'resolved-by';
-  static const _RemarksKey = 'remarks';
-  // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
-  // method.
 
   static final activeIssues = _activeRef.snapshots();
 
@@ -172,7 +156,7 @@ class Issue with _$Issue {
 
     // Updates the document w/ server timestamp for 'rasied-on' attribute.
     await doc.update({
-      _RaisedOnKey: FieldValue.serverTimestamp(),
+      IssueKeys.raisedOn: FieldValue.serverTimestamp(),
     });
 
     // Update's the creator's active issues index w/ the newly created doc. ref.
@@ -183,11 +167,63 @@ class Issue with _$Issue {
   }
 }
 
+/// Contains all the keys related to [Issue].
+///
+/// This class is abstract sealed class to discourage creating instances of this
+/// class as it contains only static members.
+@sealed
+abstract class IssueKeys {
+  // Issue Collection Keys
+
+  /// Key for the [CollectionReference] of active issues.
+  static const activeIssues = 'active-issues';
+
+  /// Key for the [CollectionReference] of resolved issues.
+  static const resolvedIssues = 'resolved-issues';
+
+  // Issue Document Keys
+  //
+  // NOTE: When adding document specific keys, make sure these are used also in
+  //       the `fromFirestore` and `toFirestore` methods.
+
+  /// Key for the [DocumentReference] of the user who raised the issue.
+  static const raisedBy = 'raised-by';
+
+  /// Key for the [Timestamp] of when the issue was raised.
+  static const raisedOn = 'raised-on';
+
+  /// Key for the title of the issue as [String].
+  static const title = 'title';
+
+  /// Key for the description of the issue as [String].
+  static const description = 'description';
+
+  /// Key for the location of the issue as [IssueLocation].
+  static const location = 'location';
+
+  /// Key for whether the issue is important or not as [bool].
+  static const isImportant = 'is-important';
+
+  /// Key for whether the issue is urgent or not as [bool].
+  static const isUrgent = 'is-urgent';
+
+  /// Key for the [Timestamp] of when the issue was resolved.
+  static const resolvedOn = 'resolved-on';
+
+  /// Key for the [DocumentReference] of the user who resolved the issue.
+  static const resolvedBy = 'resolved-by';
+
+  /// Key for the remarks of the issue as [String].
+  static const remarks = 'remarks';
+
+  const IssueKeys._();
+}
+
 extension IssueSnapshotExtension on IssueSnapshot {
   Issue get issue => this.data()!;
 
   /// Whether this issue belongs to resolved issues collection or not.
-  bool get isResolved => this.reference.parent.id == Issue._ResolvedIssuesKey;
+  bool get isResolved => this.reference.parent.id == IssueKeys.resolvedIssues;
 
   /// Purges an active issue.
   ///
@@ -255,7 +291,7 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Updates the document w/ server timestamp for 'resolved-on' attribute.
     await doc.update({
-      Issue._ResolvedOnKey: FieldValue.serverTimestamp(),
+      IssueKeys.resolvedOn: FieldValue.serverTimestamp(),
     });
 
     // Updates the user's document with change in issue from active to resolved.
