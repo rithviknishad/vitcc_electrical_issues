@@ -108,6 +108,16 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
   late final theme = Theme.of(context);
   late final size = MediaQuery.of(context).size;
 
+  /// This is used to prevent accidental submissions of incomplete issues.
+  ///
+  /// When the value is `false`, the submit button will validate the form and
+  /// set the value to `true`. Upon pressing again, the form will be revalidated
+  /// and the issue will be submitted.
+  ///
+  /// Failing to validate during revalidate process will cause this lock to be
+  /// set to `false` again.
+  bool canSubmit = false;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -133,40 +143,69 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
               Builder(builder: buildIssueDescriptionSection),
               SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  final isValid = formKey.currentState?.validate() ?? false;
-
-                  if (!isValid) {
-                    return;
-                  }
-
-                  final location = IssueLocation(
-                    block: blockController.text == 'Other'
-                        ? otherBlockController.text
-                        : blockController.text,
-                    floor: floorController.text,
-                    room: roomController.text,
-                  );
-
-                  final issue = await Issue.create(
-                    creatorSnapshot:
-                        Provider.of<UserSnapshot>(context, listen: false),
-                    title: titleController.text,
-                    description: descriptionController.text,
-                    location: location,
-                    isImportant: isImportant,
-                    isUrgent: isUrgent,
-                  );
-
-                  print(issue.reference);
-                },
-                child: Text('Submit'),
+                onPressed: _onSubmitButtonPressed,
+                child: Text(
+                  canSubmit ? 'Yes, Submit!' : 'Submit',
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _onSubmitButtonPressed() async {
+    // Cancel issue submission if failed to validate form and reset canSubmit.
+    if (!(formKey.currentState?.validate() ?? false)) {
+      setState(() => canSubmit = false);
+      return;
+    }
+
+    // Set canSubmit and return.
+    if (!canSubmit) {
+      setState(() => canSubmit = true);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Tap again just to confirm'),
+            Icon(
+              FontAwesome5.clipboard_check,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ));
+
+      return;
+    }
+
+    // The following is allowed to run, only if form is valid and submission
+    // is user conscious.
+
+    final currentUser = Provider.of<UserSnapshot>(context, listen: false);
+
+    final location = IssueLocation(
+      block: blockController.text == 'Other'
+          ? otherBlockController.text
+          : blockController.text,
+      floor: floorController.text,
+      room: roomController.text,
+    );
+
+    final issue = await Issue.create(
+      creatorSnapshot: currentUser,
+      title: titleController.text,
+      description: descriptionController.text,
+      location: location,
+      isImportant: isImportant,
+      isUrgent: isUrgent,
+    );
+
+    Navigator.of(context).pop(issue);
   }
 
   Widget buildIssueTitleSection(BuildContext context) {
@@ -400,6 +439,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
       children: [
         TextFieldWidget(
           controller: descriptionController,
+          maxLines: null,
           hintText: 'Describe the issue (optional)',
         ),
         Padding(
