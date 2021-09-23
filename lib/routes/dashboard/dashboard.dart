@@ -87,6 +87,8 @@ class _RaiseNewIssueBottomSheet extends StatefulWidget {
 }
 
 class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
+  final formKey = GlobalKey<FormState>();
+
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
 
@@ -113,18 +115,28 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
           vertical: 16,
           horizontal: 20,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Builder(builder: buildIssueTitleSection),
-            SizedBox(height: 8),
-            Builder(builder: buildIssuePrioritySection),
-            SizedBox(height: 16),
-            Builder(builder: buildIssueLocationSection),
-            SizedBox(height: 16),
-            Builder(builder: buildIssueDescriptionSection),
-          ],
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Builder(builder: buildIssueTitleSection),
+              SizedBox(height: 16),
+              Builder(builder: buildIssuePrioritySection),
+              SizedBox(height: 16),
+              Builder(builder: buildIssueLocationSection),
+              SizedBox(height: 16),
+              Builder(builder: buildIssueDescriptionSection),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  formKey.currentState?.validate();
+                },
+                child: Text('Submit'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -245,31 +257,61 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
             ),
           ),
           SizedBox(height: 4),
-          Wrap(
-            alignment: WrapAlignment.start,
-            runAlignment: WrapAlignment.start,
-            spacing: 8.0,
-            children: [
-              for (final block in [...misc.locationBlocks, 'Other'])
-                ActionChip(
-                  backgroundColor: block == blockController.text
-                      ? theme.primaryColor
-                      : theme.colorScheme.surface,
-                  label: Text(
-                    block,
-                    style: TextStyle(
-                      color: block == blockController.text
-                          ? theme.colorScheme.surface
-                          : theme.primaryColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+          FormField<String>(
+            initialValue: '',
+            validator: RequiredValidator(
+              errorText: "Select a block otherwise select 'Other'",
+            ),
+            builder: (field) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (field.hasError)
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          field.errorText!,
+                          style: TextStyle(
+                            color: theme.errorColor,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     ),
+                  Wrap(
+                    alignment: WrapAlignment.start,
+                    runAlignment: WrapAlignment.start,
+                    spacing: 8.0,
+                    children: [
+                      for (final block in [...misc.locationBlocks, 'Other'])
+                        ActionChip(
+                          backgroundColor: block == blockController.text
+                              ? theme.primaryColor
+                              : theme.colorScheme.surface,
+                          label: Text(
+                            block,
+                            style: TextStyle(
+                              color: block == blockController.text
+                                  ? theme.colorScheme.surface
+                                  : theme.primaryColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          onPressed: () {
+                            field.didChange(block);
+                            setState(() => blockController.text = block);
+                          },
+                          elevation: 0,
+                          pressElevation: 0,
+                        ),
+                    ],
                   ),
-                  onPressed: () => setState(() => blockController.text = block),
-                  elevation: 0,
-                  pressElevation: 0,
-                ),
-            ],
+                ],
+              );
+            },
           ),
 
           // Other location, pushed into tree conditionally
@@ -331,7 +373,17 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
       children: [
         TextFieldWidget(
           controller: descriptionController,
-          hintText: 'Describe the issue',
+          hintText: 'Describe the issue (optional)',
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Include details such as when this issue started or how the issue was noticed, etc.',
+              style: theme.textTheme.caption,
+            ),
+          ),
         ),
       ],
     );
