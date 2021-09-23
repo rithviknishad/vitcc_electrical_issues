@@ -113,14 +113,17 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
           backgroundColor: _primary,
           actionTextColor: _secondary,
           disabledActionTextColor: Colors.grey,
-          contentTextStyle: TextStyle(color: Colors.white),
+          contentTextStyle: TextStyle(
+            fontFamily: _fontFamily,
+            color: Colors.white,
+          ),
         ),
 
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(_primary),
             textStyle: MaterialStateProperty.all(TextStyle(
-              fontFamily: 'Ubuntu',
+              fontFamily: _fontFamily,
               color: _accent,
               fontWeight: FontWeight.w500,
             )),
