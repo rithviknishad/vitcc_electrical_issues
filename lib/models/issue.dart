@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
+import 'package:vitcc_electrical_issues/models/firestore_extensions.dart';
 
 import 'user.dart';
 
@@ -59,7 +60,7 @@ class Issue with _$Issue {
         // Issue -> Map<String, dynamic>
         toFirestore: (issue, setOptions) {
           return {
-            IssueKeys.raisedBy: issue.raisedBy,
+            IssueKeys.raisedBy: issue.raisedBy.asOriginalReference,
             IssueKeys.raisedOn: issue.raisedOn,
             IssueKeys.title: issue.title,
             IssueKeys.description: issue.description,
@@ -67,7 +68,7 @@ class Issue with _$Issue {
             IssueKeys.isImportant: issue.isImportant,
             IssueKeys.isUrgent: issue.isUrgent,
             IssueKeys.resolvedOn: issue.resolvedOn,
-            IssueKeys.resolvedBy: issue.resolvedBy,
+            IssueKeys.resolvedBy: issue.resolvedBy?.asOriginalReference,
             IssueKeys.remarks: issue.remarks,
           };
         },
@@ -140,7 +141,7 @@ class Issue with _$Issue {
     // Sets the issue document w/ the specified info.
     await doc.set(
       Issue._create(
-        raisedBy: creatorSnapshot.originalReference,
+        raisedBy: creatorSnapshot.reference,
         raisedOn: Timestamp.now(),
         title: title,
         description: description,
@@ -251,7 +252,9 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Remove reference from user's document issues index.
     issue.raisedBy.update({
-      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([reference]),
+      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([
+        reference.asOriginalReference,
+      ]),
     });
 
     await reference.delete();
@@ -285,7 +288,7 @@ extension IssueSnapshotExtension on IssueSnapshot {
     // Set's the new ref. with issue details along with resolve details.
     await doc.set(issue.copyWith(
       resolvedOn: Timestamp.now(),
-      resolvedBy: resolverSnapshot.originalReference,
+      resolvedBy: resolverSnapshot.reference.asOriginalReference,
       remarks: remarks,
     ));
 
@@ -296,8 +299,12 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Updates the user's document with change in issue from active to resolved.
     await issue.raisedBy.update({
-      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([this.reference]),
-      PlatformUser.ResolvedIssuesKey: FieldValue.arrayUnion([doc]),
+      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([
+        this.reference.asOriginalReference,
+      ]),
+      PlatformUser.ResolvedIssuesKey: FieldValue.arrayUnion([
+        doc.asOriginalReference,
+      ]),
     });
 
     // Delete the issue from active issues collection.
