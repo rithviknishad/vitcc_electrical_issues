@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/main.dart';
+import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -95,9 +97,12 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
   final locationFloor = TextEditingController();
   final locationRoom = TextEditingController();
 
+  // Storing "Theme.of(context)" here, so that different builders of this object can share it.
+  // Marked `late` so that it's initialized lazily to prevent "_dependOnInheritedWidgetOfType called before initState" issue.
+  late final theme = Theme.of(context);
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
 
     return SizedBox(
@@ -112,108 +117,172 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // Title of the issue
-            TextFieldWidget(
-              controller: title,
-              hintText: 'What is the issue?',
-              validator: RequiredValidator(
-                errorText: 'Describe the issue in short',
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'e.g. "Air Conditioner not working"',
-                  style: theme.textTheme.caption,
-                ),
-              ),
-            ),
-
+            Builder(builder: buildIssueTitleSection),
             SizedBox(height: 8),
-
-            // Issue Priority
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Is this issue important or urgent?',
-                  style: TextStyle(
-                    color: theme.primaryColor,
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              children: [
-                SizedBox(width: 8),
-                ActionChip(
-                  backgroundColor: isImportant
-                      ? theme.primaryColor
-                      : theme.colorScheme.surface,
-                  label: Text(
-                    '${isImportant ? '' : 'Not'} Important',
-                    style: TextStyle(
-                      color: isImportant
-                          ? theme.colorScheme.surface
-                          : theme.primaryColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  onPressed: () => setState(() => isImportant = !isImportant),
-                  elevation: 0,
-                  pressElevation: 0,
-                ),
-                SizedBox(width: 8),
-                ActionChip(
-                  backgroundColor:
-                      isUrgent ? theme.primaryColor : theme.colorScheme.surface,
-                  label: Text(
-                    '${isUrgent ? '' : 'Not'} Urgent',
-                    style: TextStyle(
-                      color: isUrgent
-                          ? theme.colorScheme.surface
-                          : theme.primaryColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  onPressed: () => setState(() => isUrgent = !isUrgent),
-                  elevation: 0,
-                  pressElevation: 0,
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'Click the chips to toggle between selection states',
-                  style: theme.textTheme.caption,
-                ),
-              ),
-            ),
-
-            // Describe the issue
-            TextFieldWidget(
-              controller: description,
-              hintText: 'Describe the issue',
-            ),
-
-            // Tips on describing an issue
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                'Tips to describe an issue\n1. Check if appliance has power',
-              ),
-            )
+            Builder(builder: buildIssuePrioritySection),
+            SizedBox(height: 16),
+            Builder(builder: buildIssueLocationSection),
+            SizedBox(height: 16),
+            Builder(builder: buildIssueDescriptionSection),
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildIssueTitleSection(BuildContext context) {
+    return Column(
+      children: [
+        TextFieldWidget(
+          controller: title,
+          hintText: 'What is the issue?',
+          validator: RequiredValidator(
+            errorText: 'Describe the issue in short',
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'e.g. "Air Conditioner not working"',
+              style: theme.textTheme.caption,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildIssuePrioritySection(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Is this issue important or urgent?',
+              style: TextStyle(
+                color: theme.primaryColor,
+              ),
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            SizedBox(width: 8),
+            ActionChip(
+              backgroundColor:
+                  isImportant ? theme.primaryColor : theme.colorScheme.surface,
+              label: Text(
+                '${isImportant ? '' : 'Not'} Important',
+                style: TextStyle(
+                  color: isImportant
+                      ? theme.colorScheme.surface
+                      : theme.primaryColor,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () => setState(() => isImportant = !isImportant),
+              elevation: 0,
+              pressElevation: 0,
+            ),
+            SizedBox(width: 8),
+            ActionChip(
+              backgroundColor:
+                  isUrgent ? theme.primaryColor : theme.colorScheme.surface,
+              label: Text(
+                '${isUrgent ? '' : 'Not'} Urgent',
+                style: TextStyle(
+                  color:
+                      isUrgent ? theme.colorScheme.surface : theme.primaryColor,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () => setState(() => isUrgent = !isUrgent),
+              elevation: 0,
+              pressElevation: 0,
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Click the chips to toggle between selection states',
+              style: theme.textTheme.caption,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildIssueLocationSection(BuildContext context) {
+    final misc = Provider.of<MiscSnapshot?>(context)?.data()!;
+
+    if (misc == null) {
+      // TODO: impl. a nice loader here...
+      return Container();
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Where is the issue?',
+              style: TextStyle(
+                color: theme.primaryColor,
+              ),
+            ),
+          ),
+        ),
+        Wrap(
+          alignment: WrapAlignment.spaceEvenly,
+          runAlignment: WrapAlignment.spaceEvenly,
+          spacing: 8.0,
+          // runSpacing: 8.0,
+          children: [
+            for (final block in misc.locationBlocks)
+              ActionChip(
+                backgroundColor: block == locationBlock.text
+                    ? theme.primaryColor
+                    : theme.colorScheme.surface,
+                label: Text(
+                  block,
+                  style: TextStyle(
+                    color: block == locationBlock.text
+                        ? theme.colorScheme.surface
+                        : theme.primaryColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onPressed: () => setState(() => locationBlock.text = block),
+                elevation: 0,
+                pressElevation: 0,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildIssueDescriptionSection(BuildContext context) {
+    return Column(
+      children: [
+        TextFieldWidget(
+          controller: description,
+          hintText: 'Describe the issue',
+        ),
+      ],
     );
   }
 }
