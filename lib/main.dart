@@ -116,6 +116,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
           contentTextStyle: TextStyle(
             fontFamily: _fontFamily,
             color: Colors.white,
+            letterSpacing: 0.5,
           ),
         ),
 
