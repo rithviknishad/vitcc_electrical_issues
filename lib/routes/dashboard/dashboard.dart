@@ -4,7 +4,10 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/main.dart';
+import 'package:vitcc_electrical_issues/models/issue.dart';
+import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
+import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -130,8 +133,32 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
               Builder(builder: buildIssueDescriptionSection),
               SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  formKey.currentState?.validate();
+                onPressed: () async {
+                  final isValid = formKey.currentState?.validate() ?? false;
+
+                  if (!isValid) {
+                    return;
+                  }
+
+                  final location = IssueLocation(
+                    block: blockController.text == 'Other'
+                        ? otherBlockController.text
+                        : blockController.text,
+                    floor: floorController.text,
+                    room: roomController.text,
+                  );
+
+                  final issue = await Issue.create(
+                    creatorSnapshot:
+                        Provider.of<UserSnapshot>(context, listen: false),
+                    title: titleController.text,
+                    description: descriptionController.text,
+                    location: location,
+                    isImportant: isImportant,
+                    isUrgent: isUrgent,
+                  );
+
+                  print(issue.reference);
                 },
                 child: Text('Submit'),
               ),
