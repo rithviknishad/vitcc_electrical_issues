@@ -24,6 +24,7 @@ dependencies:
   form_field_validator: ^1.1.0
   flutter_animator:
     git: https://github.com/rithviknishad/animator.git
+  firebase_dynamic_links: ^2.0.9
 
 dev_dependencies:
   flutter_test:
