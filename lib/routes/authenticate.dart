@@ -26,6 +26,8 @@ class AuthenticateView extends StatefulWidget {
 
 class _AuthenticateViewState extends State<AuthenticateView>
     with WidgetsBindingObserver {
+  final formKey = GlobalKey<FormState>();
+  final vitMailController = TextEditingController();
   bool isLoading = false;
 
   @override
@@ -33,6 +35,13 @@ class _AuthenticateViewState extends State<AuthenticateView>
     super.initState();
 
     WidgetsBinding.instance?.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    vitMailController.dispose();
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 
   @override
