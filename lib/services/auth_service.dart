@@ -42,8 +42,9 @@ class AuthService {
   }
 
   // TODO: handle deep links later
-  // NOTE: Temprorily disabled at firebase console.
-  static Future<void> signInWithVitEmail(String email) async {
+  static Future<void> sendSignInLinkToVitEmail(String email) async {
+    // TODO: Reg. Exp. check if `email` is vit domain.
+
     await firebaseAuth.sendSignInLinkToEmail(
       email: email,
       actionCodeSettings: ActionCodeSettings(
