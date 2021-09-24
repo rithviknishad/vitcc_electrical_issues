@@ -48,7 +48,11 @@ class AuthService {
     );
   }
 
-  static Future<List<String?>?> signInWithEmailLink(
+  /// This future completes with `null` if authentication was succesfull.
+  ///
+  /// Completes with `List<String>` containing relevant information if failed
+  /// to authenticate.
+  static Future<List<String>?> signInWithEmailLink(
       String email, String link) async {
     if (!firebaseAuth.isSignInWithEmailLink(link)) {
       return ["$link is not a sign-in with email link"];
@@ -62,8 +66,8 @@ class AuthService {
     } on FirebaseAuthException catch (ex) {
       return [
         ex.code,
-        ex.message,
-        if (ex.email != null) ex.email,
+        if (ex.message != null) ex.message!,
+        if (ex.email != null) ex.email!,
       ];
     } catch (exception) {
       return ['$exception'];
