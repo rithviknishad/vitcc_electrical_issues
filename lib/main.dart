@@ -53,7 +53,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
               }
 
               // Show authentication page if not signed in.
-              return Authenticate();
+              return AuthenticatePage();
             },
           );
         },
