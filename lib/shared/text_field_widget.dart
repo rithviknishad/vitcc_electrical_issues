@@ -20,6 +20,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool readOnly;
   final int? minLines;
   final int? maxLines;
+  final AutovalidateMode autovalidateMode;
 
   const TextFieldWidget({
     required this.hintText,
@@ -40,6 +41,7 @@ class TextFieldWidget extends StatelessWidget {
     this.readOnly = false,
     this.minLines,
     this.maxLines = 1,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   });
 
   @override
