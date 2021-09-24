@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -40,6 +41,36 @@ class _AuthenticatePageState extends State<AuthenticatePage>
     vitMailController.dispose();
     WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      final pendingDynamicLink =
+          await FirebaseDynamicLinks.instance.getInitialLink();
+
+      if (pendingDynamicLink == null) {
+        return null;
+      }
+
+      handleLink(pendingDynamicLink.link);
+
+      FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (dynamicLink) async {
+          if (dynamicLink == null) {
+            return;
+          }
+          handleLink(dynamicLink.link);
+        },
+        onError: (linkError) async => print(linkError),
+      );
+    }
+  }
+
+  void handleLink(Uri link) async {
+    final email = vitMailController.text;
+
+    final res = await AuthService.signInWithEmailLink(email, '$link');
   }
 
   @override
