@@ -47,15 +47,18 @@ class AuthService {
 
     await firebaseAuth.sendSignInLinkToEmail(
       email: email,
-      actionCodeSettings: ActionCodeSettings(
-        url: _authDomain,
-        handleCodeInApp: true,
-      ),
+      actionCodeSettings: _actionCodeSettings,
     );
   }
 
-  /// Authorized domain of this app.
-  static const _authDomain = 'https://vitelectricalissues.page.link';
+  static final _actionCodeSettings = ActionCodeSettings(
+    url: "https://vitelectricalissues.page.link",
+    handleCodeInApp: true,
+    iOSBundleId: "com.rithviknishad.vitcc_electrical_issues",
+    androidPackageName: "com.rithviknishad.vitcc_electrical_issues",
+    androidInstallApp: true,
+    androidMinimumVersion: '1',
+  );
 
   /// Signs out the current user and notifies [user] stream.
   static Future<void> signOut() async {
