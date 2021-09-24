@@ -48,9 +48,10 @@ class AuthService {
     );
   }
 
-  static Future<String?> signInWithEmailLink(String email, String link) async {
+  static Future<List<String?>?> signInWithEmailLink(
+      String email, String link) async {
     if (!firebaseAuth.isSignInWithEmailLink(link)) {
-      return "$link is not a sign-in with email link";
+      return ["$link is not a sign-in with email link"];
     }
 
     try {
@@ -58,10 +59,14 @@ class AuthService {
         email: email,
         emailLink: link,
       );
-    } on FirebaseAuthException catch (exception) {
-      return "Failed to authenticate!\nEmail: ${exception.email}\nError code: ${exception.code}\nReason: ${exception.message}";
+    } on FirebaseAuthException catch (ex) {
+      return [
+        ex.code,
+        ex.message,
+        if (ex.email != null) ex.email,
+      ];
     } catch (exception) {
-      return '$exception';
+      return ['$exception'];
     }
   }
 
