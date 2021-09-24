@@ -55,7 +55,7 @@ class AuthService {
   }
 
   /// Authorized domain of this app.
-  static const _authDomain = 'https://vitcc-electrical-issues.firebaseapp.com';
+  static const _authDomain = 'https://vitelectricalissues.page.link';
 
   /// Signs out the current user and notifies [user] stream.
   static Future<void> signOut() async {
