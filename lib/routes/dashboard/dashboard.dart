@@ -119,6 +119,18 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
   bool canSubmit = false;
 
   @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    blockController.dispose();
+    otherBlockController.dispose();
+    floorController.dispose();
+    roomController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: size.height,
@@ -454,17 +466,5 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    blockController.dispose();
-    otherBlockController.dispose();
-    floorController.dispose();
-    roomController.dispose();
-
-    super.dispose();
   }
 }
