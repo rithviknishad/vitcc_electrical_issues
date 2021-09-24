@@ -455,4 +455,16 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
       ],
     );
   }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    blockController.dispose();
+    otherBlockController.dispose();
+    floorController.dispose();
+    roomController.dispose();
+
+    super.dispose();
+  }
 }
