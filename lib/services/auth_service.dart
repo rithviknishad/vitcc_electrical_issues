@@ -41,24 +41,27 @@ class AuthService {
     await firebaseAuth.signInWithCredential(credential);
   }
 
-  // TODO: handle deep links later
   static Future<void> sendSignInLinkToVitEmail(String email) async {
-    // TODO: Reg. Exp. check if `email` is vit domain.
-
     await firebaseAuth.sendSignInLinkToEmail(
       email: email,
       actionCodeSettings: _actionCodeSettings,
     );
   }
 
-  static final _actionCodeSettings = ActionCodeSettings(
-    url: "https://vitelectricalissues.page.link",
-    handleCodeInApp: true,
-    iOSBundleId: "com.rithviknishad.vitcc_electrical_issues",
-    androidPackageName: "com.rithviknishad.vitcc_electrical_issues",
-    androidInstallApp: true,
-    androidMinimumVersion: '1',
-  );
+  static Future<String?> signInWithEmailLink(String email, String link) async {
+    if (!firebaseAuth.isSignInWithEmailLink(link)) {
+      return "$link is not a sign-in with email link";
+    }
+
+    try {
+      await firebaseAuth.signInWithEmailLink(
+        email: email,
+        emailLink: link,
+      );
+    } on FirebaseAuthException catch (exception) {
+      return "Failed to authenticate!\nEmail: ${exception.email}\nError code: ${exception.code}\nReason: ${exception.message}";
+    }
+  }
 
   /// Signs out the current user and notifies [user] stream.
   static Future<void> signOut() async {
@@ -70,6 +73,15 @@ class AuthService {
       await googleSignIn.signOut();
     }
   }
+
+  static final _actionCodeSettings = ActionCodeSettings(
+    url: "https://vitelectricalissues.page.link",
+    handleCodeInApp: true,
+    iOSBundleId: "com.rithviknishad.vitcc_electrical_issues",
+    androidPackageName: "com.rithviknishad.vitcc_electrical_issues",
+    androidInstallApp: true,
+    androidMinimumVersion: '1',
+  );
 
   // Avoid attempting to instantiate objects of this class.
   AuthService._();
