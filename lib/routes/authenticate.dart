@@ -14,6 +14,8 @@ class AuthenticatePage extends StatefulWidget {
 
 class _AuthenticatePageState extends State<AuthenticatePage>
     with WidgetsBindingObserver {
+  static final vitMailRegEx = RegExp(r"@(vitstudent.ac.in|vit.ac.in)$");
+
   /// To validate the form that may contain vit email for sign in with link.
   final formKey = GlobalKey<FormState>();
 
@@ -118,8 +120,14 @@ class _AuthenticatePageState extends State<AuthenticatePage>
                           setState(() => vitMailIsValid = result);
                         }
                       },
-                      validator:
-                          EmailValidator(errorText: 'Invalid Email Address'),
+                      validator: MultiValidator([
+                        EmailValidator(errorText: 'Invliad email address'),
+                        PatternValidator(
+                          vitMailRegEx,
+                          errorText:
+                              "Email address should belong to 'vit.ac.in' or 'vitstudent.ac.in' domain",
+                        )
+                      ]),
                       keyboardType: TextInputType.emailAddress,
                     ),
                   ),
