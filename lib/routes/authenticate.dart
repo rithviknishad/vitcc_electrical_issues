@@ -24,8 +24,16 @@ class AuthenticateView extends StatefulWidget {
   _AuthenticateViewState createState() => _AuthenticateViewState();
 }
 
-class _AuthenticateViewState extends State<AuthenticateView> {
+class _AuthenticateViewState extends State<AuthenticateView>
+    with WidgetsBindingObserver {
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance?.addObserver(this);
+  }
 
   @override
   Widget build(BuildContext context) {
