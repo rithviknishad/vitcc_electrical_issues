@@ -60,6 +60,8 @@ class AuthService {
       );
     } on FirebaseAuthException catch (exception) {
       return "Failed to authenticate!\nEmail: ${exception.email}\nError code: ${exception.code}\nReason: ${exception.message}";
+    } catch (exception) {
+      return '$exception';
     }
   }
 
