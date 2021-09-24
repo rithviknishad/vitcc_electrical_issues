@@ -14,7 +14,7 @@ class AuthenticatePage extends StatefulWidget {
 
 class _AuthenticatePageState extends State<AuthenticatePage>
     with WidgetsBindingObserver {
-  static final vitMailRegEx = RegExp(r"@(vitstudent.ac.in|vit.ac.in)$");
+  static final vitMailRegEx = r"@(vitstudent.ac.in|vit.ac.in)$";
 
   /// To validate the form that may contain vit email for sign in with link.
   final formKey = GlobalKey<FormState>();
@@ -88,7 +88,7 @@ class _AuthenticatePageState extends State<AuthenticatePage>
                       style: TextStyle(
                         color: keyboardIsOpen
                             ? theme.primaryColor
-                            : theme.colorScheme.secondary,
+                            : theme.colorScheme.surface,
                         fontSize: 36.0,
                         fontWeight: FontWeight.w300,
                       ),
@@ -121,16 +121,20 @@ class _AuthenticatePageState extends State<AuthenticatePage>
                         }
                       },
                       validator: MultiValidator([
+                        RequiredValidator(
+                          errorText: "e.g. 'alexa.siri2019@vitstudent.ac.in'",
+                        ),
                         EmailValidator(errorText: 'Invliad email address'),
                         PatternValidator(
                           vitMailRegEx,
                           errorText:
-                              "Email address should belong to 'vit.ac.in' or 'vitstudent.ac.in' domain",
+                              "Domain must be 'vit.ac.in' or 'vitstudent.ac.in'",
                         )
                       ]),
                       keyboardType: TextInputType.emailAddress,
                     ),
                   ),
+                  SizedBox(height: 20),
                   _Button(
                     text: 'Sign in with Google',
                     hasBorder: false,
@@ -174,7 +178,7 @@ class _Button extends StatelessWidget {
           border: hasBorder
               ? Border.all(color: theme.primaryColor, width: 1.0)
               : Border.fromBorderSide(BorderSide.none),
-          color: hasBorder ? theme.accentColor : theme.primaryColor,
+          color: hasBorder ? theme.colorScheme.surface : theme.primaryColor,
         ),
         child: InkWell(
           onTap: onTap,
@@ -185,7 +189,9 @@ class _Button extends StatelessWidget {
               child: Text(
                 text,
                 style: TextStyle(
-                  color: hasBorder ? theme.primaryColor : theme.accentColor,
+                  color: hasBorder
+                      ? theme.primaryColor
+                      : theme.colorScheme.surface,
                   fontWeight: FontWeight.w600,
                   fontSize: 16.0,
                 ),
