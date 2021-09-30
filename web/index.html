@@ -23,10 +23,27 @@
   <meta name="apple-mobile-web-app-title" content="vitcc_electrical_issues">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
+  <!-- Google Sign-in -->
+  <meta name="google-signin-client_id" content="589975892833-vaaku86n69ihgnpnjd5ufb17advkmeub.apps.googleusercontent.com">
+
   <title>VITCC Electrical Issues</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  
+  <!-- Load the Firebase SDKs before loading this file -->
+  <script src="/__/firebase/init.js"></script>
+  
+  <script>
+    firebase.analytics();
+  </script>
+
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
