@@ -26,6 +26,7 @@ dependencies:
   # Change to original, once PR is merged.
   flutter_animator:
     git: https://github.com/rithviknishad/animator.git
+  jiffy: ^4.1.0
 
 dev_dependencies:
   flutter_test:
