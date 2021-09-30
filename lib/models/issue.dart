@@ -29,6 +29,8 @@ class Issue with _$Issue {
     required String? remarks,
   }) = _Issue;
 
+  bool get isActiveIssue => resolvedOn == null;
+
   static final _activeRef = _convert(
     collection: FirebaseFirestore.instance.collection(IssueKeys.activeIssues),
   );
@@ -83,12 +85,12 @@ class Issue with _$Issue {
   /// collection.
   static Stream<IssueSnapshot> watch(DocumentReference ref) {
     // Check if ref belongs to active issues.
-    if (ref.parent == _activeRef) {
+    if (ref.parent.id == _activeRef.id) {
       return _activeRef.doc(ref.id).snapshots();
     }
 
     // Check if ref belongs to resolved issues.
-    if (ref.parent == _resolvedRef) {
+    if (ref.parent.id == _resolvedRef.id) {
       return _resolvedRef.doc(ref.id).snapshots();
     }
 
@@ -104,12 +106,12 @@ class Issue with _$Issue {
   /// collection.
   static Future<IssueSnapshot> read(DocumentReference ref) {
     // Check if ref belongs to active issues.
-    if (ref.parent == _activeRef) {
+    if (ref.parent.id == _activeRef.id) {
       return _activeRef.doc(ref.id).get();
     }
 
     // Check if ref belongs to resolved issues.
-    if (ref.parent == _resolvedRef) {
+    if (ref.parent.id == _resolvedRef.id) {
       return _resolvedRef.doc(ref.id).get();
     }
 
