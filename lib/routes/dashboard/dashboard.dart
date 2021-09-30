@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -8,6 +9,7 @@ import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
+import 'package:vitcc_electrical_issues/routes/dashboard/welcome_card.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -47,11 +49,16 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [],
+      body: CupertinoScrollbar(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              WelcomeCard(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: _raiseNewIssueFormIsShown
@@ -269,7 +276,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
                 '${isImportant ? '' : 'Not'} Important',
                 style: TextStyle(
                   color: isImportant
-                      ? theme.colorScheme.surface
+                      ? theme.colorScheme.secondary
                       : theme.primaryColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -367,7 +374,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
                         ActionChip(
                           backgroundColor: block == blockController.text
                               ? theme.primaryColor
-                              : theme.colorScheme.surface,
+                              : theme.colorScheme.secondary,
                           label: Text(
                             block,
                             style: TextStyle(
