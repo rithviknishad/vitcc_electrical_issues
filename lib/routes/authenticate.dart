@@ -1,4 +1,3 @@
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -41,40 +40,6 @@ class _AuthenticatePageState extends State<AuthenticatePage>
     vitMailController.dispose();
     WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed) {
-      final pendingDynamicLink =
-          await FirebaseDynamicLinks.instance.getInitialLink();
-
-      if (pendingDynamicLink == null) {
-        return;
-      }
-
-      handleLink(pendingDynamicLink.link);
-
-      FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (dynamicLink) async {
-          if (dynamicLink == null) {
-            return;
-          }
-
-          handleLink(dynamicLink.link);
-        },
-        onError: (linkError) async => print(linkError),
-      );
-    }
-  }
-
-  void handleLink(Uri link) async {
-    setState(() => isLoading = true);
-    final email = vitMailController.text;
-
-    final res = await AuthService.signInWithEmailLink(email, '$link');
-
-    print(res);
   }
 
   @override
@@ -139,58 +104,19 @@ class _AuthenticatePageState extends State<AuthenticatePage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Form(
-                    key: formKey,
-                    child: TextFieldWidget(
-                      controller: vitMailController,
-                      hintText: 'VIT Email',
-                      obscureText: false,
-                      prefixIconData: FontAwesome5.id_badge,
-                      suffixIconData: vitMailIsValid ? Icons.check : null,
-                      onChanged: (_) {
-                        final result =
-                            formKey.currentState?.validate() ?? false;
-
-                        if (vitMailIsValid != result) {
-                          setState(() => vitMailIsValid = result);
-                        }
-                      },
-                      validator: MultiValidator([
-                        RequiredValidator(
-                          errorText: "e.g. 'alexa.siri2019@vitstudent.ac.in'",
-                        ),
-                        EmailValidator(errorText: 'Invliad email address'),
-                        PatternValidator(
-                          vitMailRegEx,
-                          errorText:
-                              "Domain must be 'vit.ac.in' or 'vitstudent.ac.in'",
-                        )
-                      ]),
-                      keyboardType: TextInputType.emailAddress,
+                  for (final provider in AuthService.providers.entries)
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: _Button(
+                        text: 'Sign in with ${provider.key}',
+                        hasBorder: false,
+                        onTap: () async {
+                          setState(() => isLoading = true);
+                          await AuthService.signInWithGoogle(provider.value);
+                          setState(() => isLoading = false);
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  _Button(
-                    text: 'Sign In with Email Link',
-                    hasBorder: false,
-                    onTap: () async {
-                      final email = vitMailController.text;
-
-                      AuthService.sendSignInLinkToVitEmail(email);
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  _Button(
-                    text: 'Sign in with Google',
-                    hasBorder: false,
-                    onTap: () async {
-                      setState(() => isLoading = true);
-
-                      await AuthService.signInWithGoogle();
-
-                      setState(() => isLoading = false);
-                    },
-                  ),
                 ],
               ),
             ),

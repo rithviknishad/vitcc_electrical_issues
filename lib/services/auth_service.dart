@@ -1,12 +1,20 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 
 class AuthService {
   static final firebaseAuth = FirebaseAuth.instance;
-  static final googleSignIn = GoogleSignIn();
+
+  static final providers = {
+    'VIT ID': GoogleSignIn(hostedDomain: 'vit.ac.in'),
+    'VIT Student ID': GoogleSignIn(hostedDomain: 'vitstudent.ac.in'),
+
+    // Allow sign in with any domain only in debug mode.
+    if (kDebugMode) 'Google': GoogleSignIn(),
+  };
 
   static Stream<UserSnapshot?> get user =>
       FirebaseAuth.instance.authStateChanges().asyncMap((user) {
@@ -18,7 +26,7 @@ class AuthService {
   static User? get currentUser => firebaseAuth.currentUser;
 
   /// Sign in w/ Google Account.
-  static Future<void> signInWithGoogle() async {
+  static Future<void> signInWithGoogle(GoogleSignIn googleSignIn) async {
     // Try fetching the currently signed-in account.
     var currentUser = googleSignIn.currentUser;
 
@@ -41,47 +49,17 @@ class AuthService {
     await firebaseAuth.signInWithCredential(credential);
   }
 
-  static Future<void> sendSignInLinkToVitEmail(String email) async {
-    await firebaseAuth.sendSignInLinkToEmail(
-      email: email,
-      actionCodeSettings: _actionCodeSettings,
-    );
-  }
-
-  /// This future completes with `null` if authentication was succesfull.
-  ///
-  /// Completes with `List<String>` containing relevant information if failed
-  /// to authenticate.
-  static Future<List<String>?> signInWithEmailLink(
-      String email, String link) async {
-    if (!firebaseAuth.isSignInWithEmailLink(link)) {
-      return ["$link is not a sign-in with email link"];
-    }
-
-    try {
-      await firebaseAuth.signInWithEmailLink(
-        email: email,
-        emailLink: link,
-      );
-    } on FirebaseAuthException catch (ex) {
-      return [
-        ex.code,
-        if (ex.message != null) ex.message!,
-        if (ex.email != null) ex.email!,
-      ];
-    } catch (exception) {
-      return ['$exception'];
-    }
-  }
-
   /// Signs out the current user and notifies [user] stream.
   static Future<void> signOut() async {
     // sign out from firebase
     await firebaseAuth.signOut();
 
     // sign out from google, if signed in using google sign-in.
-    if (await googleSignIn.isSignedIn()) {
-      await googleSignIn.signOut();
+    for (final googleSignIn in providers.values) {
+      if (await googleSignIn.isSignedIn()) {
+        await googleSignIn.signOut();
+        return;
+      }
     }
   }
 
