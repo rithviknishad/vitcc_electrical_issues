@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/firestore_extensions.dart';
+import 'package:vitcc_electrical_issues/models/misc.dart';
 
 import 'user.dart';
 
@@ -163,6 +164,9 @@ class Issue with _$Issue {
     // Update's the creator's active issues index w/ the newly created doc. ref.
     await creatorSnapshot.addActiveIssue(doc);
 
+    // Inform misc about this action, to update counters.
+    await Misc.informIssueCreated();
+
     // Returns the document snapshot.
     return doc.get();
   }
@@ -251,11 +255,14 @@ extension IssueSnapshotExtension on IssueSnapshot {
     }
 
     // Remove reference from user's document issues index.
-    issue.raisedBy.update({
+    await issue.raisedBy.update({
       PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([
         reference.asOriginalReference,
       ]),
     });
+
+    // Inform misc about this action, to update counters.
+    await Misc.informActiveIssuePurged();
 
     await reference.delete();
   }
@@ -309,6 +316,9 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Delete the issue from active issues collection.
     await reference.delete();
+
+    // Inform misc about this action, to update counters.
+    await Misc.informIssueResolved();
 
     // Returns the newly created resolved issue.
     return doc.get();
