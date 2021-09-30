@@ -75,9 +75,11 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
         colorScheme: ColorScheme.light(
           primary: _primary,
           onPrimary: _accent,
-          secondary: _secondary,
-          surface: _accent,
+          secondary: _accent,
+          surface: Colors.white,
           onSurface: _primary,
+          background: _accent,
+          onBackground: _primary,
         ),
 
         scaffoldBackgroundColor: _accent,
