@@ -50,7 +50,7 @@ class _AuthenticatePageState extends State<AuthenticatePage>
           await FirebaseDynamicLinks.instance.getInitialLink();
 
       if (pendingDynamicLink == null) {
-        return null;
+        return;
       }
 
       handleLink(pendingDynamicLink.link);
@@ -60,6 +60,7 @@ class _AuthenticatePageState extends State<AuthenticatePage>
           if (dynamicLink == null) {
             return;
           }
+
           handleLink(dynamicLink.link);
         },
         onError: (linkError) async => print(linkError),
@@ -68,9 +69,12 @@ class _AuthenticatePageState extends State<AuthenticatePage>
   }
 
   void handleLink(Uri link) async {
+    setState(() => isLoading = true);
     final email = vitMailController.text;
 
     final res = await AuthService.signInWithEmailLink(email, '$link');
+
+    print(res);
   }
 
   @override
@@ -167,6 +171,16 @@ class _AuthenticatePageState extends State<AuthenticatePage>
                   ),
                   SizedBox(height: 20),
                   _Button(
+                    text: 'Sign In with Email Link',
+                    hasBorder: false,
+                    onTap: () async {
+                      final email = vitMailController.text;
+
+                      AuthService.sendSignInLinkToVitEmail(email);
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  _Button(
                     text: 'Sign in with Google',
                     hasBorder: false,
                     onTap: () async {
@@ -176,7 +190,7 @@ class _AuthenticatePageState extends State<AuthenticatePage>
 
                       setState(() => isLoading = false);
                     },
-                  )
+                  ),
                 ],
               ),
             ),
