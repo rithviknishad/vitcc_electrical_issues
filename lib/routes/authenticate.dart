@@ -106,15 +106,18 @@ class _AuthenticatePageState extends State<AuthenticatePage>
                 children: [
                   for (final provider in AuthService.providers.entries)
                     Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: _Button(
-                        text: 'Sign in with ${provider.key}',
-                        hasBorder: false,
-                        onTap: () async {
-                          setState(() => isLoading = true);
-                          await AuthService.signInWithGoogle(provider.value);
-                          setState(() => isLoading = false);
-                        },
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints.loose(Size(400, 60)),
+                        child: _Button(
+                          text: 'Sign in with ${provider.key}',
+                          hasBorder: false,
+                          onTap: () async {
+                            setState(() => isLoading = true);
+                            await AuthService.signInWithGoogle(provider.value);
+                            setState(() => isLoading = false);
+                          },
+                        ),
                       ),
                     ),
                 ],
