@@ -11,9 +11,13 @@ class Misc with _$Misc {
 
   const factory Misc._create({
     required List<String> locationBlocks,
+    required int activeIssuesCount,
+    required int resolvedIssuesCount,
   }) = _Misc;
 
   static const _LocationBlocksKey = 'location-blocks';
+  static const _ActiveIssuesCountKey = 'active-issues-count';
+  static const _ResolvedIssuesCountKey = 'resolved-issues-count';
 
   static final _ref =
       FirebaseFirestore.instance.collection('misc').withConverter<Misc>(
@@ -21,8 +25,9 @@ class Misc with _$Misc {
       final data = snapshot.data()!;
 
       return Misc._create(
-        locationBlocks: data[_LocationBlocksKey].cast<String>(),
-      );
+          locationBlocks: data[_LocationBlocksKey].cast<String>(),
+          activeIssuesCount: data[_ActiveIssuesCountKey],
+          resolvedIssuesCount: data[_ResolvedIssuesCountKey]);
     },
     toFirestore: (value, options) {
       return {
@@ -36,4 +41,17 @@ class Misc with _$Misc {
   static Stream<MiscSnapshot> get watch => _ref.snapshots();
 
   static Future<MiscSnapshot> get read => _ref.get();
+
+  static Future<void> informIssueCreated() async {
+    await _ref.update({
+      _ActiveIssuesCountKey: FieldValue.increment(1),
+    });
+  }
+
+  static Future<void> informIssueResolved() async {
+    await _ref.update({
+      _ActiveIssuesCountKey: FieldValue.increment(-1),
+      _ResolvedIssuesCountKey: FieldValue.increment(1),
+    });
+  }
 }
