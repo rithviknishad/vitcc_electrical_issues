@@ -76,6 +76,12 @@ class PlatformUser with _$PlatformUser {
   /// Read all resolved issues of this user.
   Iterable<Future<IssueSnapshot>> get resolvedIssues =>
       resolvedIssueRefs.map(Issue.read);
+
+  /// Whether this user has any active issues.
+  bool get hasActiveIssues => activeIssueRefs.isNotEmpty;
+
+  /// Whether this user has any resolved issues.
+  bool get hasResolvedIssues => resolvedIssueRefs.isNotEmpty;
 }
 
 extension UserSnapshotExtension on UserSnapshot {
