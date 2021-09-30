@@ -61,3 +61,7 @@ class Misc with _$Misc {
     });
   }
 }
+
+extension MiscSnapshotExtension on MiscSnapshot {
+  Misc get misc => this.data()!;
+}
