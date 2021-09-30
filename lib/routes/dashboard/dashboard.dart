@@ -9,7 +9,9 @@ import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
-import 'package:vitcc_electrical_issues/routes/dashboard/welcome_card.dart';
+import 'package:vitcc_electrical_issues/routes/dashboard/counters.dart';
+import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
+import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -17,6 +19,9 @@ class DashboardPage extends StatefulWidget {
 
   @override
   _DashboardPageState createState() => _DashboardPageState();
+
+  static _DashboardPageState of(BuildContext context) =>
+      context.findAncestorStateOfType<_DashboardPageState>()!;
 }
 
 class _DashboardPageState extends State<DashboardPage> {
@@ -34,7 +39,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final user = Provider.of<UserSnapshot>(context).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -56,35 +61,29 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              WelcomeCard(),
+              ActiveAndResolvedCountWidget(),
+              SizedBox(height: 8),
+              RaiseAnIssueSection(),
+              SizedBox(height: 16),
+              MyIssuesSection(),
             ],
           ),
         ),
       ),
-      floatingActionButton: _raiseNewIssueFormIsShown
-          ? null
-          : Builder(
-              builder: (context) {
-                return FloatingActionButton.extended(
-                  onPressed: () async {
-                    setState(() => _raiseNewIssueFormIsShown = true);
-
-                    await Scaffold.of(context)
-                        .showBottomSheet(
-                          (_) => _RaiseNewIssueBottomSheet(),
-                          backgroundColor: theme.appBarTheme.backgroundColor,
-                        )
-                        .closed;
-
-                    setState(() => _raiseNewIssueFormIsShown = false);
-                  },
-                  tooltip: 'Click to raise a new issue.',
-                  label: Text('Raise a new issue'),
-                  icon: Icon(FontAwesome5.feather),
-                );
-              },
-            ),
     );
+  }
+
+  Future<void> showRaiseNewIssueForm(BuildContext context) async {
+    setState(() => _raiseNewIssueFormIsShown = true);
+
+    await Scaffold.of(context)
+        .showBottomSheet(
+          (_) => _RaiseNewIssueBottomSheet(),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        )
+        .closed;
+
+    setState(() => _raiseNewIssueFormIsShown = false);
   }
 }
 
@@ -270,8 +269,9 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
           children: [
             SizedBox(width: 8),
             ActionChip(
-              backgroundColor:
-                  isImportant ? theme.primaryColor : theme.colorScheme.surface,
+              backgroundColor: isImportant
+                  ? theme.primaryColor
+                  : theme.colorScheme.secondary,
               label: Text(
                 '${isImportant ? '' : 'Not'} Important',
                 style: TextStyle(
@@ -289,7 +289,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
             SizedBox(width: 8),
             ActionChip(
               backgroundColor:
-                  isUrgent ? theme.primaryColor : theme.colorScheme.surface,
+                  isUrgent ? theme.primaryColor : theme.colorScheme.secondary,
               label: Text(
                 '${isUrgent ? '' : 'Not'} Urgent',
                 style: TextStyle(
