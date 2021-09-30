@@ -54,4 +54,10 @@ class Misc with _$Misc {
       _ResolvedIssuesCountKey: FieldValue.increment(1),
     });
   }
+
+  static Future<void> informActiveIssuePurged() async {
+    await _ref.update({
+      _ActiveIssuesCountKey: FieldValue.increment(-1),
+    });
+  }
 }
