@@ -237,6 +237,9 @@ extension IssueSnapshotExtension on IssueSnapshot {
   /// Whether this issue belongs to resolved issues collection or not.
   bool get isResolved => this.reference.parent.id == IssueKeys.resolvedIssues;
 
+  /// Whether this issue belongs to active issues collection or not.
+  bool get isActive => this.reference.parent.id == IssueKeys.activeIssues;
+
   /// Purges an active issue.
   ///
   /// This future can throw exception if purge operation was forbidden.
@@ -263,7 +266,7 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Remove reference from user's document issues index.
     await issue.raisedBy.update({
-      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([
+      IssueKeys.activeIssues: FieldValue.arrayRemove([
         reference.asOriginalReference,
       ]),
     });
@@ -313,10 +316,10 @@ extension IssueSnapshotExtension on IssueSnapshot {
 
     // Updates the user's document with change in issue from active to resolved.
     await issue.raisedBy.update({
-      PlatformUser.ActiveIssuesKey: FieldValue.arrayRemove([
+      IssueKeys.activeIssues: FieldValue.arrayRemove([
         this.reference.asOriginalReference,
       ]),
-      PlatformUser.ResolvedIssuesKey: FieldValue.arrayUnion([
+      IssueKeys.resolvedIssues: FieldValue.arrayUnion([
         doc.asOriginalReference,
       ]),
     });
