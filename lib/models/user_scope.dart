@@ -25,10 +25,12 @@ class UserScope {
   bool get canCreateIssue => _hasPermissionTo(createIssue);
 
   /// Whether this user scope allows viewing active issues.
-  bool get canViewActiveIssue => _hasPermissionTo(viewActiveIssue);
+  bool get canViewActiveIssue =>
+      _hasPermissionTo(viewActiveIssue) || _hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows viewing resolved issues.
-  bool get canViewResolvedIssue => _hasPermissionTo(viewResolvedIssue);
+  bool get canViewResolvedIssue =>
+      _hasPermissionTo(viewResolvedIssue) || _hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows resolving an active issue.
   bool get canResolveIssue => _hasPermissionTo(resolveIssue);
