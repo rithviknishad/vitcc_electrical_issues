@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animator/flutter_animator.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 
@@ -38,22 +39,34 @@ class ActiveAndResolvedCountWidget extends StatelessWidget {
   }
 
   Widget buildInfoWidget({required String description, required int? value}) {
+    final displayValue = '${value ?? '-'}';
+
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
         return Column(
           children: [
-            Text(
-              '${value ?? '-'}',
-              style: theme.textTheme.headline5?.apply(
-                color: theme.primaryColor,
+            FadeInDown(
+              key: Key('$displayValue$description'),
+              preferences: const AnimationPreferences(
+                duration: const Duration(milliseconds: 300),
+                offset: const Duration(milliseconds: 100),
+              ),
+              child: Text(
+                displayValue,
+                style: theme.textTheme.headline5?.apply(
+                  color: theme.primaryColor,
+                ),
               ),
             ),
             SizedBox(height: 12),
-            Text(
-              description,
-              style: TextStyle(
-                color: theme.primaryColor.withOpacity(0.75),
+            FadeIn(
+              key: Key(description),
+              child: Text(
+                description,
+                style: TextStyle(
+                  color: theme.primaryColor.withOpacity(0.75),
+                ),
               ),
             )
           ],
