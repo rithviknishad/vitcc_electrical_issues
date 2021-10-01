@@ -14,34 +14,78 @@ class PlatformUser with _$PlatformUser {
   const PlatformUser._();
 
   const factory PlatformUser._create({
-    required User user,
+    required String? name,
+    required String? email,
+    required String? phoneNumber,
     required UserScope scope,
     required Iterable<DocumentReference> activeIssueRefs,
     required Iterable<DocumentReference> resolvedIssueRefs,
   }) = _PlatformUser;
 
-  static Future<UserSnapshot> get(User user) async {
+  static Future<UserSnapshot?> getUserFromId(String id) async {
+    final doc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(id)
+        .withConverter<PlatformUser>(
+      // Map<String, dynamic> -> PlatformUser
+      fromFirestore: (snapshot, snapshotOptions) {
+        final data = snapshot.data()!;
+
+        return PlatformUser._create(
+          name: data[_NameKey],
+          email: data[_EmailKey],
+          phoneNumber: data[_PhoneNumberKey],
+          scope: UserScope(data[_ScopeKey] as int),
+          activeIssueRefs:
+              (data[IssueKeys.activeIssues] as List).cast<DocumentReference>(),
+          resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
+              .cast<DocumentReference>(),
+        );
+      },
+      // PlatformUser -> Map<String, dynamic>
+      toFirestore: (user, setOptions) {
+        throw Exception('Write not permitted');
+      },
+    );
+
+    final snapshot = await doc.get();
+
+    if (snapshot.exists) {
+      return snapshot;
+    }
+
+    return null;
+  }
+
+  static Future<Stream<UserSnapshot>> watch(User firebaseUser) async {
     // The document reference w/ converter of the user.
     final doc = FirebaseFirestore.instance
         .collection('users')
-        .doc(user.uid)
+        .doc(firebaseUser.uid)
         .withConverter<PlatformUser>(
           // Map<String, dynamic> -> PlatformUser
           fromFirestore: (snapshot, snapshotOptions) {
+            final data = snapshot.data()!;
+
             return PlatformUser._create(
-              user: user,
-              scope: UserScope(snapshot[_ScopeKey] as int),
-              activeIssueRefs:
-                  (snapshot[ActiveIssuesKey] as List).cast<DocumentReference>(),
-              resolvedIssueRefs: (snapshot[ResolvedIssuesKey] as List)
+              name: data[_NameKey],
+              email: data[_EmailKey],
+              phoneNumber: data[_PhoneNumberKey],
+              scope: UserScope(data[_ScopeKey] as int),
+              activeIssueRefs: (data[IssueKeys.activeIssues] as List)
+                  .cast<DocumentReference>(),
+              resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
                   .cast<DocumentReference>(),
             );
           },
           // PlatformUser -> Map<String, dynamic>
           toFirestore: (user, setOptions) => {
+            _NameKey: user.name,
+            _EmailKey: user.email,
+            _PhoneNumberKey: user.phoneNumber,
             _ScopeKey: user.scope.value,
-            ActiveIssuesKey: user.activeIssueRefs,
-            ResolvedIssuesKey: user.resolvedIssueRefs,
+            IssueKeys.activeIssues: user.activeIssueRefs,
+            IssueKeys.resolvedIssues: user.resolvedIssueRefs,
           },
         );
 
@@ -49,23 +93,26 @@ class PlatformUser with _$PlatformUser {
 
     // Returns the snapshot if document associated w/ user exists
     if (snapshot.exists) {
-      return snapshot;
+      return doc.snapshots();
     }
 
     // Creates a new document if document does not exist for the user.
     await doc.set(PlatformUser._create(
-      user: user,
+      name: firebaseUser.displayName,
+      email: firebaseUser.email,
+      phoneNumber: firebaseUser.phoneNumber,
       scope: UserScope.defaultScope,
       activeIssueRefs: List.empty(),
       resolvedIssueRefs: List.empty(),
     ));
 
-    return await doc.get();
+    return doc.snapshots();
   }
 
   static const _ScopeKey = 'scope';
-  static const ActiveIssuesKey = 'active-issues';
-  static const ResolvedIssuesKey = 'resolved-issues';
+  static const _NameKey = 'name';
+  static const _EmailKey = 'email';
+  static const _PhoneNumberKey = 'phone-number';
   // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
   // method.
 
@@ -89,7 +136,7 @@ extension UserSnapshotExtension on UserSnapshot {
 
   Future<void> addActiveIssue(DocumentReference<Issue> issueReference) {
     return reference.update({
-      PlatformUser.ActiveIssuesKey: FieldValue.arrayUnion([
+      IssueKeys.activeIssues: FieldValue.arrayUnion([
         issueReference.asOriginalReference,
       ])
     });
