@@ -320,16 +320,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
   }
 
   Widget buildIssueLocationSection(BuildContext context) {
-    final misc = Provider.of<MiscSnapshot?>(context)?.data()!;
-
-    if (misc == null) {
-      return Center(
-        child: Text(
-          'waiting for campus locations provider...',
-          style: TextStyle(color: theme.disabledColor),
-        ),
-      );
-    }
+    final misc = Provider.of<MiscSnapshot>(context).misc;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
