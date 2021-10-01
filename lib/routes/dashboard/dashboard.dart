@@ -12,6 +12,7 @@ import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/counters.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
+import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -323,8 +324,12 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
     final misc = Provider.of<MiscSnapshot?>(context)?.data()!;
 
     if (misc == null) {
-      // TODO: impl. a nice loader here...
-      return Container();
+      return Center(
+        child: Text(
+          'waiting for campus locations provider...',
+          style: TextStyle(color: theme.disabledColor),
+        ),
+      );
     }
 
     return Padding(
