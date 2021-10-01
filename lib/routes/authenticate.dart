@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
-import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 import 'package:vitcc_electrical_issues/shared/wave_widget.dart';
 
 class AuthenticatePage extends StatefulWidget {
@@ -12,35 +9,9 @@ class AuthenticatePage extends StatefulWidget {
   _AuthenticatePageState createState() => _AuthenticatePageState();
 }
 
-class _AuthenticatePageState extends State<AuthenticatePage>
-    with WidgetsBindingObserver {
-  static final vitMailRegEx = r"@(vitstudent.ac.in|vit.ac.in)$";
-
-  /// To validate the form that may contain vit email for sign in with link.
-  final formKey = GlobalKey<FormState>();
-
-  /// For sign in with link using VIT mail.
-  final vitMailController = TextEditingController();
-
-  /// Whether the specified vit mail is valid.
-  bool vitMailIsValid = false;
-
+class _AuthenticatePageState extends State<AuthenticatePage> {
   /// Whether a process related to authentication / auth_service is running.
   bool isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance?.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    vitMailController.dispose();
-    WidgetsBinding.instance?.removeObserver(this);
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +104,7 @@ class _AuthenticatePageState extends State<AuthenticatePage>
 class _Button extends StatelessWidget {
   final String text;
   final bool hasBorder;
-  final Function() onTap;
+  final VoidCallback onTap;
 
   _Button({
     required this.text,
