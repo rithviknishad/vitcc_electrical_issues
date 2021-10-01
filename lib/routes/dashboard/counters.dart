@@ -8,7 +8,7 @@ class ActiveAndResolvedCountWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final misc = Provider.of<MiscSnapshot?>(context)?.misc;
+    final misc = Provider.of<MiscSnapshot>(context).misc;
 
     return Container(
       margin: const EdgeInsets.all(8),
@@ -22,13 +22,13 @@ class ActiveAndResolvedCountWidget extends StatelessWidget {
               Expanded(
                 child: buildInfoWidget(
                   description: 'issues being resolved',
-                  value: misc?.activeIssuesCount,
+                  value: misc.activeIssuesCount,
                 ),
               ),
               Expanded(
                 child: buildInfoWidget(
                   description: 'issues resolved so far',
-                  value: misc?.resolvedIssuesCount,
+                  value: misc.resolvedIssuesCount,
                 ),
               ),
             ],
@@ -38,22 +38,20 @@ class ActiveAndResolvedCountWidget extends StatelessWidget {
     );
   }
 
-  Widget buildInfoWidget({required String description, required int? value}) {
-    final displayValue = '${value ?? '-'}';
-
+  Widget buildInfoWidget({required String description, required int value}) {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
         return Column(
           children: [
             FadeInDown(
-              key: Key('$displayValue$description'),
+              key: Key('$value$description'),
               preferences: const AnimationPreferences(
                 duration: const Duration(milliseconds: 300),
                 offset: const Duration(milliseconds: 100),
               ),
               child: Text(
-                displayValue,
+                '$value',
                 style: theme.textTheme.headline5?.apply(
                   color: theme.primaryColor,
                 ),
