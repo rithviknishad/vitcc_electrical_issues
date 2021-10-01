@@ -38,18 +38,30 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
                 return Loading();
               }
 
+              final user = snapshot.data;
+
               // Authenitcated
-              if (snapshot.data is UserSnapshot) {
-                return MultiProvider(
-                  providers: [
-                    StreamProvider<MiscSnapshot?>.value(
-                      value: Misc.watch,
-                      initialData: null,
-                    ),
-                    Provider<UserSnapshot>.value(value: snapshot.data!),
-                  ],
-                  child: DashboardPage(),
-                );
+              if (user is UserSnapshot) {
+                return FutureBuilder<MiscSnapshot>(
+                    future: Misc.read,
+                    builder: (context, snapshot) {
+                      final misc = snapshot.data;
+
+                      if (!snapshot.hasData || misc == null) {
+                        return Loading();
+                      }
+
+                      return MultiProvider(
+                        providers: [
+                          StreamProvider<MiscSnapshot>.value(
+                            value: Misc.watch,
+                            initialData: misc,
+                          ),
+                          Provider<UserSnapshot>.value(value: user),
+                        ],
+                        child: DashboardPage(),
+                      );
+                    });
               }
 
               // Show authentication page if not signed in.
