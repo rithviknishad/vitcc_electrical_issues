@@ -23,8 +23,6 @@ class AuthService {
         }
       });
 
-  static User? get currentUser => firebaseAuth.currentUser;
-
   /// Sign in w/ Google Account.
   static Future<void> signInWithGoogle(GoogleSignIn googleSignIn) async {
     // Try fetching the currently signed-in account.
@@ -62,15 +60,6 @@ class AuthService {
       }
     }
   }
-
-  static final _actionCodeSettings = ActionCodeSettings(
-    url: "https://vitelectricalissues.page.link",
-    handleCodeInApp: true,
-    iOSBundleId: "com.rithviknishad.vitcc_electrical_issues",
-    androidPackageName: "com.rithviknishad.vitcc_electrical_issues",
-    androidInstallApp: true,
-    androidMinimumVersion: '1',
-  );
 
   // Avoid attempting to instantiate objects of this class.
   AuthService._();
