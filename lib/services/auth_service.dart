@@ -16,12 +16,7 @@ class AuthService {
     if (kDebugMode) 'Google': GoogleSignIn(),
   };
 
-  static Stream<UserSnapshot?> get user =>
-      FirebaseAuth.instance.authStateChanges().asyncMap((user) {
-        if (user != null) {
-          return PlatformUser.get(user);
-        }
-      });
+  static Stream<User?> get user => FirebaseAuth.instance.authStateChanges();
 
   /// Sign in w/ Google Account.
   static Future<void> signInWithGoogle(GoogleSignIn googleSignIn) async {
