@@ -13,8 +13,8 @@ class RaiseAnIssueSection extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.hoverColor,
-        borderRadius: BorderRadius.circular(20),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
         // color: theme.colorScheme.surface,
       ),
       child: Column(
