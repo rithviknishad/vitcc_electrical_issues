@@ -6,6 +6,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
+import 'package:vitcc_electrical_issues/shared/field_value.dart';
 import 'package:vitcc_electrical_issues/shared/marquee_widget.dart';
 
 class IssueTile extends StatefulWidget {
@@ -16,7 +17,7 @@ class IssueTile extends StatefulWidget {
 }
 
 class _IssueTileState extends State<IssueTile> {
-  bool _isExpanded = false;
+  bool _isExpanded = true; // TODO revert it to false later after testing.
 
   void toggleTileSelectionState() {
     setState(() => _isExpanded = !_isExpanded);
@@ -24,16 +25,14 @@ class _IssueTileState extends State<IssueTile> {
 
   static const _shrinkedPadding = const EdgeInsets.all(12);
   static const _expandedPadding = const EdgeInsets.fromLTRB(12, 20, 12, 20);
-  static const _shrinkedMargin = const EdgeInsets.all(8);
-  static const _expandedMargin = const EdgeInsets.fromLTRB(8, 20, 8, 20);
   static final _shrinkedBorderRadius = BorderRadius.circular(10);
   static final _expandedBorderRadius = BorderRadius.circular(14);
 
   @override
   Widget build(BuildContext context) {
-    final issue = Provider.of<IssueSnapshot?>(context)?.issue;
+    final issueSnapshot = Provider.of<IssueSnapshot?>(context);
 
-    if (issue == null) {
+    if (issueSnapshot == null) {
       return buildShimmer(context);
     }
 
@@ -46,15 +45,15 @@ class _IssueTileState extends State<IssueTile> {
         curve: Curves.fastLinearToSlowEaseIn,
         duration: const Duration(milliseconds: 500),
         padding: _isExpanded ? _expandedPadding : _shrinkedPadding,
-        margin: _isExpanded ? _expandedMargin : _shrinkedMargin,
+        margin: const EdgeInsets.fromLTRB(8, 6, 8, 6),
         decoration: BoxDecoration(
-          color: issue.isActiveIssue ? theme.cardColor : theme.hoverColor,
+          color: issueSnapshot.isActive ? theme.cardColor : theme.hoverColor,
           borderRadius:
               _isExpanded ? _expandedBorderRadius : _shrinkedBorderRadius,
         ),
         child: _isExpanded
-            ? buildExpandedTile(context, issue)
-            : buildShrinkedTile(context, issue),
+            ? buildExpandedTile(context, issueSnapshot)
+            : buildShrinkedTile(context, issueSnapshot.issue),
       ),
     );
   }
@@ -70,6 +69,8 @@ class _IssueTileState extends State<IssueTile> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             buildIssueTitleWidget(theme, issue),
+
+            // Location Short
             FadeInRight(
               preferences: AnimationPreferences(
                 duration: const Duration(milliseconds: 300),
@@ -102,30 +103,15 @@ class _IssueTileState extends State<IssueTile> {
           ],
         ),
         SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                issue.isActiveIssue
-                    ? 'Raised on ${Jiffy(issue.raisedOn.toDate()).format('MMMM do')}'
-                    : 'Resolved on ${Jiffy(issue.resolvedOn!.toDate()).format('MMMM do')}',
-                style: TextStyle(
-                  color: theme.disabledColor,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-            if (issue.isImportant) buildFlag(theme, 'IMPORTANT'),
-            if (issue.isUrgent) buildFlag(theme, 'URGENT'),
-          ],
-        )
+        buildIssueStatusAndPrioritySection(issue, theme),
       ],
     );
   }
 
-  Widget buildExpandedTile(BuildContext context, Issue issue) {
+  Widget buildExpandedTile(BuildContext context, IssueSnapshot issueSnapshot) {
     final theme = Theme.of(context);
     final user = Provider.of<UserSnapshot>(context).user;
+    final issue = issueSnapshot.issue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,22 +126,32 @@ class _IssueTileState extends State<IssueTile> {
           ],
         ),
         SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                issue.isActiveIssue
-                    ? 'Raised on ${Jiffy(issue.raisedOn.toDate()).format('MMMM do')}'
-                    : 'Resolved on ${Jiffy(issue.resolvedOn!.toDate()).format('MMMM do')}',
-                style: TextStyle(
-                  color: theme.disabledColor,
-                  fontSize: 13,
-                ),
+        buildIssueStatusAndPrioritySection(issue, theme),
+        SizedBox(height: 8),
+        FadeIn(
+          preferences: AnimationPreferences(
+            duration: const Duration(milliseconds: 300),
+            offset: const Duration(milliseconds: 70),
+          ),
+          child: Wrap(
+            direction: Axis.vertical,
+            spacing: 4,
+            runSpacing: 4,
+            children: [
+              FieldValueWidget(
+                icon: FontAwesome5.user,
+                value: issue.raisedBy.id,
+                field: 'Raised by',
               ),
-            ),
-            if (issue.isImportant) buildFlag(theme, 'IMPORTANT'),
-            if (issue.isUrgent) buildFlag(theme, 'URGENT'),
-          ],
+              // Row(
+              //   children: [
+              //     Icon(FontAwesome5.user),
+              //     Text('Raised by: '),
+              //     Text(issue.raisedBy.id),
+              //   ],
+              // )
+            ],
+          ),
         )
       ],
     );
@@ -173,6 +169,26 @@ class _IssueTileState extends State<IssueTile> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildIssueStatusAndPrioritySection(Issue issue, ThemeData theme) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            issue.isActiveIssue
+                ? 'Raised on ${Jiffy(issue.raisedOn.toDate()).format('MMMM do')}'
+                : 'Resolved on ${Jiffy(issue.resolvedOn!.toDate()).format('MMMM do')}',
+            style: TextStyle(
+              color: theme.disabledColor,
+              fontSize: 13,
+            ),
+          ),
+        ),
+        if (issue.isImportant) buildFlag(theme, 'IMPORTANT'),
+        if (issue.isUrgent) buildFlag(theme, 'URGENT'),
+      ],
     );
   }
 
