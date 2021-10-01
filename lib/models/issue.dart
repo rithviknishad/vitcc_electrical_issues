@@ -77,7 +77,8 @@ class Issue with _$Issue {
         },
       );
 
-  static final activeIssues = _activeRef.snapshots();
+  static Stream<List<IssueSnapshot>> get activeIssues =>
+      _activeRef.snapshots().map((querySnapshot) => querySnapshot.docs);
 
   /// Watch the specified issue reference.
   ///
