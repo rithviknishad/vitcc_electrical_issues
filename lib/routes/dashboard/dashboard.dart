@@ -9,6 +9,7 @@ import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
+import 'package:vitcc_electrical_issues/routes/dashboard/active_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/counters.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
@@ -58,13 +59,20 @@ class _DashboardPageState extends State<DashboardPage> {
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 10,
             children: [
+              // The analytics widget
               ActiveAndResolvedCountWidget(),
-              SizedBox(height: 8),
+
+              // View all active issues if user has permission
+              if (user.scope.canViewActiveIssue) ActiveIssuesSection(),
+
+              // Raise an issue section
               RaiseAnIssueSection(),
-              SizedBox(height: 16),
+
+              // All issues raised by the user.
               MyIssuesSection(),
             ],
           ),
