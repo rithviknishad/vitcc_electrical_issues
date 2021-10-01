@@ -29,7 +29,11 @@ class Issue with _$Issue {
     required String? remarks,
   }) = _Issue;
 
+  /// Whether the issue is active.
   bool get isActiveIssue => resolvedOn == null;
+
+  /// Whether the issue is resolved.
+  bool get isResolvedIssue => !isActiveIssue;
 
   static final _activeRef = _convert(
     collection: FirebaseFirestore.instance.collection(IssueKeys.activeIssues),
