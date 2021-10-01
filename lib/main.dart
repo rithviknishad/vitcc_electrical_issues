@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +32,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
           }
 
           // Loading screen, when attempting to authenticate w/ firebase.
-          return StreamBuilder<UserSnapshot?>(
+          return StreamBuilder<User?>(
             stream: AuthService.user,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,7 +42,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
               final user = snapshot.data;
 
               // Authenitcated
-              if (user is UserSnapshot) {
+              if (user is User) {
                 return FutureBuilder<MiscSnapshot>(
                     future: Misc.read,
                     builder: (context, snapshot) {
@@ -51,15 +52,28 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
                         return Loading();
                       }
 
-                      return MultiProvider(
-                        providers: [
-                          StreamProvider<MiscSnapshot>.value(
-                            value: Misc.watch,
-                            initialData: misc,
-                          ),
-                          Provider<UserSnapshot>.value(value: user),
-                        ],
-                        child: DashboardPage(),
+                      return FutureBuilder<Stream<UserSnapshot>>(
+                        future: PlatformUser.watch(user),
+                        builder: (context, snapshot) {
+                          final userStream = snapshot.data;
+
+                          if (!snapshot.hasData || userStream == null) {
+                            return Loading();
+                          }
+                          return MultiProvider(
+                            providers: [
+                              StreamProvider<MiscSnapshot>.value(
+                                value: Misc.watch,
+                                initialData: misc,
+                              ),
+                              StreamProvider<UserSnapshot?>.value(
+                                value: userStream,
+                                initialData: null,
+                              ),
+                            ],
+                            child: DashboardPage(),
+                          );
+                        },
                       );
                     });
               }
