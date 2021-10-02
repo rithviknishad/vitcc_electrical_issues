@@ -1,13 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:vitcc_electrical_issues/models/misc.dart';
-import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/routes/authenticate.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/dashboard.dart';
-import 'package:vitcc_electrical_issues/services/auth_service.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 
 void main() => runApp(ElectricalIssueTrackerApp());
@@ -31,56 +26,8 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
             return Loading();
           }
 
-          // Loading screen, when attempting to authenticate w/ firebase.
-          return StreamBuilder<User?>(
-            stream: AuthService.user,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Loading();
-              }
-
-              final user = snapshot.data;
-
-              // Authenitcated
-              if (user is User) {
-                return FutureBuilder<MiscSnapshot>(
-                    future: Misc.read,
-                    builder: (context, snapshot) {
-                      final misc = snapshot.data;
-
-                      if (!snapshot.hasData || misc == null) {
-                        return Loading();
-                      }
-
-                      return FutureBuilder<Stream<UserSnapshot>>(
-                        future: PlatformUser.watch(user),
-                        builder: (context, snapshot) {
-                          final userStream = snapshot.data;
-
-                          if (!snapshot.hasData || userStream == null) {
-                            return Loading();
-                          }
-                          return MultiProvider(
-                            providers: [
-                              StreamProvider<MiscSnapshot>.value(
-                                value: Misc.watch,
-                                initialData: misc,
-                              ),
-                              StreamProvider<UserSnapshot?>.value(
-                                value: userStream,
-                                initialData: null,
-                              ),
-                            ],
-                            child: DashboardPage(),
-                          );
-                        },
-                      );
-                    });
-              }
-
-              // Show authentication page if not signed in.
-              return AuthenticatePage();
-            },
+          return Authenticated(
+            child: DashboardPage(),
           );
         },
       ),
