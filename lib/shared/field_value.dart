@@ -23,7 +23,10 @@ class FieldValueWidget extends StatelessWidget {
     final isSpecified = value?.isNotEmpty ?? false;
 
     final valueWidget = isSpecified
-        ? Text('$value')
+        ? Text(
+            '$value',
+            style: TextStyle(color: theme.primaryColor),
+          )
         : Text(
             'Not specified',
             style: TextStyle(color: theme.disabledColor),
