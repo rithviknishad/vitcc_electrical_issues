@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/shared/field_value.dart';
+import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 import 'package:vitcc_electrical_issues/shared/marquee_widget.dart';
 
 class IssueTile extends StatefulWidget {
@@ -116,6 +117,7 @@ class _IssueTileState extends State<IssueTile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Issue title
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,33 +127,48 @@ class _IssueTileState extends State<IssueTile> {
             buildIssueTitleWidget(theme, issue),
           ],
         ),
+
         SizedBox(height: 8),
+
+        // Status and priority
         buildIssueStatusAndPrioritySection(issue, theme),
-        SizedBox(height: 8),
+
+        // Issue Description
+        if (issue.description.trim().isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Text(
+              issue.description,
+              style: TextStyle(
+                color: theme.primaryColor,
+              ),
+            ),
+          )
+        else
+          SizedBox(height: 8),
+
+        // Other attributes
         FadeIn(
           preferences: AnimationPreferences(
             duration: const Duration(milliseconds: 300),
             offset: const Duration(milliseconds: 70),
           ),
-          child: Wrap(
-            direction: Axis.vertical,
-            spacing: 4,
-            runSpacing: 4,
-            children: [
-              FieldValueWidget(
-                icon: FontAwesome5.user,
-                value: issue.raisedBy.id,
-                field: 'Raised by',
-              ),
-              // Row(
-              //   children: [
-              //     Icon(FontAwesome5.user),
-              //     Text('Raised by: '),
-              //     Text(issue.raisedBy.id),
-              //   ],
-              // )
-            ],
-          ),
+          child: FutureBuilder<UserSnapshot?>(
+              future: PlatformUser.getUserFromId(issue.raisedBy.id),
+              builder: (context, snapshot) {
+                final author = snapshot.data;
+
+                return Wrap(
+                  direction: Axis.vertical,
+                  children: [
+                    // Author attributes
+                    if (author is UserSnapshot)
+                      ...buildAuthorAttributes(author.user, theme)
+                    else
+                      Loading.alt()
+                  ],
+                );
+              }),
         )
       ],
     );
@@ -214,6 +231,26 @@ class _IssueTileState extends State<IssueTile> {
         ),
       ),
     );
+  }
+
+  List<Widget> buildAuthorAttributes(PlatformUser author, ThemeData theme) {
+    return [
+      FieldValueWidget(
+        icon: FontAwesome5.user,
+        value: author.name,
+        field: 'Raised by',
+      ),
+      FieldValueWidget(
+        icon: FontAwesome5.envelope,
+        value: author.email,
+        field: 'Email',
+      ),
+      FieldValueWidget(
+        icon: FontAwesome5.mobile,
+        value: author.phoneNumber,
+        field: 'Contact No.',
+      ),
+    ];
   }
 
   Widget buildShimmer(BuildContext context) {
