@@ -104,8 +104,11 @@ class _IssueTileState extends State<IssueTile> {
             ),
           ],
         ),
-        SizedBox(height: 8),
-        buildIssueStatusAndPrioritySection(issue, theme),
+        Padding(
+          key: Key('issue-status-priority-of-shrinked'),
+          padding: const EdgeInsets.only(top: 8),
+          child: buildIssueStatusAndPrioritySection(issue, theme),
+        ),
       ],
     );
   }
@@ -130,10 +133,12 @@ class _IssueTileState extends State<IssueTile> {
           ],
         ),
 
-        SizedBox(height: 8),
-
         // Status and priority
-        buildIssueStatusAndPrioritySection(issue, theme),
+        Padding(
+          key: Key('issue-status-priority-of-expanded'),
+          padding: const EdgeInsets.only(top: 8),
+          child: buildIssueStatusAndPrioritySection(issue, theme),
+        ),
 
         // Issue Description
         if (issue.description.trim().isNotEmpty)
@@ -285,22 +290,28 @@ class _IssueTileState extends State<IssueTile> {
   }
 
   Widget buildFlag(ThemeData theme, String flagDescription) {
-    return Padding(
+    return HeartBeat(
       key: Key('flag:$flagDescription'),
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.secondary,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            flagDescription,
-            style: TextStyle(
-              fontSize: 12,
-              color: theme.primaryColor,
-              letterSpacing: 0.5,
+      preferences: AnimationPreferences(
+        duration: const Duration(milliseconds: 700),
+        offset: const Duration(seconds: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.secondary,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              flagDescription,
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.primaryColor,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
         ),
