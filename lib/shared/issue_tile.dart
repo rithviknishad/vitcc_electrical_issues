@@ -114,6 +114,7 @@ class _IssueTileState extends State<IssueTile> {
     final theme = Theme.of(context);
     final user = Provider.of<UserSnapshot>(context).user;
     final issue = issueSnapshot.issue;
+    final isResolvedIssue = issue.isResolvedIssue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,17 +137,24 @@ class _IssueTileState extends State<IssueTile> {
 
         // Issue Description
         if (issue.description.trim().isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text(
-              issue.description,
-              style: TextStyle(
-                color: theme.primaryColor,
+          FadeIn(
+            preferences: AnimationPreferences(
+              duration: const Duration(milliseconds: 400),
+              offset: const Duration(milliseconds: 150),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                issue.description,
+                style: TextStyle(
+                  color: theme.primaryColor,
+                ),
               ),
             ),
           )
         else
           SizedBox(height: 8),
+        // TODO: consider changing it to 'No description provided' in disabled style.
 
         // Other attributes
         FadeIn(
@@ -154,10 +162,11 @@ class _IssueTileState extends State<IssueTile> {
             duration: const Duration(milliseconds: 300),
             offset: const Duration(milliseconds: 70),
           ),
-          child: FutureBuilder<UserSnapshot?>(
-              future: PlatformUser.getUserFromId(issue.raisedBy.id),
+          child: FutureBuilder<_AuthorAndResolverPair>(
+              future: getAuthorAndResolver(issue),
               builder: (context, snapshot) {
-                final author = snapshot.data;
+                final author = snapshot.data?.a;
+                final resolver = snapshot.data?.b;
 
                 return Wrap(
                   direction: Axis.vertical,
@@ -165,20 +174,76 @@ class _IssueTileState extends State<IssueTile> {
                     // Location
                     ...buildIssueLocationAttributes(issue.location),
 
+                    // TODO: consider making it to a three stage live event style
                     // Issue raised on (time)
                     FieldValueWidget(
                       icon: FontAwesome5.clock,
-                      value: Jiffy(issue.raisedOn.toDate()).fromNow(),
+                      value: Jiffy(issue.raisedOn.toDate())
+                          .format('EEEE, MMM do, hh:mm a'),
+                      field: 'Raised on',
                     ),
+
+                    // Issue resolve time
+                    if (isResolvedIssue && issue.resolvedOn != null)
+                      FieldValueWidget(
+                        icon: FontAwesome5.clock,
+                        value: Jiffy(issue.resolvedOn!.toDate())
+                            .format('EEEE, MMM do, hh:mm a'),
+                        field: 'Resolved on',
+                      ),
 
                     // Author attributes
                     if (author is UserSnapshot)
-                      ...buildIssueAuthorAttributes(author.user)
+                      ...buildUserAttributes(author.user)
                     else
-                      Loading.alt()
+                      Loading.alt(),
+
+                    // Resolver attributes
+                    if (isResolvedIssue && resolver is UserSnapshot)
+                      ...buildUserAttributes(
+                        resolver.user,
+                        isResolverAndNotAuthor: true,
+                      ),
                   ],
                 );
               }),
+        ),
+
+        if (isResolvedIssue && (issue.remarks?.isNotEmpty ?? false))
+          FadeInLeft(
+            preferences: AnimationPreferences(
+              duration: const Duration(milliseconds: 300),
+              offset: const Duration(milliseconds: 150),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'Remarks: ${issue.remarks!}',
+                style: TextStyle(
+                  color: theme.primaryColor,
+                ),
+              ),
+            ),
+          ),
+
+        FadeIn(
+          preferences: AnimationPreferences(
+            duration: const Duration(milliseconds: 400),
+            offset: const Duration(milliseconds: 1000),
+          ),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                'ID: ${issueSnapshot.id}',
+                style: TextStyle(
+                  color: theme.disabledColor,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
         )
       ],
     );
@@ -264,20 +329,22 @@ class _IssueTileState extends State<IssueTile> {
     ];
   }
 
-  List<Widget> buildIssueAuthorAttributes(PlatformUser author) {
+  List<Widget> buildUserAttributes(PlatformUser user,
+      {bool isResolverAndNotAuthor = false}) {
+    final role = '${isResolverAndNotAuthor ? 'Resolved' : 'Raised'} by';
+
     return [
       FieldValueWidget(
-        icon: FontAwesome5.user,
-        value: author.name,
-        field: 'Raised by',
+        icon: isResolverAndNotAuthor ? FontAwesome5.tools : FontAwesome5.user,
+        value: user.name,
+        field: role,
       ),
       FieldValueWidget(
-        value: author.email,
-        field: 'Email',
+        value: user.email,
       ),
       FieldValueWidget(
         icon: FontAwesome5.mobile,
-        value: author.phoneNumber,
+        value: user.phoneNumber,
         field: 'Contact No.',
       ),
     ];
@@ -310,4 +377,18 @@ class _IssueTileState extends State<IssueTile> {
       ),
     );
   }
+
+  Future<_AuthorAndResolverPair> getAuthorAndResolver(Issue issue) async {
+    final author = await PlatformUser.getUserFromId(issue.raisedBy.id);
+
+    UserSnapshot? resolver;
+
+    if (issue.resolvedBy != null) {
+      resolver = await PlatformUser.getUserFromId(issue.resolvedBy!.id);
+    }
+
+    return Pair(author, resolver);
+  }
 }
+
+typedef _AuthorAndResolverPair = Pair<UserSnapshot?, UserSnapshot?>;
