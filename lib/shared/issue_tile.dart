@@ -164,7 +164,12 @@ class _IssueTileState extends State<IssueTile> {
                   children: [
                     // Location
                     ...buildIssueLocationAttributes(issue.location),
+
                     // Issue raised on (time)
+                    FieldValueWidget(
+                      icon: FontAwesome5.clock,
+                      value: Jiffy(issue.raisedOn.toDate()).fromNow(),
+                    ),
 
                     // Author attributes
                     if (author is UserSnapshot)
@@ -200,8 +205,8 @@ class _IssueTileState extends State<IssueTile> {
         Expanded(
           child: Text(
             issue.isActiveIssue
-                ? 'Raised on ${Jiffy(issue.raisedOn.toDate()).format('MMMM do')}'
-                : 'Resolved on ${Jiffy(issue.resolvedOn!.toDate()).format('MMMM do')}',
+                ? 'Raised ${Jiffy(issue.raisedOn.toDate()).fromNow()}'
+                : 'Resolved ${Jiffy(issue.resolvedOn!.toDate()).fromNow()}',
             style: TextStyle(
               color: theme.disabledColor,
               fontSize: 13,
@@ -249,11 +254,10 @@ class _IssueTileState extends State<IssueTile> {
 
     return [
       FieldValueWidget(
-        icon: FontAwesome5.building,
+        icon: FontAwesome5.map_marker_alt,
         value: '${location.block}, $formattedFloor',
       ),
       FieldValueWidget(
-        icon: FontAwesome5.map_marker_alt,
         value: location.room,
         field: 'Room / Location',
       ),
@@ -268,7 +272,6 @@ class _IssueTileState extends State<IssueTile> {
         field: 'Raised by',
       ),
       FieldValueWidget(
-        icon: FontAwesome5.envelope,
         value: author.email,
         field: 'Email',
       ),
