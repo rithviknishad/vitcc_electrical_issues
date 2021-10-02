@@ -22,7 +22,7 @@ class IssueTile extends StatefulWidget {
 }
 
 class _IssueTileState extends State<IssueTile> {
-  bool _isExpanded = true; // TODO revert it to false later after testing.
+  bool _isExpanded = false;
 
   void toggleTileSelectionState() {
     setState(() => _isExpanded = !_isExpanded);
