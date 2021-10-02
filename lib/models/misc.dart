@@ -60,6 +60,16 @@ class Misc with _$Misc {
       _ActiveIssuesCountKey: FieldValue.increment(-1),
     });
   }
+
+  static Future<void> updateActiveIssuesCount(int value) async {
+    assert(value >= 0, 'bad argument: cannot write negative value');
+
+    if (value < 0) {
+      return;
+    }
+
+    await _ref.update({_ActiveIssuesCountKey: value});
+  }
 }
 
 extension MiscSnapshotExtension on MiscSnapshot {
