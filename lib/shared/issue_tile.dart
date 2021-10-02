@@ -7,9 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
+import 'package:vitcc_electrical_issues/shared/dialog_result.dart';
 import 'package:vitcc_electrical_issues/shared/field_value.dart';
+import 'package:vitcc_electrical_issues/shared/field_value_edit_dialog.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 import 'package:vitcc_electrical_issues/shared/marquee_widget.dart';
+import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class IssueTile extends StatefulWidget {
   const IssueTile({Key? key}) : super(key: key);
@@ -115,7 +118,7 @@ class _IssueTileState extends State<IssueTile> {
 
   Widget buildExpandedTile(BuildContext context, IssueSnapshot issueSnapshot) {
     final theme = Theme.of(context);
-    final user = Provider.of<UserSnapshot>(context).user;
+    final currentUser = Provider.of<UserSnapshot>(context);
     final issue = issueSnapshot.issue;
     final isResolvedIssue = issue.isResolvedIssue;
 
@@ -220,6 +223,9 @@ class _IssueTileState extends State<IssueTile> {
 
         // Issue ID
         buildIssueId(issueSnapshot, theme),
+
+        if (!isResolvedIssue && currentUser.user.scope.canResolveIssue)
+          buildResolveThisIssueButton(currentUser, issueSnapshot, theme),
       ],
     );
   }
@@ -310,8 +316,10 @@ class _IssueTileState extends State<IssueTile> {
     ];
   }
 
-  List<Widget> buildUserAttributes(PlatformUser user,
-      {bool isResolverAndNotAuthor = false}) {
+  List<Widget> buildUserAttributes(
+    PlatformUser user, {
+    bool isResolverAndNotAuthor = false,
+  }) {
     final role = '${isResolverAndNotAuthor ? 'Resolved' : 'Raised'} by';
 
     return [
@@ -371,6 +379,19 @@ class _IssueTileState extends State<IssueTile> {
     );
   }
 
+  Widget buildResolveThisIssueButton(
+    UserSnapshot currentUser,
+    IssueSnapshot issueSnapshot,
+    ThemeData theme,
+  ) {
+    return OutlinedButton.icon(
+      icon: Icon(FontAwesome5.tools, size: 16),
+      label: Text('Resolve this issue'),
+      onPressed: () =>
+          onResolveThisIssuePressed(context, issueSnapshot, currentUser),
+    );
+  }
+
   Widget buildShimmer(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -409,6 +430,40 @@ class _IssueTileState extends State<IssueTile> {
     }
 
     return Pair(author, resolver);
+  }
+
+  Future<void> onResolveThisIssuePressed(
+    BuildContext context,
+    IssueSnapshot issueSnapshot,
+    UserSnapshot resolver,
+  ) async {
+    final _remarksController = TextEditingController();
+
+    final dialogResult = await showDialog<DialogResult>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return FieldValueEditDialog(
+          title: 'Resolve this issue?',
+          textFieldWidget: TextFieldWidget(
+            controller: _remarksController,
+            hintText: 'Remarks (optional)',
+            prefixIconData: FontAwesome5.align_left,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+          ),
+          okButtonText: 'Yes, Resolve!',
+        );
+      },
+    );
+
+    // TODO: show a loader here
+
+    if (dialogResult == DialogResult.ok) {
+      await issueSnapshot.resolve(
+        resolverSnapshot: resolver,
+        remarks: _remarksController.text,
+      );
+    }
   }
 }
 
