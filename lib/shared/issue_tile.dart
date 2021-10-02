@@ -5,6 +5,7 @@ import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
+import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/shared/field_value.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
@@ -161,9 +162,13 @@ class _IssueTileState extends State<IssueTile> {
                 return Wrap(
                   direction: Axis.vertical,
                   children: [
+                    // Location
+                    ...buildIssueLocationAttributes(issue.location),
+                    // Issue raised on (time)
+
                     // Author attributes
                     if (author is UserSnapshot)
-                      ...buildAuthorAttributes(author.user, theme)
+                      ...buildIssueAuthorAttributes(author.user)
                     else
                       Loading.alt()
                   ],
@@ -233,7 +238,29 @@ class _IssueTileState extends State<IssueTile> {
     );
   }
 
-  List<Widget> buildAuthorAttributes(PlatformUser author, ThemeData theme) {
+  List<Widget> buildIssueLocationAttributes(IssueLocation location) {
+    String formattedFloor = '';
+
+    try {
+      formattedFloor = Jiffy(location.floor, 'd').format('do floor');
+    } catch (exception) {
+      formattedFloor = 'Floor: ${location.floor}';
+    }
+
+    return [
+      FieldValueWidget(
+        icon: FontAwesome5.building,
+        value: '${location.block}, $formattedFloor',
+      ),
+      FieldValueWidget(
+        icon: FontAwesome5.map_marker_alt,
+        value: location.room,
+        field: 'Room / Location',
+      ),
+    ];
+  }
+
+  List<Widget> buildIssueAuthorAttributes(PlatformUser author) {
     return [
       FieldValueWidget(
         icon: FontAwesome5.user,
