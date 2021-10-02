@@ -57,7 +57,7 @@ class PlatformUser with _$PlatformUser {
     return null;
   }
 
-  static Future<Stream<UserSnapshot>> watch(User firebaseUser) async {
+  static Stream<UserSnapshot> watch(User firebaseUser) async* {
     // The document reference w/ converter of the user.
     final doc = FirebaseFirestore.instance
         .collection('users')
@@ -91,22 +91,20 @@ class PlatformUser with _$PlatformUser {
 
     final snapshot = await doc.get();
 
-    // Returns the snapshot if document associated w/ user exists
-    if (snapshot.exists) {
-      return doc.snapshots();
+    // Creates a new document if document does not exist for the user.
+    if (!snapshot.exists) {
+      await doc.set(PlatformUser._create(
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        phoneNumber: firebaseUser.phoneNumber,
+        scope: UserScope.defaultScope,
+        activeIssueRefs: List.empty(),
+        resolvedIssueRefs: List.empty(),
+      ));
     }
 
-    // Creates a new document if document does not exist for the user.
-    await doc.set(PlatformUser._create(
-      name: firebaseUser.displayName,
-      email: firebaseUser.email,
-      phoneNumber: firebaseUser.phoneNumber,
-      scope: UserScope.defaultScope,
-      activeIssueRefs: List.empty(),
-      resolvedIssueRefs: List.empty(),
-    ));
-
-    return doc.snapshots();
+// Returns the snapshot if document associated w/ user exists
+    yield* doc.snapshots();
   }
 
   static const _ScopeKey = 'scope';
