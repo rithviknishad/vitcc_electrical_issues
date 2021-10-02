@@ -214,42 +214,12 @@ class _IssueTileState extends State<IssueTile> {
               }),
         ),
 
+        // Issue Resolve remarks
         if (isResolvedIssue && (issue.remarks?.isNotEmpty ?? false))
-          FadeInLeft(
-            preferences: AnimationPreferences(
-              duration: const Duration(milliseconds: 300),
-              offset: const Duration(milliseconds: 150),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                'Remarks: ${issue.remarks!}',
-                style: TextStyle(
-                  color: theme.primaryColor,
-                ),
-              ),
-            ),
-          ),
+          buildRemarksWidget(issue.remarks!, theme),
 
-        FadeIn(
-          preferences: AnimationPreferences(
-            duration: const Duration(milliseconds: 400),
-            offset: const Duration(milliseconds: 1000),
-          ),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                'ID: ${issueSnapshot.id}',
-                style: TextStyle(
-                  color: theme.disabledColor,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-        )
+        // Issue ID
+        buildIssueId(issueSnapshot, theme),
       ],
     );
   }
@@ -359,6 +329,46 @@ class _IssueTileState extends State<IssueTile> {
         field: 'Contact No.',
       ),
     ];
+  }
+
+  Widget buildRemarksWidget(String remarks, ThemeData theme) {
+    return FadeInLeft(
+      preferences: AnimationPreferences(
+        duration: const Duration(milliseconds: 300),
+        offset: const Duration(milliseconds: 150),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Text(
+          'Remarks: $remarks',
+          style: TextStyle(
+            color: theme.primaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildIssueId(IssueSnapshot issueSnapshot, ThemeData theme) {
+    return FadeIn(
+      preferences: AnimationPreferences(
+        duration: const Duration(milliseconds: 400),
+        offset: const Duration(milliseconds: 1000),
+      ),
+      child: Align(
+        alignment: Alignment.topRight,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(
+            'ID: ${issueSnapshot.id}',
+            style: TextStyle(
+              color: theme.disabledColor,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildShimmer(BuildContext context) {
