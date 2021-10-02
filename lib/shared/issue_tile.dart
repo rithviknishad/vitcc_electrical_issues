@@ -320,7 +320,7 @@ class _IssueTileState extends State<IssueTile> {
   }
 
   List<Widget> buildIssueLocationAttributes(IssueLocation location) {
-    String formattedFloor = '';
+    var formattedFloor = '';
 
     try {
       formattedFloor = Jiffy(location.floor, 'd').format('do floor');
