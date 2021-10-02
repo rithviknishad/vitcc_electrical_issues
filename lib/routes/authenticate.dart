@@ -137,8 +137,12 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                           hasBorder: false,
                           onTap: () async {
                             setState(() => isLoading = true);
+
                             await AuthService.signInWithGoogle(provider.value);
-                            setState(() => isLoading = false);
+
+                            if (mounted) {
+                              setState(() => isLoading = false);
+                            }
                           },
                         ),
                       ),
