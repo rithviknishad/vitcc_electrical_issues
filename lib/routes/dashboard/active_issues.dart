@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
+import 'package:vitcc_electrical_issues/models/misc.dart';
 
 import 'package:vitcc_electrical_issues/shared/issue_tile.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
@@ -21,7 +22,7 @@ class ActiveIssuesSection extends StatelessWidget {
           return Loading.alt();
         }
 
-        // TODO: handle issues misc syncing
+        syncMiscWithActiveIssuesLengthIfDrift(context, activeIssues);
 
         if (activeIssues.isEmpty) {
           return buildAllIssuesResolvedStatus(context);
@@ -30,6 +31,20 @@ class ActiveIssuesSection extends StatelessWidget {
         return buildIssuesView(context, activeIssues);
       },
     );
+  }
+
+  /// Syncs misc's active issues count with active issues length to compensate
+  /// drift errors.
+  void syncMiscWithActiveIssuesLengthIfDrift(
+    BuildContext context,
+    List<IssueSnapshot> activeIssues,
+  ) {
+    // Voluntarily not setting listen to false.
+    final misc = Provider.of<MiscSnapshot>(context).misc;
+
+    if (misc.activeIssuesCount != activeIssues.length) {
+      Misc.updateActiveIssuesCount(activeIssues.length);
+    }
   }
 
   Widget buildIssuesView(BuildContext context, List<IssueSnapshot> issues) {
