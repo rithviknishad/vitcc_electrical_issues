@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 
 class FieldValueWidget extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String? field;
   final String? value;
   final VoidCallback? onPressed;
   final List<Widget>? actions;
 
   FieldValueWidget({
-    required this.icon,
+    this.icon,
     this.field,
     required this.value,
     this.onPressed,
