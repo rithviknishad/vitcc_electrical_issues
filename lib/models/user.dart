@@ -20,6 +20,7 @@ class PlatformUser with _$PlatformUser {
     required UserScope scope,
     required Iterable<DocumentReference> activeIssueRefs,
     required Iterable<DocumentReference> resolvedIssueRefs,
+    required Timestamp onboardTimestamp,
   }) = _PlatformUser;
 
   static Future<UserSnapshot?> getUserFromId(String id) async {
@@ -40,6 +41,7 @@ class PlatformUser with _$PlatformUser {
               (data[IssueKeys.activeIssues] as List).cast<DocumentReference>(),
           resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
               .cast<DocumentReference>(),
+          onboardTimestamp: data[_OnboardTimestampKey],
         );
       },
       // PlatformUser -> Map<String, dynamic>
@@ -76,6 +78,7 @@ class PlatformUser with _$PlatformUser {
                   .cast<DocumentReference>(),
               resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
                   .cast<DocumentReference>(),
+              onboardTimestamp: data[_OnboardTimestampKey],
             );
           },
           // PlatformUser -> Map<String, dynamic>
@@ -86,6 +89,7 @@ class PlatformUser with _$PlatformUser {
             _ScopeKey: user.scope.value,
             IssueKeys.activeIssues: user.activeIssueRefs,
             IssueKeys.resolvedIssues: user.resolvedIssueRefs,
+            _OnboardTimestampKey: user.onboardTimestamp,
           },
         );
 
@@ -100,6 +104,7 @@ class PlatformUser with _$PlatformUser {
         scope: UserScope.defaultScope,
         activeIssueRefs: List.empty(),
         resolvedIssueRefs: List.empty(),
+        onboardTimestamp: Timestamp.fromDate(DateTime.now()),
       ));
     }
 
@@ -111,6 +116,7 @@ class PlatformUser with _$PlatformUser {
   static const _NameKey = 'name';
   static const _EmailKey = 'email';
   static const _PhoneNumberKey = 'phone-number';
+  static const _OnboardTimestampKey = 'onboard-timestamp';
   // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
   // method.
 
