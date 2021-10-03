@@ -34,8 +34,11 @@ jobs:
           flutter-version: ${{ env.flutter_version }}
           channel: stable
 
-      - run: flutter config --enable-web
+      - name: Flutter enable web
+        run: flutter config --enable-web
+
       - run: flutter pub get
+      - run: flutter pub run build_runner watch --delete-conflicting-outputs
 
       # Deploy for Web
 
