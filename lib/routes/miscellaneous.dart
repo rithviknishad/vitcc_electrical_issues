@@ -1,9 +1,11 @@
 //ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vitcc_electrical_issues/main.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
+import 'package:vitcc_electrical_issues/services/auth_service.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
   MiscellaneousDialog({
@@ -92,6 +94,14 @@ class MiscellaneousDialog extends StatelessWidget {
             userSnapshot.id,
             theme.textTheme.caption,
             attributeValueStyle,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton.icon(
+              onPressed: AuthService.signOut,
+              icon: Icon(FontAwesome5.sign_out_alt),
+              label: Text('Sign out'),
+            ),
           ),
         ],
       ),
