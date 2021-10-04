@@ -8,7 +8,10 @@ import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 void main() => runApp(ElectricalIssueTrackerApp());
 
 class ElectricalIssueTrackerApp extends StatelessWidget {
-  static const title = 'Electrical Issue Tracker';
+  static const appName = 'Electrical Issue Tracker';
+  static const Widget? appIcon = null; // TODO: add application logo here also
+  static const appLegalese = 'TODO';
+  static const appVersion = 'vTODO';
 
   const ElectricalIssueTrackerApp({Key? key}) : super(key: key);
 
@@ -16,7 +19,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: title,
+      title: appName,
       theme: _theme,
       home: FutureBuilder<FirebaseApp>(
         future: Firebase.initializeApp(),
