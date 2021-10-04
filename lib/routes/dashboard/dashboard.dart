@@ -10,7 +10,9 @@ import 'package:vitcc_electrical_issues/routes/dashboard/active_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/counters.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
+import 'package:vitcc_electrical_issues/routes/miscellaneous.dart';
 import 'package:vitcc_electrical_issues/routes/raise_issue.dart';
+import 'package:vitcc_electrical_issues/shared/dialog_result.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -35,6 +37,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
   bool _raiseNewIssueFormIsShown = false;
 
+  void showMiscellaneousDialog(BuildContext context) async {
+    await showDialog<DialogResult>(
+      context: context,
+      builder: (_) => MiscellaneousDialog(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -57,13 +66,13 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Text(
             _raiseNewIssueFormIsShown
                 ? 'Raise an issue'
-                : ElectricalIssueTrackerApp.title,
+                : ElectricalIssueTrackerApp.appName,
           ),
         ),
         actions: [
           GestureDetector(
             behavior: HitTestBehavior.translucent,
-            // TODO: onTap show accounts ...
+            onTap: () => showMiscellaneousDialog(context),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: PhysicalModel(
