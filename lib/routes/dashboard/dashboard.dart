@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -275,41 +276,46 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
         ),
         Row(
           children: [
-            SizedBox(width: 8),
-            ActionChip(
-              backgroundColor: isImportant
-                  ? theme.primaryColor
-                  : theme.colorScheme.secondary,
-              label: Text(
-                '${isImportant ? '' : 'Not'} Important',
-                style: TextStyle(
-                  color: isImportant
-                      ? theme.colorScheme.secondary
-                      : theme.primaryColor,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ActionChip(
+                backgroundColor: isImportant
+                    ? theme.primaryColor
+                    : theme.colorScheme.secondary,
+                label: Text(
+                  '${isImportant ? '' : 'Not'} Important',
+                  style: TextStyle(
+                    color: isImportant
+                        ? theme.colorScheme.secondary
+                        : theme.primaryColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
+                onPressed: () => setState(() => isImportant = !isImportant),
+                elevation: 0,
+                pressElevation: 0,
               ),
-              onPressed: () => setState(() => isImportant = !isImportant),
-              elevation: 0,
-              pressElevation: 0,
             ),
-            SizedBox(width: 8),
-            ActionChip(
-              backgroundColor:
-                  isUrgent ? theme.primaryColor : theme.colorScheme.secondary,
-              label: Text(
-                '${isUrgent ? '' : 'Not'} Urgent',
-                style: TextStyle(
-                  color:
-                      isUrgent ? theme.colorScheme.surface : theme.primaryColor,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ActionChip(
+                backgroundColor:
+                    isUrgent ? theme.primaryColor : theme.colorScheme.secondary,
+                label: Text(
+                  '${isUrgent ? '' : 'Not'} Urgent',
+                  style: TextStyle(
+                    color: isUrgent
+                        ? theme.colorScheme.surface
+                        : theme.primaryColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
+                onPressed: () => setState(() => isUrgent = !isUrgent),
+                elevation: 0,
+                pressElevation: 0,
               ),
-              onPressed: () => setState(() => isUrgent = !isUrgent),
-              elevation: 0,
-              pressElevation: 0,
             ),
           ],
         ),
@@ -318,7 +324,7 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
           child: Align(
             alignment: Alignment.topLeft,
             child: Text(
-              'Select applicable priorities of this issue',
+              'Select applicable priorities for this issue',
               style: theme.textTheme.caption,
             ),
           ),
@@ -372,6 +378,8 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
                     alignment: WrapAlignment.start,
                     runAlignment: WrapAlignment.start,
                     spacing: 8.0,
+                    // For some reason, `ActionChip` does not show consistent margins across platforms.
+                    runSpacing: kIsWeb ? 8.0 : 0,
                     children: [
                       for (final block in [...misc.locationBlocks, 'Other'])
                         ActionChip(
