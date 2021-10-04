@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final user = Provider.of<UserSnapshot>(context).user;
+
+    NetworkImage? userPhoto;
+
+    final photoUrl = Provider.of<User>(context).photoURL;
+
+    if (photoUrl != null) {
+      userPhoto = NetworkImage(photoUrl);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -55,6 +65,30 @@ class _DashboardPageState extends State<DashboardPage> {
                 : ElectricalIssueTrackerApp.title,
           ),
         ),
+        actions: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            // TODO: onTap show accounts ...
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: PhysicalModel(
+                color: Colors.transparent,
+                elevation: 4,
+                shape: BoxShape.circle,
+                child: CircleAvatar(
+                  backgroundColor: theme.primaryColor,
+                  child: Text(
+                    user.name?[0] ?? '',
+                    style: TextStyle(
+                      color: theme.colorScheme.secondary,
+                    ),
+                  ),
+                  foregroundImage: userPhoto,
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       body: CupertinoScrollbar(
         child: SingleChildScrollView(
