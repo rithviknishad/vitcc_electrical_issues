@@ -1,13 +1,17 @@
+//ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vitcc_electrical_issues/main.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
-  const MiscellaneousDialog({Key? key}) : super(key: key);
+  MiscellaneousDialog({Key? key}) : super(key: key);
 
   final String appName = ElectricalIssueTrackerApp.appName;
   final Widget? appIcon = ElectricalIssueTrackerApp.appIcon;
   final String appLegalese = ElectricalIssueTrackerApp.appLegalese;
-  final String appVersion = ElectricalIssueTrackerApp.appVersion;
+
+  String? appVersion; // Will be obtained by future builder in child
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +41,15 @@ class MiscellaneousDialog extends StatelessWidget {
                         appName,
                         style: theme.textTheme.headline5,
                       ),
-                      Text(
-                        appVersion,
-                        style: theme.textTheme.bodyText2,
+                      FutureBuilder<PackageInfo>(
+                        future: PackageInfo.fromPlatform(),
+                        builder: (context, snapshot) {
+                          appVersion = 'version ${snapshot.data?.version}';
+                          return Text(
+                            appVersion ?? '',
+                            style: theme.textTheme.bodyText2,
+                          );
+                        },
                       ),
                       const SizedBox(height: 18),
                       Text(

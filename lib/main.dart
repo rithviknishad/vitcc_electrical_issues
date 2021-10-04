@@ -10,8 +10,7 @@ void main() => runApp(ElectricalIssueTrackerApp());
 class ElectricalIssueTrackerApp extends StatelessWidget {
   static const appName = 'Electrical Issue Tracker';
   static const Widget? appIcon = null; // TODO: add application logo here also
-  static const appLegalese = 'TODO';
-  static const appVersion = 'vTODO';
+  static const appLegalese = 'GNU General Public License v3.0';
 
   const ElectricalIssueTrackerApp({Key? key}) : super(key: key);
 
