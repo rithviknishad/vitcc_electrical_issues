@@ -378,8 +378,6 @@ class __RaiseNewIssueBottomSheetState extends State<_RaiseNewIssueBottomSheet> {
                     alignment: WrapAlignment.start,
                     runAlignment: WrapAlignment.start,
                     spacing: 8.0,
-                    // For some reason, `ActionChip` does not show consistent margins across platforms.
-                    runSpacing: kIsWeb ? 8.0 : 0,
                     children: [
                       for (final block in [...misc.locationBlocks, 'Other'])
                         ActionChip(
