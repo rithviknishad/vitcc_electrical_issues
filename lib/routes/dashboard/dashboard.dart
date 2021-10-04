@@ -73,7 +73,7 @@ class _DashboardPageState extends State<DashboardPage> {
               padding: const EdgeInsets.all(10),
               child: PhysicalModel(
                 color: Colors.transparent,
-                elevation: 4,
+                elevation: 3,
                 shape: BoxShape.circle,
                 child: CircleAvatar(
                   backgroundColor: theme.primaryColor,

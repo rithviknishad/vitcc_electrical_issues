@@ -21,6 +21,7 @@ class PlatformUser with _$PlatformUser {
     required Iterable<DocumentReference> activeIssueRefs,
     required Iterable<DocumentReference> resolvedIssueRefs,
     required Timestamp onboardTimestamp,
+    required String? photoURL,
   }) = _PlatformUser;
 
   static Future<UserSnapshot?> getUserFromId(String id) async {
@@ -42,11 +43,12 @@ class PlatformUser with _$PlatformUser {
           resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
               .cast<DocumentReference>(),
           onboardTimestamp: data[_OnboardTimestampKey],
+          photoURL: data[_PhotoUrlKey],
         );
       },
       // PlatformUser -> Map<String, dynamic>
       toFirestore: (user, setOptions) {
-        throw Exception('Write not permitted');
+        throw Exception('Action not permitted in this context');
       },
     );
 
@@ -70,16 +72,16 @@ class PlatformUser with _$PlatformUser {
             final data = snapshot.data()!;
 
             return PlatformUser._create(
-              name: data[_NameKey],
-              email: data[_EmailKey],
-              phoneNumber: data[_PhoneNumberKey],
-              scope: UserScope(data[_ScopeKey] as int),
-              activeIssueRefs: (data[IssueKeys.activeIssues] as List)
-                  .cast<DocumentReference>(),
-              resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
-                  .cast<DocumentReference>(),
-              onboardTimestamp: data[_OnboardTimestampKey],
-            );
+                name: data[_NameKey],
+                email: data[_EmailKey],
+                phoneNumber: data[_PhoneNumberKey],
+                scope: UserScope(data[_ScopeKey] as int),
+                activeIssueRefs: (data[IssueKeys.activeIssues] as List)
+                    .cast<DocumentReference>(),
+                resolvedIssueRefs: (data[IssueKeys.resolvedIssues] as List)
+                    .cast<DocumentReference>(),
+                onboardTimestamp: data[_OnboardTimestampKey],
+                photoURL: data[_PhotoUrlKey]);
           },
           // PlatformUser -> Map<String, dynamic>
           toFirestore: (user, setOptions) => {
@@ -90,6 +92,7 @@ class PlatformUser with _$PlatformUser {
             IssueKeys.activeIssues: user.activeIssueRefs,
             IssueKeys.resolvedIssues: user.resolvedIssueRefs,
             _OnboardTimestampKey: user.onboardTimestamp,
+            _PhotoUrlKey: user.photoURL,
           },
         );
 
@@ -105,10 +108,18 @@ class PlatformUser with _$PlatformUser {
         activeIssueRefs: List.empty(),
         resolvedIssueRefs: List.empty(),
         onboardTimestamp: Timestamp.fromDate(DateTime.now()),
+        photoURL: firebaseUser.photoURL,
       ));
+    } else {
+      // Update photo url if change.
+      if (snapshot.data()!.photoURL != firebaseUser.photoURL) {
+        await doc.update({
+          _PhotoUrlKey: firebaseUser.photoURL,
+        });
+      }
     }
 
-// Returns the snapshot if document associated w/ user exists
+    // Returns the snapshot if document associated w/ user exists
     yield* doc.snapshots();
   }
 
@@ -117,6 +128,7 @@ class PlatformUser with _$PlatformUser {
   static const _EmailKey = 'email';
   static const _PhoneNumberKey = 'phone-number';
   static const _OnboardTimestampKey = 'onboard-timestamp';
+  static const _PhotoUrlKey = 'photo-url';
   // NOTE: When adding keys, make sure these are added in the `_toFirestore()`
   // method.
 
