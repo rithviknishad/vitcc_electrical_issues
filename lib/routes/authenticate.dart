@@ -43,6 +43,7 @@ class Authenticated extends StatelessWidget {
                 providers: [
                   Provider.value(value: userSnapshot),
                   Provider.value(value: miscSnapshot),
+                  Provider.value(value: currentUser),
                 ],
                 child: child,
               );
