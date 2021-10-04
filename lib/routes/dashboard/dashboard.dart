@@ -37,17 +37,11 @@ class _DashboardPageState extends State<DashboardPage> {
 
   bool _raiseNewIssueFormIsShown = false;
 
-  void showMiscellaneousDialog(BuildContext context) async {
-    await showDialog<DialogResult>(
-      context: context,
-      builder: (_) => MiscellaneousDialog(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = Provider.of<UserSnapshot>(context).user;
+    final userSnapshot = Provider.of<UserSnapshot>(context);
+    final user = userSnapshot.user;
 
     NetworkImage? userPhoto;
 
@@ -72,7 +66,12 @@ class _DashboardPageState extends State<DashboardPage> {
         actions: [
           GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onTap: () => showMiscellaneousDialog(context),
+            onTap: () async {
+              await showDialog<DialogResult>(
+                context: context,
+                builder: (_) => MiscellaneousDialog(userSnapshot: userSnapshot),
+              );
+            },
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: PhysicalModel(

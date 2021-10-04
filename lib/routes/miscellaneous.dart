@@ -3,9 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vitcc_electrical_issues/main.dart';
+import 'package:vitcc_electrical_issues/models/user.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
-  MiscellaneousDialog({Key? key}) : super(key: key);
+  MiscellaneousDialog({
+    required this.userSnapshot,
+    Key? key,
+  }) : super(key: key);
+
+  final UserSnapshot userSnapshot;
 
   final String appName = ElectricalIssueTrackerApp.appName;
   final Widget? appIcon = ElectricalIssueTrackerApp.appIcon;
@@ -17,6 +23,12 @@ class MiscellaneousDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final materialLocalizations = MaterialLocalizations.of(context);
+
+    final user = userSnapshot.user;
+
+    final attributeValueStyle = theme.textTheme.caption?.copyWith(
+      fontWeight: FontWeight.bold,
+    );
 
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -62,7 +74,25 @@ class MiscellaneousDialog extends StatelessWidget {
               ),
             ],
           ),
-          // TODO: other stuffs,
+          SizedBox(height: 20),
+          buildUserAttribute(
+            'Signed in as',
+            user.name ?? user.email ?? userSnapshot.id,
+            theme.textTheme.caption,
+            attributeValueStyle,
+          ),
+          buildUserAttribute(
+            'Email',
+            '${user.email}',
+            theme.textTheme.caption,
+            attributeValueStyle,
+          ),
+          buildUserAttribute(
+            'UID',
+            userSnapshot.id,
+            theme.textTheme.caption,
+            attributeValueStyle,
+          ),
         ],
       ),
       actions: [
@@ -84,6 +114,24 @@ class MiscellaneousDialog extends StatelessWidget {
         ),
       ],
       scrollable: true,
+    );
+  }
+
+  Widget buildUserAttribute(
+    String key,
+    String value,
+    TextStyle? keyTheme,
+    TextStyle? valueTheme,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('$key ', style: keyTheme),
+          Text(value, style: valueTheme),
+        ],
+      ),
     );
   }
 }
