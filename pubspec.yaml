@@ -28,6 +28,7 @@ dependencies:
     git: https://github.com/rithviknishad/animator.git
   jiffy: ^4.1.0
   package_info_plus: ^1.2.1
+  url_launcher: ^6.0.12
 
 dev_dependencies:
   flutter_test:
