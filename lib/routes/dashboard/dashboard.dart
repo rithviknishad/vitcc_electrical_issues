@@ -105,7 +105,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ActiveAndResolvedCountWidget(),
 
               // View all active issues if user has permission
-              if (user.scope.canViewActiveIssue) ActiveIssuesSection(),
+              if (user.scope.canViewActiveIssues) ActiveIssuesSection(),
 
               // Raise an issue section
               RaiseAnIssueSection(),
