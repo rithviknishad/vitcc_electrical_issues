@@ -84,6 +84,10 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
           ),
         ),
         iconTheme: const IconThemeData(color: _primary),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: _primary,
+          foregroundColor: _accent,
+        ),
         snackBarTheme: const SnackBarThemeData(
           backgroundColor: _primary,
           actionTextColor: Colors.amber,
