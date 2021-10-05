@@ -2,6 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'maintainer.freezed.dart';
 
+// TODO: make this firestore compatible
+
 @freezed
 class Maintainer with _$Maintainer {
   const Maintainer._();
