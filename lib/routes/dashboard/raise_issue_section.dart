@@ -30,10 +30,13 @@ class RaiseAnIssueSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FloatingActionButton.extended(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 onPressed: () =>
                     DashboardPage.of(context).showRaiseNewIssueForm(context),
                 tooltip: 'Click to raise a new issue.',
-                label: Text('Raise a new issue'),
+                label: Text('Raise new issue'),
                 icon: Icon(FontAwesome5.feather),
               ),
             ],
