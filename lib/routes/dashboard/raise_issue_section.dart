@@ -35,7 +35,6 @@ class RaiseAnIssueSection extends StatelessWidget {
                 ),
                 onPressed: () =>
                     DashboardPage.of(context).showRaiseNewIssueForm(context),
-                tooltip: 'Click to raise a new issue.',
                 label: Text('Raise new issue'),
                 icon: Icon(FontAwesome5.feather),
               ),
