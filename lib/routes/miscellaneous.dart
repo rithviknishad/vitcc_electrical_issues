@@ -119,18 +119,16 @@ class MiscellaneousDialog extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    height: 26,
-                    width: 26,
-                    child: CircleAvatar(
-                      foregroundImage:
-                          NetworkImage('${maintainer.photoURL}&s=70'),
-                      child: Text(maintainer.username[0]),
-                    ),
+                SizedBox(
+                  height: 26,
+                  width: 26,
+                  child: CircleAvatar(
+                    foregroundImage:
+                        NetworkImage('${maintainer.photoURL}&s=70'),
+                    child: Text(maintainer.username[0]),
                   ),
                 ),
+                SizedBox(width: 8),
                 Link(
                   uri: Uri.tryParse(maintainer.uri),
                   builder: (context, followLink) {
