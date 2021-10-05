@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vitcc_electrical_issues/main.dart';
+import 'package:vitcc_electrical_issues/models/maintainer.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
 
@@ -103,6 +104,37 @@ class MiscellaneousDialog extends StatelessWidget {
               label: Text('Sign out'),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Project Maintained by',
+              style: theme.textTheme.bodyText2?.copyWith(
+                color: theme.primaryColor,
+              ),
+            ),
+          ),
+          for (final maintainer in Maintainer.all)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 26,
+                    width: 26,
+                    child: CircleAvatar(
+                      foregroundImage:
+                          NetworkImage('${maintainer.photoURL}&s=70'),
+                      child: Text(maintainer.username[0]),
+                    ),
+                  ),
+                ),
+                Text(
+                  'github.com/${maintainer.username}',
+                  style: theme.textTheme.caption?.copyWith(letterSpacing: 0.5),
+                ),
+              ],
+            )
         ],
       ),
       actions: [
