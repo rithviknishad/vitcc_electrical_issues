@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vitcc_electrical_issues/main.dart';
 import 'package:vitcc_electrical_issues/models/maintainer.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
@@ -129,9 +131,18 @@ class MiscellaneousDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  'github.com/${maintainer.username}',
-                  style: theme.textTheme.caption?.copyWith(letterSpacing: 0.5),
+                Link(
+                  uri: Uri.tryParse(maintainer.uri),
+                  builder: (context, followLink) {
+                    return TextButton(
+                      onPressed: followLink,
+                      child: Text(
+                        'github.com/${maintainer.username}',
+                        style: theme.textTheme.caption
+                            ?.copyWith(letterSpacing: 0.5),
+                      ),
+                    );
+                  },
                 ),
               ],
             )
