@@ -6,10 +6,10 @@ class UserScope {
   static const createIssue = 1 << 0;
 
   /// Allows a user to view active issues.
-  static const viewActiveIssue = 1 << 1;
+  static const viewActiveIssues = 1 << 1;
 
   /// Allows a user to view resolved issues.
-  static const viewResolvedIssue = 1 << 2;
+  static const viewResolvedIssues = 1 << 2;
 
   /// Allows a user to perform resolve operation on an active issue.
   static const resolveIssue = 1 << 3;
@@ -25,12 +25,12 @@ class UserScope {
   bool get canCreateIssue => _hasPermissionTo(createIssue);
 
   /// Whether this user scope allows viewing active issues.
-  bool get canViewActiveIssue =>
-      _hasPermissionTo(viewActiveIssue) || _hasPermissionTo(resolveIssue);
+  bool get canViewActiveIssues =>
+      _hasPermissionTo(viewActiveIssues) || _hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows viewing resolved issues.
-  bool get canViewResolvedIssue =>
-      _hasPermissionTo(viewResolvedIssue) || _hasPermissionTo(resolveIssue);
+  bool get canViewResolvedIssues =>
+      _hasPermissionTo(viewResolvedIssues) || _hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows resolving an active issue.
   bool get canResolveIssue => _hasPermissionTo(resolveIssue);
