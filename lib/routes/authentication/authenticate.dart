@@ -6,7 +6,7 @@ import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
-import 'package:vitcc_electrical_issues/shared/wave_widget.dart';
+import 'package:vitcc_electrical_issues/routes/authentication/wave_widget.dart';
 
 class Authenticated extends StatelessWidget {
   final Widget child;
