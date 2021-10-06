@@ -3,8 +3,8 @@ import 'package:flutter_animator/flutter_animator.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 
-class ActiveAndResolvedCountWidget extends StatelessWidget {
-  const ActiveAndResolvedCountWidget({Key? key}) : super(key: key);
+class ActiveAndResolvedIssueCounters extends StatelessWidget {
+  const ActiveAndResolvedIssueCounters({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,14 @@ class ActiveAndResolvedCountWidget extends StatelessWidget {
     );
   }
 
-  Widget buildInfoWidget({required String description, required int value}) {
+  Widget buildInfoWidget({
+    required String description,
+    required int value,
+  }) {
     return Builder(
       builder: (context) {
         final theme = Theme.of(context);
+
         return Column(
           children: [
             FadeInDown(
@@ -63,7 +67,7 @@ class ActiveAndResolvedCountWidget extends StatelessWidget {
               child: Text(
                 description,
                 style: TextStyle(
-                  color: theme.primaryColor.withOpacity(0.75),
+                  color: theme.disabledColor,
                 ),
               ),
             )
