@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:vitcc_electrical_issues/routes/authenticate.dart';
+import 'package:vitcc_electrical_issues/routes/authentication/authenticate.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/dashboard.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 
@@ -44,81 +44,113 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
     );
   }
 
-  static const _primary = Color(0xFF924642);
-  static const _accent = Color(0xFFFCEDEA);
-  static const _background = Color(0xFFFEF9F7);
+  static const _primary = Color.fromARGB(255, 0, 38, 70);
+  static const _accent = Color.fromARGB(255, 245, 248, 253);
+  static const _secondary = Color(0xFF924642);
+  static const _vistaWhite = Color(0xFFFEF9F7);
+
   static const _fontFamily = 'Ubuntu';
 
-  static get _theme => ThemeData(
-        fontFamily: _fontFamily,
-        brightness: Brightness.light,
-        primaryColor: _primary,
-        colorScheme: ColorScheme.light(
-          primary: _primary,
-          onPrimary: _accent,
-          secondary: _accent,
-          surface: Colors.white,
-          onSurface: _primary,
-          background: _accent,
-          onBackground: _primary,
+  static get _theme {
+    return ThemeData(
+      fontFamily: _fontFamily,
+      brightness: Brightness.light,
+      primaryColor: _primary,
+      colorScheme: ColorScheme.light(
+        primary: _primary,
+        onPrimary: _accent,
+        secondary: _secondary,
+        onSecondary: _vistaWhite,
+        surface: _accent,
+        onSurface: _primary,
+        background: _accent,
+        onBackground: _primary,
+      ),
+      disabledColor: Color(0x99002646),
+      scaffoldBackgroundColor: _accent,
+      cardColor: Colors.white,
+      appBarTheme: AppBarTheme(
+        color: _accent,
+        iconTheme: IconThemeData(
+          color: _primary,
         ),
-        scaffoldBackgroundColor: _background,
-        cardColor: _accent,
-        appBarTheme: AppBarTheme(
-          color: Color(0xFFFEF9F7),
-          iconTheme: IconThemeData(
-            color: _primary,
-          ),
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: _background,
-            statusBarIconBrightness: Brightness.dark,
-          ),
-          elevation: 0,
-          actionsIconTheme: const IconThemeData(
-            color: _primary,
-          ),
-          titleTextStyle: TextStyle(
-            fontFamily: _fontFamily,
-            fontSize: 18,
-            color: _primary,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: _accent,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+        elevation: 0,
+        actionsIconTheme: const IconThemeData(
+          color: _primary,
+        ),
+        titleTextStyle: TextStyle(
+          fontFamily: _fontFamily,
+          fontSize: 18,
+          color: _primary,
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
           ),
         ),
-        iconTheme: const IconThemeData(color: _primary),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 8,
+      ),
+      iconTheme: const IconThemeData(
+        color: _primary,
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: _primary,
+        foregroundColor: _accent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
           backgroundColor: _primary,
-          foregroundColor: _accent,
+          primary: _accent,
+          onSurface: _accent,
         ),
-        snackBarTheme: const SnackBarThemeData(
-          backgroundColor: _primary,
-          actionTextColor: Colors.amber,
-          disabledActionTextColor: Colors.grey,
-          contentTextStyle: TextStyle(
-            fontFamily: _fontFamily,
-            color: Colors.white,
-            letterSpacing: 0.5,
-          ),
+      ),
+      dialogTheme: DialogTheme(
+        backgroundColor: _accent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: _accent,
-          enabledBorder: UnderlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: _primary),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.red),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.red),
-          ),
-          labelStyle: const TextStyle(color: _primary, fontSize: 14),
-          focusColor: _primary,
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: _primary,
+        contentTextStyle: TextStyle(
+          fontFamily: _fontFamily,
+          color: _accent,
+          letterSpacing: 0.5,
         ),
-      );
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: _accent,
+        enabledBorder: UnderlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: _primary),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        labelStyle: const TextStyle(color: _primary, fontSize: 14),
+        focusColor: _primary,
+      ),
+    );
+  }
 }
