@@ -19,10 +19,6 @@ class FieldValueEditDialog extends StatelessWidget {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
       title: Text(
         title,
         style: TextStyle(color: theme.primaryColor),
