@@ -87,6 +87,7 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
                   canSubmit ? 'Yes, Submit!' : 'Submit',
                 ),
               ),
+              SizedBox(height: 60),
             ],
           ),
         ),
