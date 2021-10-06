@@ -22,16 +22,6 @@ class FieldValueWidget extends StatelessWidget {
 
     final isSpecified = value?.isNotEmpty ?? false;
 
-    final valueWidget = isSpecified
-        ? Text(
-            '$value',
-            style: TextStyle(color: theme.primaryColor),
-          )
-        : Text(
-            'Not specified',
-            style: TextStyle(color: theme.disabledColor),
-          );
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -65,7 +55,14 @@ class FieldValueWidget extends StatelessWidget {
                   preferences: AnimationPreferences(
                     duration: const Duration(milliseconds: 200),
                   ),
-                  child: valueWidget,
+                  child: Text(
+                    isSpecified ? '$value' : 'Not specified',
+                    style: TextStyle(
+                      color: isSpecified
+                          ? theme.primaryColor
+                          : theme.disabledColor,
+                    ),
+                  ),
                 ),
 
                 // Field Name
@@ -79,7 +76,9 @@ class FieldValueWidget extends StatelessWidget {
                     child: Text(
                       '($field)',
                       style: TextStyle(
-                          color: theme.disabledColor, letterSpacing: 0.5),
+                        color: theme.disabledColor,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
               ],
