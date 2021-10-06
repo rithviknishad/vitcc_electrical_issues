@@ -29,10 +29,6 @@ class MiscellaneousDialog extends StatelessWidget {
     final materialLocalizations = MaterialLocalizations.of(context);
 
     return AlertDialog(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
       content: ListBody(
         children: [
           Row(
