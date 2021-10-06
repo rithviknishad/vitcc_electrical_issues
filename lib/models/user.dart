@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/user_scope.dart';
-import 'package:vitcc_electrical_issues/models/firestore_extensions.dart';
+import 'package:vitcc_electrical_issues/extensions/firestore_extensions.dart';
 
 part 'user.freezed.dart';
 

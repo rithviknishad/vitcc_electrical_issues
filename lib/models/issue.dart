@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
-import 'package:vitcc_electrical_issues/models/firestore_extensions.dart';
+import 'package:vitcc_electrical_issues/extensions/firestore_extensions.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 
 import 'user.dart';
