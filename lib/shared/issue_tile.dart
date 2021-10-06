@@ -239,6 +239,8 @@ class _IssueTileState extends State<IssueTile> {
           style: TextStyle(
             fontSize: 14,
             color: theme.primaryColor,
+            fontWeight:
+                issue.isActiveIssue ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),
@@ -259,36 +261,43 @@ class _IssueTileState extends State<IssueTile> {
             ),
           ),
         ),
-        if (issue.isImportant) buildFlag(theme, 'IMPORTANT'),
-        if (issue.isUrgent) buildFlag(theme, 'URGENT'),
+        if (issue.isImportant)
+          buildFlag(
+            theme,
+            'IMPORTANT',
+            issue.isActiveIssue,
+          ),
+        if (issue.isUrgent)
+          buildFlag(
+            theme,
+            'URGENT',
+            issue.isActiveIssue,
+          ),
       ],
     );
   }
 
-  Widget buildFlag(ThemeData theme, String flagDescription) {
-    return HeartBeat(
+  Widget buildFlag(ThemeData theme, String flagDescription, bool animate) {
+    return Tada(
       key: Key('flag:$flagDescription'),
       preferences: AnimationPreferences(
         duration: const Duration(milliseconds: 700),
-        offset: const Duration(seconds: 1),
+        offset: const Duration(seconds: 3),
+        autoPlay: animate ? AnimationPlayStates.Loop : AnimationPlayStates.None,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.secondary,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              flagDescription,
-              style: TextStyle(
-                fontSize: 12,
-                color: theme.primaryColor,
-                letterSpacing: 0.5,
-              ),
-            ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.onPrimary,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: Text(
+          flagDescription,
+          style: TextStyle(
+            fontSize: 12,
+            color: theme.colorScheme.primary,
+            letterSpacing: 0.5,
           ),
         ),
       ),
