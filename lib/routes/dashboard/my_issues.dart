@@ -20,7 +20,6 @@ class MyIssuesSection extends StatelessWidget {
   }
 
   Widget buildMyIssuesView(BuildContext context, PlatformUser user) {
-    final theme = Theme.of(context);
     final activeIssues = user.activeIssues;
     final resolvedIssues = user.resolvedIssues;
 
@@ -29,7 +28,9 @@ class MyIssuesSection extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           'Issues raised by you',
-          style: TextStyle(color: theme.disabledColor),
+          style: TextStyle(
+            color: Theme.of(context).disabledColor,
+          ),
         ),
         SizedBox(height: 8),
         // List all active issues
