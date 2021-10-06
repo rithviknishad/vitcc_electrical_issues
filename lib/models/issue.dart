@@ -53,7 +53,8 @@ class Issue with _$Issue {
 
           return Issue._create(
             raisedBy: data[IssueKeys.raisedBy],
-            raisedOn: data[IssueKeys.raisedOn],
+            // TODO: find an alternative solution to this weired fix
+            raisedOn: data[IssueKeys.raisedOn] ?? Timestamp.now(),
             title: data[IssueKeys.title],
             description: data[IssueKeys.description],
             location: IssueLocation.fromJson(data[IssueKeys.location]),
