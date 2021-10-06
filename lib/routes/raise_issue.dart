@@ -193,14 +193,14 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
               padding: const EdgeInsets.all(8.0),
               child: ActionChip(
                 backgroundColor: isImportant
-                    ? theme.primaryColor
-                    : theme.colorScheme.secondary,
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onPrimary,
                 label: Text(
                   '${isImportant ? '' : 'Not'} Important',
                   style: TextStyle(
                     color: isImportant
-                        ? theme.colorScheme.secondary
-                        : theme.primaryColor,
+                        ? theme.colorScheme.onPrimary
+                        : theme.colorScheme.primary,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -213,14 +213,15 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ActionChip(
-                backgroundColor:
-                    isUrgent ? theme.primaryColor : theme.colorScheme.secondary,
+                backgroundColor: isUrgent
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onPrimary,
                 label: Text(
                   '${isUrgent ? '' : 'Not'} Urgent',
                   style: TextStyle(
                     color: isUrgent
-                        ? theme.colorScheme.surface
-                        : theme.primaryColor,
+                        ? theme.colorScheme.onPrimary
+                        : theme.colorScheme.primary,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -295,14 +296,14 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
                       for (final block in [...misc.locationBlocks, 'Other'])
                         ActionChip(
                           backgroundColor: block == blockController.text
-                              ? theme.primaryColor
-                              : theme.colorScheme.secondary,
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onPrimary,
                           label: Text(
                             block,
                             style: TextStyle(
                               color: block == blockController.text
-                                  ? theme.colorScheme.surface
-                                  : theme.primaryColor,
+                                  ? theme.colorScheme.onPrimary
+                                  : theme.colorScheme.primary,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
