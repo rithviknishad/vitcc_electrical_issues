@@ -90,7 +90,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
       body: CupertinoScrollbar(
@@ -102,13 +102,14 @@ class _DashboardPageState extends State<DashboardPage> {
             runSpacing: 10,
             children: [
               // The analytics widget
-              ActiveAndResolvedCountWidget(),
+              ActiveAndResolvedIssueCounters(),
 
               // View all active issues if user has permission
               if (user.scope.canViewActiveIssues) ActiveIssuesSection(),
 
               // Raise an issue section
-              RaiseAnIssueSection(),
+              if (user.scope.canCreateIssue) RaiseAnIssueSection(),
+              // TODO: else, you cannot raise an issue widget?
 
               // All issues raised by the user.
               MyIssuesSection(),
@@ -123,10 +124,7 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() => _raiseNewIssueFormIsShown = true);
 
     await Scaffold.of(context)
-        .showBottomSheet(
-          (_) => RaiseNewIssueBottomSheet(),
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        )
+        .showBottomSheet((_) => RaiseNewIssueBottomSheet())
         .closed;
 
     setState(() => _raiseNewIssueFormIsShown = false);
