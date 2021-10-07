@@ -5,11 +5,11 @@ class FieldValueEditDialog extends StatelessWidget {
   final String title;
   final String okButtonText;
   final String cancelButtonText;
-  final Widget textFieldWidget;
+  final Widget content;
 
   FieldValueEditDialog({
     required this.title,
-    required this.textFieldWidget,
+    required this.content,
     this.okButtonText = 'Ok',
     this.cancelButtonText = 'Cancel',
   });
@@ -24,7 +24,7 @@ class FieldValueEditDialog extends StatelessWidget {
         style: TextStyle(color: theme.primaryColor),
       ),
       titlePadding: const EdgeInsets.all(16),
-      content: textFieldWidget,
+      content: content,
       actions: [
         TextButton(
           child: Text(cancelButtonText),

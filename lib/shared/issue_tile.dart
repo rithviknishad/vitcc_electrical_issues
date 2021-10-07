@@ -454,7 +454,7 @@ class _IssueTileState extends State<IssueTile> {
       builder: (context) {
         return FieldValueEditDialog(
           title: 'Resolve this issue?',
-          textFieldWidget: TextFieldWidget(
+          content: TextFieldWidget(
             controller: _remarksController,
             hintText: 'Remarks (optional)',
             prefixIconData: FontAwesome5.align_left,
