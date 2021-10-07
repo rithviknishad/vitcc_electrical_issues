@@ -53,6 +53,7 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
 
   static get _theme {
     return ThemeData(
+      visualDensity: VisualDensity.standard,
       fontFamily: _fontFamily,
       brightness: Brightness.light,
       primaryColor: _primary,
