@@ -90,13 +90,13 @@ class MiscellaneousDialog extends StatelessWidget {
           SizedBox(height: 8),
           ...buildProjectMaintainers(theme),
 
-          // Facing issues using the platform
-          SizedBox(height: 16),
-          ...buildIssueTrackerWidgets(theme),
-
           // Contribution pointers
           SizedBox(height: 16),
           ...buildProjectRepositoryAttributes(theme),
+
+          // Facing issues using the platform
+          SizedBox(height: 16),
+          ...buildIssueTrackerWidgets(theme),
         ],
       ),
       actions: [
