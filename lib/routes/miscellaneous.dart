@@ -8,7 +8,6 @@ import 'package:vitcc_electrical_issues/main.dart';
 import 'package:vitcc_electrical_issues/models/maintainer.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
-import 'package:vitcc_electrical_issues/shared/dialog_result.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
   MiscellaneousDialog({
@@ -18,10 +17,6 @@ class MiscellaneousDialog extends StatelessWidget {
 
   final UserSnapshot userSnapshot;
 
-  final String appName = ElectricalIssueTrackerApp.appName;
-  final Widget? appIcon = ElectricalIssueTrackerApp.appIcon;
-  final String appLegalese = ElectricalIssueTrackerApp.appLegalese;
-
   String? appVersion; // Will be obtained by future builder in child
 
   @override
@@ -29,24 +24,24 @@ class MiscellaneousDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final materialLocalizations = MaterialLocalizations.of(context);
 
+    final appIcon = Image(
+      image: ElectricalIssueTrackerApp.appIcon,
+    );
+
     return AlertDialog(
       content: ListBody(
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (appIcon != null)
-                IconTheme(
-                  data: theme.iconTheme,
-                  child: appIcon!,
-                ),
+              appIcon,
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: ListBody(
                     children: [
                       Text(
-                        appName,
+                        ElectricalIssueTrackerApp.appName,
                         style: theme.textTheme.headline5,
                       ),
                       FutureBuilder<PackageInfo>(
@@ -61,7 +56,7 @@ class MiscellaneousDialog extends StatelessWidget {
                       ),
                       const SizedBox(height: 18),
                       Text(
-                        appLegalese,
+                        ElectricalIssueTrackerApp.appLegalese,
                         style: theme.textTheme.caption,
                       ),
                     ],
@@ -107,10 +102,10 @@ class MiscellaneousDialog extends StatelessWidget {
           onPressed: () {
             showLicensePage(
               context: context,
-              applicationName: appName,
+              applicationName: ElectricalIssueTrackerApp.appName,
               applicationVersion: appVersion,
               applicationIcon: appIcon,
-              applicationLegalese: appLegalese,
+              applicationLegalese: ElectricalIssueTrackerApp.appLegalese,
             );
           },
         ),

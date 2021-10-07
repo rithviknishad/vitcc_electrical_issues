@@ -9,7 +9,7 @@ void main() => runApp(ElectricalIssueTrackerApp());
 
 class ElectricalIssueTrackerApp extends StatelessWidget {
   static const appName = 'Electrical Issue Tracker';
-  static const Widget? appIcon = null; // TODO: add application logo here also
+  static const appIcon = AssetImage('assets/icons/192.png');
   static const appLegalese = 'GNU General Public License v3.0';
   // Move to Misc
   static const appIssueTracker =
