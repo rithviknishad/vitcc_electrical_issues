@@ -7,6 +7,7 @@ import 'package:url_launcher/link.dart';
 import 'package:vitcc_electrical_issues/main.dart';
 import 'package:vitcc_electrical_issues/models/maintainer.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
+import 'package:vitcc_electrical_issues/models/user_scope.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
@@ -133,13 +134,18 @@ class MiscellaneousDialog extends StatelessWidget {
       'Create new issue': user.scope.canCreateIssue,
       'View issues raised by you': true,
       'Purge active issues raised by you': true,
-      'Purge resolved issues raised by you': false,
-      'View all active issues raised by anyone': user.scope.canViewActiveIssues,
-      'View all resolved issues raised by anyone':
-          user.scope.canViewResolvedIssues,
-      'Resolve an active issue': user.scope.canResolveIssue,
-      'Purge active issues NOT raised by you': user.scope.canPurgeIssue,
-      'Purge resolved issues NOT raised by you': false,
+
+      // Show remaining permissions only if user non-default permissions.
+      if (!user.scope.hasPermissionToOnly(UserScope.createIssue)) ...{
+        'Purge resolved issues raised by you': false,
+        'View all active issues raised by anyone':
+            user.scope.canViewActiveIssues,
+        'View all resolved issues raised by anyone':
+            user.scope.canViewResolvedIssues,
+        'Resolve an active issue': user.scope.canResolveIssue,
+        'Purge active issues NOT raised by you': user.scope.canPurgeIssue,
+        'Purge resolved issues NOT raised by you': false,
+      }
     };
 
     return [
