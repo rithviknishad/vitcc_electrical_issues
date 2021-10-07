@@ -15,7 +15,7 @@ class AuthService {
     if (kDebugMode) 'Google': GoogleSignIn(),
   };
 
-  static Stream<User?> get user => FirebaseAuth.instance.authStateChanges();
+  static Stream<User?> get user => firebaseAuth.userChanges();
 
   /// Sign in w/ Google Account.
   static Future<void> signInWithGoogle(GoogleSignIn googleSignIn) async {
@@ -57,4 +57,32 @@ class AuthService {
 
   // Avoid attempting to instantiate objects of this class.
   AuthService._();
+
+  static Future<String?> createUserWithEmailAndPassword(
+    String email,
+    String password,
+  ) async {
+    try {
+      await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (exception) {
+      return exception.message;
+    }
+  }
+
+  static Future<String?> signInWithEmailAndPassword(
+    String email,
+    String password,
+  ) async {
+    try {
+      await firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (exception) {
+      return exception.message;
+    }
+  }
 }
