@@ -8,6 +8,7 @@ import 'package:vitcc_electrical_issues/main.dart';
 import 'package:vitcc_electrical_issues/models/maintainer.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
+import 'package:vitcc_electrical_issues/shared/dialog_result.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
   MiscellaneousDialog({
@@ -78,7 +79,10 @@ class MiscellaneousDialog extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton.icon(
-              onPressed: AuthService.signOut,
+              onPressed: () {
+                AuthService.signOut();
+                Navigator.of(context).pop();
+              },
               icon: Icon(FontAwesome5.sign_out_alt),
               label: Text('Sign out'),
             ),
