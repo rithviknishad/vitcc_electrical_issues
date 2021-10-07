@@ -19,24 +19,28 @@ class UserScope {
   static const purgeAnyIssue = 1 << 4;
 
   /// Checks whether this instance has permission to the specified [scope].
-  bool _hasPermissionTo(int scope) => value & scope != 0;
+  bool hasPermissionTo(int scope) => value & scope != 0;
+
+  /// Checks whether this instance has permission only for the specified [scope]
+  /// and has no other permissions.
+  bool hasPermissionToOnly(int scope) => value == scope;
 
   /// Whether this user scope allows creating an issue.
-  bool get canCreateIssue => _hasPermissionTo(createIssue);
+  bool get canCreateIssue => hasPermissionTo(createIssue);
 
   /// Whether this user scope allows viewing active issues.
   bool get canViewActiveIssues =>
-      _hasPermissionTo(viewActiveIssues) || _hasPermissionTo(resolveIssue);
+      hasPermissionTo(viewActiveIssues) || hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows viewing resolved issues.
   bool get canViewResolvedIssues =>
-      _hasPermissionTo(viewResolvedIssues) || _hasPermissionTo(resolveIssue);
+      hasPermissionTo(viewResolvedIssues) || hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows resolving an active issue.
-  bool get canResolveIssue => _hasPermissionTo(resolveIssue);
+  bool get canResolveIssue => hasPermissionTo(resolveIssue);
 
   /// Whether this user scope allows purging an active issue.
-  bool get canPurgeIssue => _hasPermissionTo(purgeAnyIssue);
+  bool get canPurgeIssue => hasPermissionTo(purgeAnyIssue);
 
   /// Creates an instance with the specified scopes.
   const UserScope(this.value);
