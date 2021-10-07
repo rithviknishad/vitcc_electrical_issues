@@ -52,7 +52,7 @@ class TextFieldWidget extends StatelessWidget {
     Widget? _prefixIcon, _suffixIcon;
 
     if (prefixIconData != null) {
-      _prefixIcon = FaIcon(
+      _prefixIcon = Icon(
         prefixIconData,
         size: 18,
         color: theme.primaryColor,
@@ -63,7 +63,7 @@ class TextFieldWidget extends StatelessWidget {
       _suffixIcon = GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onSuffixIconTap,
-        child: FaIcon(
+        child: Icon(
           suffixIconData,
           size: 18,
           color: theme.primaryColor,
