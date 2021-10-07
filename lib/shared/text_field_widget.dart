@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final String hintText;
@@ -51,7 +52,7 @@ class TextFieldWidget extends StatelessWidget {
     Widget? _prefixIcon, _suffixIcon;
 
     if (prefixIconData != null) {
-      _prefixIcon = Icon(
+      _prefixIcon = FaIcon(
         prefixIconData,
         size: 18,
         color: theme.primaryColor,
@@ -62,7 +63,7 @@ class TextFieldWidget extends StatelessWidget {
       _suffixIcon = GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onSuffixIconTap,
-        child: Icon(
+        child: FaIcon(
           suffixIconData,
           size: 18,
           color: theme.primaryColor,

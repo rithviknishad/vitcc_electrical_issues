@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
@@ -103,8 +103,8 @@ class _IssueTileState extends State<IssueTile> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(4),
-                child: Icon(
-                  FontAwesome5.map_marker_alt,
+                child: FaIcon(
+                  FontAwesomeIcons.mapMarkerAlt,
                   size: 12,
                   color: theme.disabledColor,
                 ),
@@ -190,7 +190,7 @@ class _IssueTileState extends State<IssueTile> {
                     // TODO: consider making it to a three stage live event style
                     // Issue raised on (time)
                     FieldValueWidget(
-                      icon: FontAwesome5.clock,
+                      icon: FontAwesomeIcons.clock,
                       value: Jiffy(issue.raisedOn.toDate())
                           .format('EEEE, MMM do, hh:mm a'),
                       field: 'Raised on',
@@ -199,7 +199,7 @@ class _IssueTileState extends State<IssueTile> {
                     // Issue resolve time
                     if (isResolvedIssue && issue.resolvedOn != null)
                       FieldValueWidget(
-                        icon: FontAwesome5.clock,
+                        icon: FontAwesomeIcons.clock,
                         value: Jiffy(issue.resolvedOn!.toDate())
                             .format('EEEE, MMM do, hh:mm a'),
                         field: 'Resolved on',
@@ -320,7 +320,7 @@ class _IssueTileState extends State<IssueTile> {
 
     return [
       FieldValueWidget(
-        icon: FontAwesome5.map_marker_alt,
+        icon: FontAwesomeIcons.mapMarkerAlt,
         value: '${location.block}, $formattedFloor',
       ),
       FieldValueWidget(
@@ -338,7 +338,9 @@ class _IssueTileState extends State<IssueTile> {
 
     return [
       FieldValueWidget(
-        icon: isResolverAndNotAuthor ? FontAwesome5.tools : FontAwesome5.user,
+        icon: isResolverAndNotAuthor
+            ? FontAwesomeIcons.tools
+            : FontAwesomeIcons.user,
         value: user.name,
         field: role,
       ),
@@ -346,7 +348,7 @@ class _IssueTileState extends State<IssueTile> {
         value: user.email,
       ),
       FieldValueWidget(
-        icon: FontAwesome5.mobile,
+        icon: FontAwesomeIcons.mobile,
         value: user.phoneNumber,
         field: 'Contact No.',
       ),
@@ -399,7 +401,7 @@ class _IssueTileState extends State<IssueTile> {
     ThemeData theme,
   ) {
     return OutlinedButton.icon(
-      icon: Icon(FontAwesome5.tools, size: 16),
+      icon: FaIcon(FontAwesomeIcons.tools, size: 16),
       label: Text('Resolve this issue'),
       onPressed: () =>
           onResolveThisIssuePressed(context, issueSnapshot, currentUser),
@@ -462,7 +464,7 @@ class _IssueTileState extends State<IssueTile> {
           content: TextFieldWidget(
             controller: _remarksController,
             hintText: 'Remarks (optional)',
-            prefixIconData: FontAwesome5.align_left,
+            prefixIconData: FontAwesomeIcons.alignLeft,
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           okButtonText: 'Yes, Resolve!',

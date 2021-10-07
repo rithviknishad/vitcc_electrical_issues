@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
@@ -112,8 +112,8 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Tap again just to confirm'),
-            Icon(
-              FontAwesome5.clipboard_check,
+            FaIcon(
+              FontAwesomeIcons.clipboardCheck,
               color: Colors.white,
             ),
           ],

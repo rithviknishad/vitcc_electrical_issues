@@ -1,7 +1,7 @@
 //ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/link.dart';
 import 'package:vitcc_electrical_issues/main.dart';
@@ -80,7 +80,7 @@ class MiscellaneousDialog extends StatelessWidget {
                 AuthService.signOut();
                 Navigator.of(context).pop();
               },
-              icon: Icon(FontAwesome5.sign_out_alt),
+              icon: FaIcon(FontAwesomeIcons.signOutAlt),
               label: Text('Sign out'),
             ),
           ),
@@ -182,8 +182,10 @@ class MiscellaneousDialog extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(width: 8),
-              Icon(
-                permission.value ? FontAwesome5.check : FontAwesome5.times,
+              FaIcon(
+                permission.value
+                    ? FontAwesomeIcons.check
+                    : FontAwesomeIcons.times,
                 color: permission.value ? Colors.green : Colors.red,
                 size: 12,
               ),
@@ -341,8 +343,8 @@ class MiscellaneousDialog extends StatelessWidget {
                 backgroundColor: theme.primaryColor,
               ),
               onPressed: followLink,
-              icon: Icon(
-                FontAwesome5.github,
+              icon: FaIcon(
+                FontAwesomeIcons.github,
                 color: Colors.white,
               ),
               label: Text(

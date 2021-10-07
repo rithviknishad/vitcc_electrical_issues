@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
@@ -60,8 +60,8 @@ class MyIssuesSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            FontAwesome5.smile_wink,
+          FaIcon(
+            FontAwesomeIcons.smileWink,
             color: theme.disabledColor,
           ),
           SizedBox(width: 14),

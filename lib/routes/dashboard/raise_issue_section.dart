@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/dashboard.dart';
 
 class RaiseAnIssueSection extends StatelessWidget {
@@ -33,7 +33,7 @@ class RaiseAnIssueSection extends StatelessWidget {
                 onPressed: () =>
                     DashboardPage.of(context).showRaiseNewIssueForm(context),
                 label: Text('Raise new issue'),
-                icon: Icon(FontAwesome5.feather),
+                icon: FaIcon(FontAwesomeIcons.feather),
               ),
             ],
           ),
