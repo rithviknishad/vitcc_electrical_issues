@@ -41,7 +41,7 @@ class FieldValueWidget extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     offset: const Duration(milliseconds: 100),
                   ),
-                  child: FaIcon(
+                  child: Icon(
                     icon,
                     size: 18,
                     color:
