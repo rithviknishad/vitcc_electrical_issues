@@ -60,7 +60,7 @@ class MyIssuesSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FaIcon(
+          Icon(
             FontAwesomeIcons.smileWink,
             color: theme.disabledColor,
           ),
