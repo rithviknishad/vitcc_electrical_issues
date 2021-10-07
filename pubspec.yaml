@@ -41,7 +41,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/512.png
+    - assets/icons/192.png
 
   fonts:
     - family: Ubuntu
