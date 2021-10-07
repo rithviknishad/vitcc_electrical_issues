@@ -103,7 +103,7 @@ class _IssueTileState extends State<IssueTile> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(4),
-                child: FaIcon(
+                child: Icon(
                   FontAwesomeIcons.mapMarkerAlt,
                   size: 12,
                   color: theme.disabledColor,
@@ -401,7 +401,7 @@ class _IssueTileState extends State<IssueTile> {
     ThemeData theme,
   ) {
     return OutlinedButton.icon(
-      icon: FaIcon(FontAwesomeIcons.tools, size: 16),
+      icon: Icon(FontAwesomeIcons.tools, size: 16),
       label: Text('Resolve this issue'),
       onPressed: () =>
           onResolveThisIssuePressed(context, issueSnapshot, currentUser),
