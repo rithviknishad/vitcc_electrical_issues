@@ -33,7 +33,7 @@ class RaiseAnIssueSection extends StatelessWidget {
                 onPressed: () =>
                     DashboardPage.of(context).showRaiseNewIssueForm(context),
                 label: Text('Raise new issue'),
-                icon: FaIcon(FontAwesomeIcons.feather),
+                icon: Icon(FontAwesomeIcons.feather),
               ),
             ],
           ),
