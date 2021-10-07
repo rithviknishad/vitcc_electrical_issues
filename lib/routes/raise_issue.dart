@@ -196,7 +196,7 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
                     ? theme.colorScheme.primary
                     : theme.colorScheme.onPrimary,
                 label: Text(
-                  '${isImportant ? '' : 'Not'} Important',
+                  'Important',
                   style: TextStyle(
                     color: isImportant
                         ? theme.colorScheme.onPrimary
@@ -217,7 +217,7 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
                     ? theme.colorScheme.primary
                     : theme.colorScheme.onPrimary,
                 label: Text(
-                  '${isUrgent ? '' : 'Not'} Urgent',
+                  'Urgent',
                   style: TextStyle(
                     color: isUrgent
                         ? theme.colorScheme.onPrimary
