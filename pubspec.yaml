@@ -19,7 +19,6 @@ dependencies:
   provider: ^6.0.0
   freezed_annotation: ^0.14.2
   flutter_spinkit: ^5.1.0
-  fluttericon: ^2.0.0
   form_field_validator: ^1.1.0
 
   # Change to original, once PR is merged.
@@ -28,6 +27,7 @@ dependencies:
   jiffy: ^4.1.0
   package_info_plus: ^1.2.1
   url_launcher: ^6.0.12
+  font_awesome_flutter: ^9.1.0
 
 dev_dependencies:
   flutter_test:
