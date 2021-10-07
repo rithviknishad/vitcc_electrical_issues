@@ -81,7 +81,7 @@ class MiscellaneousDialog extends StatelessWidget {
                 AuthService.signOut();
                 Navigator.of(context).pop();
               },
-              icon: FaIcon(FontAwesomeIcons.signOutAlt),
+              icon: Icon(FontAwesomeIcons.signOutAlt),
               label: Text('Sign out'),
             ),
           ),
@@ -183,7 +183,7 @@ class MiscellaneousDialog extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(width: 8),
-              FaIcon(
+              Icon(
                 permission.value
                     ? FontAwesomeIcons.check
                     : FontAwesomeIcons.times,
@@ -357,7 +357,7 @@ class MiscellaneousDialog extends StatelessWidget {
                 backgroundColor: theme.primaryColor,
               ),
               onPressed: followLink,
-              icon: FaIcon(
+              icon: Icon(
                 FontAwesomeIcons.github,
                 color: Colors.white,
               ),
