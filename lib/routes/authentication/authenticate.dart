@@ -194,7 +194,7 @@ class _Button extends StatelessWidget {
                   color: hasBorder
                       ? theme.primaryColor
                       : theme.colorScheme.surface,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   fontSize: 16.0,
                 ),
               ),
