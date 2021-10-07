@@ -59,10 +59,10 @@ class ActiveIssuesSection extends StatelessWidget {
         ),
         SizedBox(height: 8),
         // List all active issues
-        for (final issue in issues)
+        for (final issue in issues.asMap().entries)
           Provider<IssueSnapshot>.value(
-            value: issue,
-            child: IssueTile(),
+            value: issue.value,
+            child: IssueTile(offset: issue.key),
           ),
       ],
     );
