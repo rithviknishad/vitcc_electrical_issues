@@ -112,7 +112,7 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Tap again just to confirm'),
-            FaIcon(
+            Icon(
               FontAwesomeIcons.clipboardCheck,
               color: Colors.white,
             ),
