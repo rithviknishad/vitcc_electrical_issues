@@ -26,6 +26,8 @@ class MiscellaneousDialog extends StatelessWidget {
 
     final appIcon = Image(
       image: ElectricalIssueTrackerApp.appIcon,
+      width: 64,
+      height: 64,
     );
 
     return AlertDialog(
@@ -37,7 +39,7 @@ class MiscellaneousDialog extends StatelessWidget {
               appIcon,
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: ListBody(
                     children: [
                       Text(
@@ -47,9 +49,8 @@ class MiscellaneousDialog extends StatelessWidget {
                       FutureBuilder<PackageInfo>(
                         future: PackageInfo.fromPlatform(),
                         builder: (context, snapshot) {
-                          appVersion = 'version ${snapshot.data?.version}';
                           return Text(
-                            appVersion ?? '',
+                            appVersion = 'version ${snapshot.data?.version}',
                             style: theme.textTheme.bodyText2,
                           );
                         },
@@ -104,7 +105,10 @@ class MiscellaneousDialog extends StatelessWidget {
               context: context,
               applicationName: ElectricalIssueTrackerApp.appName,
               applicationVersion: appVersion,
-              applicationIcon: appIcon,
+              applicationIcon: Padding(
+                padding: const EdgeInsets.all(8),
+                child: appIcon,
+              ),
               applicationLegalese: ElectricalIssueTrackerApp.appLegalese,
             );
           },
