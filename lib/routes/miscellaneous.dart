@@ -9,6 +9,7 @@ import 'package:vitcc_electrical_issues/models/maintainer.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/models/user_scope.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
+import 'package:vitcc_electrical_issues/shared/marquee_widget.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
   MiscellaneousDialog({
@@ -216,7 +217,14 @@ class MiscellaneousDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('$key ', style: keyTheme),
-          Text(value, style: valueTheme),
+          Expanded(
+            child: MarqueeWidget(
+              child: Text(
+                value,
+                style: valueTheme,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -243,7 +251,10 @@ class MiscellaneousDialog extends StatelessWidget {
                   onPressed: followLink,
                   child: Text(
                     'View/report on GitHub',
-                    style: theme.textTheme.caption,
+                    style: theme.textTheme.caption?.copyWith(
+                      color: theme.primaryColor,
+                      decoration: TextDecoration.underline,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -255,9 +266,7 @@ class MiscellaneousDialog extends StatelessWidget {
             child: Center(
               child: Text(
                 'or',
-                style: theme.textTheme.caption?.copyWith(
-                  color: theme.primaryColor,
-                ),
+                style: theme.textTheme.caption,
               ),
             ),
           ),
@@ -273,7 +282,10 @@ class MiscellaneousDialog extends StatelessWidget {
                   onPressed: followLink,
                   child: Text(
                     'Send us a mail',
-                    style: theme.textTheme.caption,
+                    style: theme.textTheme.caption?.copyWith(
+                      color: theme.primaryColor,
+                      decoration: TextDecoration.underline,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -314,8 +326,10 @@ class MiscellaneousDialog extends StatelessWidget {
                   onPressed: followLink,
                   child: Text(
                     'github.com/${maintainer.username}',
-                    style:
-                        theme.textTheme.caption?.copyWith(letterSpacing: 0.5),
+                    style: theme.textTheme.caption?.copyWith(
+                      letterSpacing: 0.5,
+                      color: theme.primaryColor,
+                    ),
                   ),
                 );
               },
