@@ -15,7 +15,12 @@ import 'package:vitcc_electrical_issues/shared/marquee_widget.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class IssueTile extends StatefulWidget {
-  const IssueTile({Key? key}) : super(key: key);
+  final int offset;
+
+  const IssueTile({
+    this.offset = 0,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<IssueTile> createState() => _IssueTileState();
@@ -282,7 +287,7 @@ class _IssueTileState extends State<IssueTile> {
       key: Key('flag:$flagDescription'),
       preferences: AnimationPreferences(
         duration: const Duration(milliseconds: 700),
-        offset: const Duration(seconds: 3),
+        offset: Duration(milliseconds: 3000 + widget.offset * 500),
         autoPlay: animate ? AnimationPlayStates.Loop : AnimationPlayStates.None,
       ),
       child: Container(
