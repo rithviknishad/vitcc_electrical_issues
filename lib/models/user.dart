@@ -111,8 +111,9 @@ class PlatformUser with _$PlatformUser {
         photoURL: firebaseUser.photoURL,
       ));
     } else {
-      // Update photo url if change.
-      if (snapshot.data()!.photoURL != firebaseUser.photoURL) {
+      // Update photo url if change, but not removal.
+      if (firebaseUser.photoURL != null &&
+          firebaseUser.photoURL != snapshot.data()!.photoURL) {
         await doc.update({
           _PhotoUrlKey: firebaseUser.photoURL,
         });
