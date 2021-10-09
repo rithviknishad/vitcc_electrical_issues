@@ -244,20 +244,17 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
           for (final provider in AuthService.providers.entries)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: ConstrainedBox(
-                constraints: BoxConstraints.loose(Size(400, 60)),
-                child: _AuthActionButton(
-                  'Sign in with ${provider.key}',
-                  () async {
-                    setState(() => isLoading = true);
+              child: _AuthActionButton(
+                'Sign in with ${provider.key}',
+                () async {
+                  setState(() => isLoading = true);
 
-                    await AuthService.signInWithGoogle(provider.value);
+                  await AuthService.signInWithGoogle(provider.value);
 
-                    if (mounted) {
-                      setState(() => isLoading = false);
-                    }
-                  },
-                ),
+                  if (mounted) {
+                    setState(() => isLoading = false);
+                  }
+                },
               ),
             ),
         ],
@@ -331,19 +328,22 @@ class _AuthActionButton extends StatelessWidget {
       );
     }
 
-    return Material(
-      child: Ink(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: theme.primaryColor,
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: SizedBox(
-            height: 60.0,
-            child: Center(
-              child: content,
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(Size(400, 60)),
+      child: Material(
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: theme.primaryColor,
+          ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(10),
+            child: SizedBox(
+              height: 60.0,
+              child: Center(
+                child: content,
+              ),
             ),
           ),
         ),
