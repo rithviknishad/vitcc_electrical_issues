@@ -61,7 +61,7 @@ class AuthService {
   // Avoid attempting to instantiate objects of this class.
   AuthService._();
 
-  static Future<String?> createUserWithEmailAndPassword(
+  static Future<FirebaseAuthException?> createUserWithEmailAndPassword(
     String email,
     String password,
   ) async {
@@ -71,11 +71,11 @@ class AuthService {
         password: password,
       );
     } on FirebaseAuthException catch (exception) {
-      return exception.message;
+      return exception;
     }
   }
 
-  static Future<String?> signInWithEmailAndPassword(
+  static Future<FirebaseAuthException?> signInWithEmailAndPassword(
     String email,
     String password,
   ) async {
@@ -85,7 +85,7 @@ class AuthService {
         password: password,
       );
     } on FirebaseAuthException catch (exception) {
-      return exception.message;
+      return exception;
     }
   }
 }
