@@ -152,23 +152,10 @@ class MiscellaneousDialog extends StatelessWidget {
     return [
       buildUserAttribute(
         'Signed in as',
-        user.name ?? user.email ?? userSnapshot.id,
+        '${user.name ?? user.email}',
         theme.textTheme.caption,
         attributeValueStyle,
       ),
-      buildUserAttribute(
-        'Email',
-        '${user.email}',
-        theme.textTheme.caption,
-        attributeValueStyle,
-      ),
-      buildUserAttribute(
-        'UID',
-        userSnapshot.id,
-        theme.textTheme.caption,
-        attributeValueStyle,
-      ),
-      SizedBox(height: 8),
       Padding(
         padding: const EdgeInsets.all(4),
         child: Text(
