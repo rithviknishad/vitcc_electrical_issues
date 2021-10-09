@@ -1,12 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/services/auth_service.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 import 'package:vitcc_electrical_issues/routes/authentication/wave_widget.dart';
+import 'package:vitcc_electrical_issues/shared/platform_utils.dart';
+import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
 
 class Authenticated extends StatelessWidget {
   final Widget child;
@@ -15,7 +19,7 @@ class Authenticated extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<User?>(
       stream: AuthService.user,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -51,7 +55,10 @@ class Authenticated extends StatelessWidget {
           );
         }
 
-        return _AuthenticatePage();
+        return ChangeNotifierProvider(
+          create: (_) => AuthenticateViewModel(),
+          child: _AuthenticatePage(),
+        );
       },
     );
   }
@@ -63,11 +70,25 @@ class _AuthenticatePage extends StatefulWidget {
 }
 
 class _AuthenticatePageState extends State<_AuthenticatePage> {
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   /// Whether a process related to authentication / auth_service is running.
   bool isLoading = false;
 
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<AuthenticateViewModel>(context);
+
     if (isLoading) {
       return Loading();
     }
@@ -125,30 +146,35 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
             ),
             Padding(
               padding: const EdgeInsets.all(30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  for (final provider in AuthService.providers.entries)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints.loose(Size(400, 60)),
-                        child: _Button(
-                          text: 'Sign in with ${provider.key}',
-                          hasBorder: false,
-                          onTap: () async {
-                            setState(() => isLoading = true);
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Emaild ID
+                    buildEmailIDTextField(viewModel),
+                    SizedBox(height: 10),
 
-                            await AuthService.signInWithGoogle(provider.value);
+                    // Password
+                    buildPasswordTextField(viewModel),
+                    SizedBox(height: 10),
 
-                            if (mounted) {
-                              setState(() => isLoading = false);
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                ],
+                    // Error message
+                    if (errorMessage is String)
+                      buildErrorMessage(errorMessage!),
+
+                    SizedBox(height: 10),
+
+                    // Sign Up button
+                    _AuthActionButton('Sign up', onSignUpPressed),
+                    SizedBox(height: 10),
+
+                    // Sign In button
+                    _AuthActionButton('Sign in', onSignInPressed),
+
+                    if (isWebDesktop) buildSignInWithGoogleProviders(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -156,18 +182,125 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
       ),
     );
   }
+
+  Widget buildEmailIDTextField(AuthenticateViewModel viewModel) {
+    return TextFieldWidget(
+      controller: emailController,
+      hintText: ' VIT Mail ID',
+      prefixIconData: FontAwesomeIcons.idBadge,
+      suffixIconData: viewModel.emailIsValid ? Icons.check : null,
+      onChanged: viewModel.isValidEmail,
+      validator: MultiValidator([
+        EmailValidator(errorText: 'Invalid Email Address'),
+        PatternValidator(
+          r'@(vitstudent.ac.in|vit.ac.in)$',
+          errorText: 'Should belong to @vit.ac.in or @vitstudent.ac.in domain.',
+        )
+      ]),
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  Widget buildPasswordTextField(AuthenticateViewModel viewModel) {
+    return TextFieldWidget(
+      controller: passwordController,
+      hintText: 'Password',
+      obscureText: !viewModel.passwordIsVisible,
+      prefixIconData: Icons.lock_outline,
+      suffixIconData:
+          viewModel.passwordIsVisible ? Icons.visibility : Icons.visibility_off,
+      onSuffixIconTap: () =>
+          viewModel.passwordIsVisible = !viewModel.passwordIsVisible,
+      validator: MultiValidator([
+        RequiredValidator(errorText: 'Required'),
+        MinLengthValidator(
+          4,
+          errorText: 'Must be at least 4 characters',
+        ),
+      ]),
+      autofillHints: [AutofillHints.password],
+    );
+  }
+
+  Widget buildErrorMessage(String errorMessage) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(
+        errorMessage,
+        style: TextStyle(
+          color: Colors.red,
+          fontSize: 14.0,
+        ),
+      ),
+    );
+  }
+
+  Widget buildSignInWithGoogleProviders() {
+    return Padding(
+      padding: const EdgeInsets.all(30),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          for (final provider in AuthService.providers.entries)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: ConstrainedBox(
+                constraints: BoxConstraints.loose(Size(400, 60)),
+                child: _AuthActionButton(
+                  'Sign in with ${provider.key}',
+                  () async {
+                    setState(() => isLoading = true);
+
+                    await AuthService.signInWithGoogle(provider.value);
+
+                    if (mounted) {
+                      setState(() => isLoading = false);
+                    }
+                  },
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> onSignUpPressed() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => isLoading = true);
+
+      errorMessage = await AuthService.createUserWithEmailAndPassword(
+        emailController.text,
+        passwordController.text,
+      );
+
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
+
+  Future<void> onSignInPressed() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => isLoading = true);
+
+      errorMessage = await AuthService.signInWithEmailAndPassword(
+        emailController.text,
+        passwordController.text,
+      );
+
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
+    }
+  }
 }
 
-class _Button extends StatelessWidget {
+class _AuthActionButton extends StatelessWidget {
   final String text;
-  final bool hasBorder;
   final VoidCallback onTap;
 
-  _Button({
-    required this.text,
-    required this.hasBorder,
-    required this.onTap,
-  });
+  _AuthActionButton(this.text, this.onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -177,10 +310,7 @@ class _Button extends StatelessWidget {
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: hasBorder
-              ? Border.all(color: theme.primaryColor, width: 1.0)
-              : Border.fromBorderSide(BorderSide.none),
-          color: hasBorder ? theme.colorScheme.surface : theme.primaryColor,
+          color: theme.primaryColor,
         ),
         child: InkWell(
           onTap: onTap,
@@ -191,9 +321,7 @@ class _Button extends StatelessWidget {
               child: Text(
                 text,
                 style: TextStyle(
-                  color: hasBorder
-                      ? theme.primaryColor
-                      : theme.colorScheme.surface,
+                  color: theme.colorScheme.surface,
                   fontWeight: FontWeight.w500,
                   fontSize: 16.0,
                 ),
@@ -203,5 +331,26 @@ class _Button extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class AuthenticateViewModel extends ChangeNotifier {
+  bool _passwordIsVisible = false;
+
+  get passwordIsVisible => _passwordIsVisible;
+  set passwordIsVisible(value) {
+    _passwordIsVisible = value;
+    notifyListeners();
+  }
+
+  static const emailPattern =
+      r"^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$";
+
+  bool _emailIsValid = false;
+
+  get emailIsValid => _emailIsValid;
+  void isValidEmail(String input) async {
+    _emailIsValid = RegExp(emailPattern).hasMatch(input);
+    notifyListeners();
   }
 }
