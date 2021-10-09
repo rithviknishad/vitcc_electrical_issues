@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animator/flutter_animator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -42,26 +43,43 @@ class _RequiresVerificationPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                FontAwesomeIcons.solidPaperPlane,
-                color: theme.colorScheme.onPrimary,
-                size: 32,
+              FadeIn(
+                preferences: AnimationPreferences(
+                  duration: const Duration(milliseconds: 500),
+                  offset: const Duration(milliseconds: 300),
+                ),
+                child: Icon(
+                  FontAwesomeIcons.solidPaperPlane,
+                  color: theme.colorScheme.onPrimary,
+                  size: 32,
+                ),
               ),
               SizedBox(height: 30),
-              Text(
-                'A verification mail has been sent to',
-                style: TextStyle(
-                  color: theme.colorScheme.onPrimary,
-                  fontSize: 18,
-                  letterSpacing: 0.8,
+              FadeIn(
+                preferences: AnimationPreferences(
+                  duration: const Duration(milliseconds: 500),
+                ),
+                child: Text(
+                  'A verification mail has been sent to',
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimary,
+                    fontSize: 18,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
               SizedBox(height: 16),
-              Text(
-                user.email ?? 'your inbox',
-                style: TextStyle(
-                  color: theme.colorScheme.onPrimary.withOpacity(0.8),
-                  letterSpacing: 0.8,
+              FadeIn(
+                preferences: AnimationPreferences(
+                  duration: const Duration(milliseconds: 500),
+                  offset: const Duration(milliseconds: 300),
+                ),
+                child: Text(
+                  user.email ?? 'your inbox',
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
               SizedBox(height: 48),
@@ -80,8 +98,7 @@ class _RequiresVerificationPage extends StatelessWidget {
 }
 
 class TimeGatedButton extends StatefulWidget {
-  final Duration initialDelay;
-  final Duration subsequentDelay;
+  final Duration delay;
   final VoidCallback onPressed;
   final VoidCallback? everySecond;
   final String label;
@@ -89,8 +106,7 @@ class TimeGatedButton extends StatefulWidget {
 
   const TimeGatedButton({
     Key? key,
-    this.initialDelay = const Duration(seconds: 10),
-    this.subsequentDelay = const Duration(seconds: 20),
+    this.delay = const Duration(seconds: 30),
     this.everySecond,
     required this.onPressed,
     required this.label,
@@ -112,7 +128,7 @@ class _TimeGatedButtonState extends State<TimeGatedButton> {
   void initState() {
     super.initState();
 
-    _pendingDuration = widget.initialDelay;
+    _pendingDuration = widget.delay;
   }
 
   @override
@@ -157,16 +173,25 @@ class _TimeGatedButtonState extends State<TimeGatedButton> {
         ? theme.colorScheme.primary
         : theme.colorScheme.onPrimary.withOpacity(0.6);
 
-    return TextButton(
-      onPressed: onButtonPressed,
-      style: TextButton.styleFrom(
-        backgroundColor: backgroundColor,
-        primary: foregroundColor,
+    return FadeIn(
+      key: Key('$buttonIsEnabled'),
+      preferences: AnimationPreferences(
+        duration: const Duration(milliseconds: 500),
+        offset: buttonIsEnabled
+            ? const Duration(milliseconds: 300)
+            : const Duration(milliseconds: 2000),
       ),
-      child: Text(
-        buttonLabel,
-        style: TextStyle(
-          letterSpacing: 0.8,
+      child: TextButton(
+        onPressed: onButtonPressed,
+        style: TextButton.styleFrom(
+          backgroundColor: backgroundColor,
+          primary: foregroundColor,
+        ),
+        child: Text(
+          buttonLabel,
+          style: TextStyle(
+            letterSpacing: 0.8,
+          ),
         ),
       ),
     );
@@ -177,7 +202,7 @@ class _TimeGatedButtonState extends State<TimeGatedButton> {
       return;
     }
 
-    setState(() => _pendingDuration = widget.subsequentDelay);
+    setState(() => _pendingDuration = widget.delay);
 
     widget.onPressed();
   }
