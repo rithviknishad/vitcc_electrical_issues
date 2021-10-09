@@ -123,26 +123,25 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                 color: Colors.white,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: size.height * 0.15),
+            AnimatedPadding(
+              duration: const Duration(milliseconds: 1000),
+              curve: Curves.ease,
+              padding: EdgeInsets.only(
+                top: size.height *
+                    (0.15 -
+                        (keyboardIsOpen ? 0.03 : 0.0) -
+                        (signUpPressed ? 0.02 : 0.0)),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: size.width * 0.8,
-                    child: Text(
-                      'Electrical Issue Tracker',
-                      style: TextStyle(
-                        color: keyboardIsOpen
-                            ? theme.primaryColor
-                            : theme.colorScheme.surface,
-                        fontSize: 36.0,
-                        fontWeight: FontWeight.w300,
-                      ),
-                      textAlign: TextAlign.center,
-                      softWrap: true,
-                    ),
-                  ),
+                  Icon(
+                    FontAwesomeIcons.feather,
+                    size: 72,
+                    color: keyboardIsOpen
+                        ? theme.primaryColor
+                        : theme.colorScheme.surface,
+                  )
                 ],
               ),
             ),
