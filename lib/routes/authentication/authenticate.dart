@@ -343,6 +343,10 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
   }
 
   Future<void> onSignInPressed() async {
+    setState(() => signUpPressed = false);
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => isLoading = true);
 
