@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:vitcc_electrical_issues/routes/authentication/authenticate.dart';
+import 'package:vitcc_electrical_issues/routes/authentication/verified.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/dashboard.dart';
 import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 
@@ -37,7 +38,9 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
           }
 
           return Authenticated(
-            child: DashboardPage(),
+            child: Verified(
+              child: DashboardPage(),
+            ),
           );
         },
       ),
