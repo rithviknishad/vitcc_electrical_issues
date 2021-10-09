@@ -243,7 +243,7 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
     return ConstrainedBox(
       constraints: BoxConstraints.loose(Size(400, 100)),
       child: TextFieldWidget(
-        controller: passwordController,
+        controller: confirmPasswordController,
         hintText: 'Confirm Password',
         obscureText: !viewModel.passwordIsVisible,
         prefixIconData: Icons.lock_outline,
