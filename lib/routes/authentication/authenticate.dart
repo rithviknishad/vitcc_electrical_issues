@@ -299,12 +299,37 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
 class _AuthActionButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
+  final IconData? icon;
 
-  _AuthActionButton(this.text, this.onTap);
+  _AuthActionButton(this.text, this.onTap, {this.icon});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    Widget content = Text(
+      text,
+      style: TextStyle(
+        color: theme.colorScheme.surface,
+        fontWeight: FontWeight.w500,
+        fontSize: 16.0,
+      ),
+    );
+
+    if (icon != null) {
+      content = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: theme.colorScheme.surface,
+          ),
+          SizedBox(width: 16),
+          content,
+          SizedBox(width: 44),
+        ],
+      );
+    }
 
     return Material(
       child: Ink(
@@ -318,14 +343,7 @@ class _AuthActionButton extends StatelessWidget {
           child: SizedBox(
             height: 60.0,
             child: Center(
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: theme.colorScheme.surface,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16.0,
-                ),
-              ),
+              child: content,
             ),
           ),
         ),
