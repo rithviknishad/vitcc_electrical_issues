@@ -123,28 +123,7 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                 color: Colors.white,
               ),
             ),
-            AnimatedPadding(
-              duration: const Duration(milliseconds: 1000),
-              curve: Curves.ease,
-              padding: EdgeInsets.only(
-                top: size.height *
-                    (0.15 -
-                        (keyboardIsOpen ? 0.03 : 0.0) -
-                        (signUpPressed ? 0.02 : 0.0)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    FontAwesomeIcons.feather,
-                    size: 72,
-                    color: keyboardIsOpen
-                        ? theme.primaryColor
-                        : theme.colorScheme.surface,
-                  )
-                ],
-              ),
-            ),
+            buildAppAnimatedLogo(keyboardIsOpen, theme, size),
             Padding(
               padding: const EdgeInsets.all(30),
               child: Form(
@@ -152,6 +131,12 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    if (!keyboardIsOpen)
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: buildLoginTitle(context),
+                      ),
+
                     // Emaild ID
                     buildEmailIDTextField(viewModel),
                     SizedBox(height: 10),
@@ -189,6 +174,53 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildAppAnimatedLogo(bool keyboardIsOpen, ThemeData theme, Size size) {
+    var topOffset = 0.15;
+
+    if (keyboardIsOpen) {
+      topOffset -= 0.03;
+    }
+
+    if (signUpPressed) {
+      topOffset -= 0.02;
+    }
+
+    final effectivePadding = EdgeInsets.only(top: size.height * topOffset);
+
+    final effectiveColor =
+        keyboardIsOpen ? theme.primaryColor : theme.colorScheme.surface;
+
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 1000),
+      curve: Curves.ease,
+      padding: effectivePadding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            FontAwesomeIcons.feather,
+            size: 72,
+            color: effectiveColor,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildLoginTitle(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 6, bottom: 24),
+      child: Text(
+        'Log In',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 38,
+          color: Theme.of(context).primaryColor,
         ),
       ),
     );
