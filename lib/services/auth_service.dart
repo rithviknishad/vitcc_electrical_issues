@@ -1,18 +1,21 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vitcc_electrical_issues/shared/platform_utils.dart';
 
 class AuthService {
   static final firebaseAuth = FirebaseAuth.instance;
 
-  static final providers = {
-    'VIT ID': GoogleSignIn(hostedDomain: 'vit.ac.in'),
-    'VIT Student ID': GoogleSignIn(hostedDomain: 'vitstudent.ac.in'),
-
-    // Allow sign in with any domain only in debug mode.
-    if (kDebugMode) 'Google': GoogleSignIn(),
+  static final Map<String, GoogleSignIn> providers = {
+    if (isWebDesktop)
+      'VIT ID': GoogleSignIn(
+        hostedDomain: 'vit.ac.in',
+      ),
+    if (isWebDesktop)
+      'VIT Student ID': GoogleSignIn(
+        hostedDomain: 'vitstudent.ac.in',
+      ),
   };
 
   static Stream<User?> get user => firebaseAuth.userChanges();
