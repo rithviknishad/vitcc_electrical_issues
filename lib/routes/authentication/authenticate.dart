@@ -167,9 +167,15 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
 
                     // Sign Up button
                     Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: _AuthActionButton('Sign up', onSignUpPressed),
+                          child: _AuthActionButton(
+                            'Sign up',
+                            onSignUpPressed,
+                            alt: true,
+                          ),
                         ),
                         Expanded(
                           child: _AuthActionButton('Sign in', onSignInPressed),
@@ -304,17 +310,26 @@ class _AuthActionButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
   final IconData? icon;
+  final bool alt;
 
-  _AuthActionButton(this.text, this.onTap, {this.icon});
+  _AuthActionButton(
+    this.text,
+    this.onTap, {
+    this.icon,
+    this.alt = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final foregroundColor = alt ? colorScheme.primary : colorScheme.onPrimary;
+    final backgroundColor = alt ? colorScheme.onPrimary : colorScheme.primary;
 
     Widget content = Text(
       text,
       style: TextStyle(
-        color: theme.colorScheme.surface,
+        color: foregroundColor,
         fontWeight: FontWeight.w500,
         fontSize: 16.0,
       ),
@@ -324,10 +339,7 @@ class _AuthActionButton extends StatelessWidget {
       content = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: theme.colorScheme.surface,
-          ),
+          Icon(icon, color: foregroundColor),
           SizedBox(width: 16),
           content,
           SizedBox(width: 44),
@@ -343,7 +355,7 @@ class _AuthActionButton extends StatelessWidget {
           child: Ink(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: theme.primaryColor,
+              color: backgroundColor,
             ),
             child: InkWell(
               onTap: onTap,
