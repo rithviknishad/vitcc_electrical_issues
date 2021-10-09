@@ -166,11 +166,16 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                     SizedBox(height: 10),
 
                     // Sign Up button
-                    _AuthActionButton('Sign up', onSignUpPressed),
-                    SizedBox(height: 10),
-
-                    // Sign In button
-                    _AuthActionButton('Sign in', onSignInPressed),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _AuthActionButton('Sign up', onSignUpPressed),
+                        ),
+                        Expanded(
+                          child: _AuthActionButton('Sign in', onSignInPressed),
+                        ),
+                      ],
+                    ),
 
                     if (isWebDesktop) buildSignInWithGoogleProviders(),
                   ],
@@ -220,10 +225,7 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
             viewModel.passwordIsVisible = !viewModel.passwordIsVisible,
         validator: MultiValidator([
           RequiredValidator(errorText: 'Required'),
-          MinLengthValidator(
-            4,
-            errorText: 'Must be at least 4 characters',
-          ),
+          MinLengthValidator(4, errorText: 'Must be at least 4 characters'),
         ]),
         autofillHints: [AutofillHints.password],
       ),
@@ -250,20 +252,17 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           for (final provider in AuthService.providers.entries)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: _AuthActionButton(
-                'Sign in with ${provider.key}',
-                () async {
-                  setState(() => isLoading = true);
+            _AuthActionButton(
+              'Sign in with ${provider.key}',
+              () async {
+                setState(() => isLoading = true);
 
-                  await AuthService.signInWithGoogle(provider.value);
+                await AuthService.signInWithGoogle(provider.value);
 
-                  if (mounted) {
-                    setState(() => isLoading = false);
-                  }
-                },
-              ),
+                if (mounted) {
+                  setState(() => isLoading = false);
+                }
+              },
             ),
         ],
       ),
@@ -336,21 +335,24 @@ class _AuthActionButton extends StatelessWidget {
       );
     }
 
-    return ConstrainedBox(
-      constraints: BoxConstraints.loose(Size(400, 60)),
-      child: Material(
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: theme.primaryColor,
-          ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              height: 60.0,
-              child: Center(
-                child: content,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints.loose(Size(400, 60)),
+        child: Material(
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: theme.primaryColor,
+            ),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                height: 50,
+                child: Center(
+                  child: content,
+                ),
               ),
             ),
           ),
