@@ -184,41 +184,49 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
   }
 
   Widget buildEmailIDTextField(AuthenticateViewModel viewModel) {
-    return TextFieldWidget(
-      controller: emailController,
-      hintText: ' VIT Mail ID',
-      prefixIconData: FontAwesomeIcons.idBadge,
-      suffixIconData: viewModel.emailIsValid ? Icons.check : null,
-      onChanged: viewModel.isValidEmail,
-      validator: MultiValidator([
-        EmailValidator(errorText: 'Invalid Email Address'),
-        PatternValidator(
-          r'@(vitstudent.ac.in|vit.ac.in)$',
-          errorText: 'Should belong to @vit.ac.in or @vitstudent.ac.in domain.',
-        )
-      ]),
-      keyboardType: TextInputType.emailAddress,
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(Size(400, 100)),
+      child: TextFieldWidget(
+        controller: emailController,
+        hintText: ' VIT Mail ID',
+        prefixIconData: FontAwesomeIcons.idBadge,
+        suffixIconData: viewModel.emailIsValid ? Icons.check : null,
+        onChanged: viewModel.isValidEmail,
+        validator: MultiValidator([
+          EmailValidator(errorText: 'Invalid Email Address'),
+          PatternValidator(
+            r'@(vitstudent.ac.in|vit.ac.in)$',
+            errorText:
+                'Should belong to @vit.ac.in or @vitstudent.ac.in domain.',
+          )
+        ]),
+        keyboardType: TextInputType.emailAddress,
+      ),
     );
   }
 
   Widget buildPasswordTextField(AuthenticateViewModel viewModel) {
-    return TextFieldWidget(
-      controller: passwordController,
-      hintText: 'Password',
-      obscureText: !viewModel.passwordIsVisible,
-      prefixIconData: Icons.lock_outline,
-      suffixIconData:
-          viewModel.passwordIsVisible ? Icons.visibility : Icons.visibility_off,
-      onSuffixIconTap: () =>
-          viewModel.passwordIsVisible = !viewModel.passwordIsVisible,
-      validator: MultiValidator([
-        RequiredValidator(errorText: 'Required'),
-        MinLengthValidator(
-          4,
-          errorText: 'Must be at least 4 characters',
-        ),
-      ]),
-      autofillHints: [AutofillHints.password],
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(Size(400, 100)),
+      child: TextFieldWidget(
+        controller: passwordController,
+        hintText: 'Password',
+        obscureText: !viewModel.passwordIsVisible,
+        prefixIconData: Icons.lock_outline,
+        suffixIconData: viewModel.passwordIsVisible
+            ? Icons.visibility
+            : Icons.visibility_off,
+        onSuffixIconTap: () =>
+            viewModel.passwordIsVisible = !viewModel.passwordIsVisible,
+        validator: MultiValidator([
+          RequiredValidator(errorText: 'Required'),
+          MinLengthValidator(
+            4,
+            errorText: 'Must be at least 4 characters',
+          ),
+        ]),
+        autofillHints: [AutofillHints.password],
+      ),
     );
   }
 
