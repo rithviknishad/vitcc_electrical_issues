@@ -11,6 +11,7 @@ import 'package:vitcc_electrical_issues/shared/loading_widget.dart';
 import 'package:vitcc_electrical_issues/routes/authentication/wave_widget.dart';
 import 'package:vitcc_electrical_issues/shared/platform_utils.dart';
 import 'package:vitcc_electrical_issues/shared/text_field_widget.dart';
+import 'package:vitcc_electrical_issues/extensions/capitalizer.dart';
 
 class Authenticated extends StatelessWidget {
   final Widget child;
@@ -71,13 +72,14 @@ class _AuthenticatePage extends StatefulWidget {
 
 class _AuthenticatePageState extends State<_AuthenticatePage> {
   final _formKey = GlobalKey<FormState>();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   /// Whether a process related to authentication / auth_service is running.
   bool isLoading = false;
-
-  String? errorMessage;
+  bool signUpPressed = false;
 
   @override
   void initState() {
@@ -159,11 +161,10 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                     buildPasswordTextField(viewModel),
                     SizedBox(height: 10),
 
-                    // Error message
-                    if (errorMessage is String)
-                      buildErrorMessage(errorMessage!),
-
-                    SizedBox(height: 10),
+                    if (signUpPressed) ...[
+                      buildConfirmPasswordTextField(viewModel),
+                      SizedBox(height: 10),
+                    ],
 
                     // Sign Up button
                     Row(
@@ -204,6 +205,7 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
         suffixIconData: viewModel.emailIsValid ? Icons.check : null,
         onChanged: viewModel.isValidEmail,
         validator: MultiValidator([
+          RequiredValidator(errorText: 'Required'),
           EmailValidator(errorText: 'Invalid Email Address'),
           PatternValidator(
             r'@(vitstudent.ac.in|vit.ac.in)$',
@@ -238,15 +240,25 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
     );
   }
 
-  Widget buildErrorMessage(String errorMessage) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        errorMessage,
-        style: TextStyle(
-          color: Colors.red,
-          fontSize: 14.0,
-        ),
+  Widget buildConfirmPasswordTextField(AuthenticateViewModel viewModel) {
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(Size(400, 100)),
+      child: TextFieldWidget(
+        controller: passwordController,
+        hintText: 'Confirm Password',
+        obscureText: !viewModel.passwordIsVisible,
+        prefixIconData: Icons.lock_outline,
+        suffixIconData: viewModel.passwordIsVisible
+            ? Icons.visibility
+            : Icons.visibility_off,
+        onSuffixIconTap: () =>
+            viewModel.passwordIsVisible = !viewModel.passwordIsVisible,
+        validator: (input) {
+          if (passwordController.text != (input ?? '')) {
+            return "Passwords do not match";
+          }
+        },
+        autofillHints: [AutofillHints.password],
       ),
     );
   }
@@ -276,13 +288,22 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
   }
 
   Future<void> onSignUpPressed() async {
+    if (!signUpPressed) {
+      setState(() => signUpPressed = true);
+      return;
+    }
+
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => isLoading = true);
 
-      errorMessage = await AuthService.createUserWithEmailAndPassword(
+      final error = await AuthService.createUserWithEmailAndPassword(
         emailController.text,
         passwordController.text,
       );
+
+      if (error is FirebaseAuthException) {
+        showErrorDialog(error.message ?? '', error.code);
+      }
 
       if (mounted) {
         setState(() => isLoading = false);
@@ -294,15 +315,81 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => isLoading = true);
 
-      errorMessage = await AuthService.signInWithEmailAndPassword(
+      final error = await AuthService.signInWithEmailAndPassword(
         emailController.text,
         passwordController.text,
       );
+
+      if (error is FirebaseAuthException) {
+        showErrorDialog(error.message ?? '', error.code);
+      }
 
       if (mounted) {
         setState(() => isLoading = false);
       }
     }
+  }
+
+  Future<void> showErrorDialog(String description, String code) async {
+    code = code.replaceAll('-', ' ').capitalize();
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Dialog(
+          backgroundColor: Color(0xFFFBE9E7),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.exclamationTriangle,
+                      color: theme.errorColor,
+                      size: 18,
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        code,
+                        style: theme.textTheme.headline6?.apply(
+                          color: theme.errorColor,
+                          fontSizeDelta: 2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: theme.errorColor,
+                    height: 1.7,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: TextButton(
+                    onPressed: Navigator.of(context).pop,
+                    child: Text(
+                      'DISMISS',
+                      style: TextStyle(
+                        color: theme.errorColor,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
