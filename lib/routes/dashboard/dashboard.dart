@@ -81,9 +81,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: CircleAvatar(
                   backgroundColor: theme.primaryColor,
                   child: Text(
-                    user.name?[0] ?? '',
+                    ((user.name ?? user.email)?[0])?.toUpperCase() ?? 'A',
                     style: TextStyle(
-                      color: theme.colorScheme.secondary,
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
                   foregroundImage: userPhoto,
