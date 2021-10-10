@@ -12,8 +12,8 @@ import 'package:vitcc_electrical_issues/services/auth_service.dart';
 import 'package:vitcc_electrical_issues/shared/marquee_widget.dart';
 
 class MiscellaneousDialog extends StatelessWidget {
-  MiscellaneousDialog({
-    required this.userSnapshot,
+  MiscellaneousDialog(
+    this.userSnapshot, {
     Key? key,
   }) : super(key: key);
 

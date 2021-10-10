@@ -12,7 +12,6 @@ import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
 import 'package:vitcc_electrical_issues/routes/miscellaneous.dart';
 import 'package:vitcc_electrical_issues/routes/raise_issue.dart';
-import 'package:vitcc_electrical_issues/shared/dialog_result.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -66,12 +65,10 @@ class _DashboardPageState extends State<DashboardPage> {
         actions: [
           GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onTap: () async {
-              await showDialog<DialogResult>(
-                context: context,
-                builder: (_) => MiscellaneousDialog(userSnapshot: userSnapshot),
-              );
-            },
+            onTap: () => showDialog(
+              context: context,
+              builder: (_) => MiscellaneousDialog(userSnapshot),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: PhysicalModel(
