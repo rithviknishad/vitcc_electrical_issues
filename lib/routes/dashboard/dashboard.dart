@@ -12,7 +12,6 @@ import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
 import 'package:vitcc_electrical_issues/routes/miscellaneous.dart';
 import 'package:vitcc_electrical_issues/routes/raise_issue.dart';
-import 'package:vitcc_electrical_issues/shared/platform_utils.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
