@@ -8,11 +8,11 @@ class AuthService {
   static final firebaseAuth = FirebaseAuth.instance;
 
   static final Map<String, GoogleSignIn> providers = {
-    if (isWebDesktop)
+    if (kIsWebDesktop)
       'VIT ID': GoogleSignIn(
         hostedDomain: 'vit.ac.in',
       ),
-    if (isWebDesktop)
+    if (kIsWebDesktop)
       'VIT Student ID': GoogleSignIn(
         hostedDomain: 'vitstudent.ac.in',
       ),

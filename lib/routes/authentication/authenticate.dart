@@ -168,7 +168,7 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                       ],
                     ),
 
-                    if (isWebDesktop) buildSignInWithGoogleProviders(),
+                    if (kIsWebDesktop) buildSignInWithGoogleProviders(),
                   ],
                 ),
               ),
