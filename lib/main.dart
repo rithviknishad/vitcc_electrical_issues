@@ -88,7 +88,9 @@ class ElectricalIssueTrackerApp extends StatelessWidget {
         ),
         titleTextStyle: TextStyle(
           fontFamily: _fontFamily,
-          fontSize: 18,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
           color: _primary,
         ),
       ),
