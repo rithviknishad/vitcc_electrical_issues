@@ -18,6 +18,7 @@ class RaiseAnIssueSection extends StatelessWidget {
         // color: theme.colorScheme.surface,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Having an electrical issue in campus?',
