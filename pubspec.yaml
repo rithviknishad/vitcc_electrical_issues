@@ -28,6 +28,7 @@ dependencies:
   package_info_plus: ^1.2.1
   url_launcher: ^6.0.12
   font_awesome_flutter: ^9.1.0
+  syncfusion_flutter_datepicker: ^19.3.45
 
 dev_dependencies:
   flutter_test:
