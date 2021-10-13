@@ -12,6 +12,7 @@ import 'package:vitcc_electrical_issues/routes/dashboard/my_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/raise_issue_section.dart';
 import 'package:vitcc_electrical_issues/routes/miscellaneous.dart';
 import 'package:vitcc_electrical_issues/routes/raise_issue.dart';
+import 'package:vitcc_electrical_issues/routes/resolved_issues.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -104,6 +105,8 @@ class _DashboardPageState extends State<DashboardPage> {
               // View all active issues if user has permission
               if (user.scope.canViewActiveIssues) ActiveIssuesSection(),
 
+              if (user.scope.canViewResolvedIssues) buildResolvedIssuesButton(),
+
               // Raise an issue section
               if (user.scope.canCreateIssue) RaiseAnIssueSection(),
 
@@ -124,5 +127,20 @@ class _DashboardPageState extends State<DashboardPage> {
         .closed;
 
     setState(() => _raiseNewIssueFormIsShown = false);
+  }
+
+  Widget buildResolvedIssuesButton() {
+    return Center(
+      child: TextButton(
+        child: Text('See resolved issues'),
+        onPressed: () => Navigator.of(context).push(resolvedIssuesRoute),
+      ),
+    );
+  }
+
+  MaterialPageRoute get resolvedIssuesRoute {
+    return MaterialPageRoute(
+      builder: (context) => ResolvedIssuesPage(),
+    );
   }
 }
