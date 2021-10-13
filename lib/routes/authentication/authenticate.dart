@@ -151,21 +151,25 @@ class _AuthenticatePageState extends State<_AuthenticatePage> {
                     ],
 
                     // Sign Up button
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: _AuthActionButton(
-                            'Sign up',
-                            onSignUpPressed,
-                            alt: true,
+                    ConstrainedBox(
+                      constraints: BoxConstraints.loose(Size(400, 60)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: _AuthActionButton(
+                              'Sign up',
+                              onSignUpPressed,
+                              alt: true,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: _AuthActionButton('Sign in', onSignInPressed),
-                        ),
-                      ],
+                          Expanded(
+                            child:
+                                _AuthActionButton('Sign in', onSignInPressed),
+                          ),
+                        ],
+                      ),
                     ),
 
                     if (kIsWebDesktop) buildSignInWithGoogleProviders(),
