@@ -49,6 +49,7 @@ class _IssueTileState extends State<IssueTile> {
     final theme = Theme.of(context);
 
     return InkWell(
+      key: Key(issueSnapshot.id),
       onTap: toggleTileSelectionState,
       highlightColor: theme.primaryColorLight,
       child: AnimatedContainer(
