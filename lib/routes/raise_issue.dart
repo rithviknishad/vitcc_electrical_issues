@@ -1,3 +1,4 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -146,6 +147,20 @@ class _RaiseNewIssueBottomSheetState extends State<RaiseNewIssueBottomSheet> {
     );
 
     Navigator.of(context).pop(issue);
+
+    CoolAlert.show(
+      borderRadius: 20,
+      context: context,
+      type: CoolAlertType.success,
+      title: 'Issue raised!',
+      text: 'Your issue will be resolved soon!',
+      confirmBtnText: 'Dismiss',
+      confirmBtnColor: theme.colorScheme.primary,
+      backgroundColor: theme.colorScheme.primary,
+      confirmBtnTextStyle: TextStyle(
+        color: theme.colorScheme.onPrimary,
+      ),
+    );
   }
 
   Widget buildIssueTitleSection(BuildContext context) {
