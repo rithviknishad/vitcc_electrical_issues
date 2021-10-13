@@ -29,7 +29,6 @@ dependencies:
   url_launcher: ^6.0.12
   font_awesome_flutter: ^9.1.0
   syncfusion_flutter_datepicker: ^19.3.45
-  cool_alert: ^1.1.0
   flare_flutter: ^3.0.2
 
 dev_dependencies:
