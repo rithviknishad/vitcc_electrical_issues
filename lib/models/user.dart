@@ -111,12 +111,23 @@ class PlatformUser with _$PlatformUser {
         photoURL: firebaseUser.photoURL,
       ));
     } else {
-      // Update photo url if change, but not removal.
-      if (firebaseUser.photoURL != null &&
-          firebaseUser.photoURL != snapshot.data()!.photoURL) {
-        await doc.update({
-          _PhotoUrlKey: firebaseUser.photoURL,
-        });
+      final platformUser = snapshot.data()!;
+
+      final deltas = {
+        // Include photoUrl if change available. Disallows destructive change.
+        if (firebaseUser.photoURL != null &&
+            firebaseUser.photoURL != platformUser.photoURL)
+          _PhotoUrlKey: firebaseUser.photoURL!,
+
+        // Include name if change available. Disallows destructive change.
+        if (firebaseUser.displayName != null &&
+            firebaseUser.displayName != platformUser.name)
+          _NameKey: firebaseUser.displayName!,
+      };
+
+      // Invoke update only if there are deltas.
+      if (deltas.isNotEmpty) {
+        await doc.update(deltas);
       }
     }
 
