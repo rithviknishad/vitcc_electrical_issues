@@ -25,16 +25,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _selectedPage = 2;
-
-  int get selectedPage => _selectedPage;
-
-  set selectedPage(int value) {
-    if (value != selectedPage) {
-      setState(() => _selectedPage = value);
-    }
-  }
-
   bool _raiseNewIssueFormIsShown = false;
 
   @override
