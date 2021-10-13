@@ -1,11 +1,11 @@
 {
-    "name": "vitcc_electrical_issues",
+    "name": "VITCC Electrical Issues",
     "short_name": "vitcc_electrical_issues",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A platform to raise electrical issues in VITCC.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
