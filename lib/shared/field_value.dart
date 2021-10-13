@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class FieldValueWidget extends StatelessWidget {
   final IconData? icon;
