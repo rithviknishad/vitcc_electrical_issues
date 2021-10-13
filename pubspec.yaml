@@ -43,6 +43,7 @@ flutter:
 
   assets:
     - assets/icons/192.png
+    - assets/flare/
 
   fonts:
     - family: Ubuntu
