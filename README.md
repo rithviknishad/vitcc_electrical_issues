@@ -10,3 +10,7 @@ A platform to raise electrical issues in [Vellore Institute of Technology, Chenn
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
+
+Created by
+[Rithvik Nishad](https://github.com/rithviknishad/) and
+[Aswin Murali](https://github.com/aswinmurali-io)
