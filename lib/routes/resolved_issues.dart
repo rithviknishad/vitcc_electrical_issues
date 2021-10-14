@@ -8,7 +8,7 @@ class ResolvedIssuesPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Center(
-          child: Text('hell'),
+          child: Text('Empty Page'),
         ),
       ),
     );

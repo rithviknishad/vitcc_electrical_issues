@@ -7,6 +7,8 @@
 
 A platform to raise electrical issues in [Vellore Institute of Technology, Chennai](https://chennai.vit.ac.in/).
 
+![demo](https://github.com/rithviknishad/vitcc_electrical_issues/blob/968a4ab8a80cb5564aec36cab0609f8d0de2a3bf/assets/images/demo.png)
+
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
