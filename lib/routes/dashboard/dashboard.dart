@@ -101,6 +101,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
               // All issues raised by the user.
               MyIssuesSection(),
+
+              // Footer
+              SizedBox(height: 30),
             ],
           ),
         ),
