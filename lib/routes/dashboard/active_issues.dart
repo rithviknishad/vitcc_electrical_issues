@@ -54,7 +54,7 @@ class ActiveIssuesSection extends StatelessWidget {
       children: [
         SizedBox(height: 8),
         Text(
-          'Issues currently active',
+          'Issues yet to be resolved',
           style: TextStyle(color: theme.disabledColor),
         ),
         SizedBox(height: 8),
