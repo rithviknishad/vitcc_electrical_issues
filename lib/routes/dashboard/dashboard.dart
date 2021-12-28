@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/main.dart';
+import 'package:vitcc_electrical_issues/models/misc.dart';
 import 'package:vitcc_electrical_issues/models/user.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/active_issues.dart';
 import 'package:vitcc_electrical_issues/routes/dashboard/counters.dart';
@@ -29,6 +30,9 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final misc = Provider.of<MiscSnapshot>(context).misc;
+
     final userSnapshot = Provider.of<UserSnapshot>(context);
     final user = userSnapshot.user;
 
@@ -89,12 +93,13 @@ class _DashboardPageState extends State<DashboardPage> {
             runSpacing: 30,
             children: [
               // The analytics widget
-              ActiveAndResolvedIssueCounters(),
+              ActiveAndResolvedIssueCounters(misc: misc),
 
               // View all active issues if user has permission
               if (user.scope.canViewActiveIssues) ActiveIssuesSection(),
 
-              if (user.scope.canViewResolvedIssues) buildResolvedIssuesButton(),
+              if (user.scope.canViewResolvedIssues)
+                buildResolvedIssuesButton(misc),
 
               // Raise an issue section
               if (user.scope.canCreateIssue) RaiseAnIssueSection(),
@@ -121,18 +126,14 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() => _raiseNewIssueFormIsShown = false);
   }
 
-  Widget buildResolvedIssuesButton() {
+  Widget buildResolvedIssuesButton(Misc misc) {
     return Center(
       child: OutlinedButton(
         child: Text('View already resolved issues'),
-        onPressed: () => Navigator.of(context).push(resolvedIssuesRoute),
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ResolvedIssuesPage(misc: misc),
+        )),
       ),
-    );
-  }
-
-  MaterialPageRoute get resolvedIssuesRoute {
-    return MaterialPageRoute(
-      builder: (context) => ResolvedIssuesPage(),
     );
   }
 }
