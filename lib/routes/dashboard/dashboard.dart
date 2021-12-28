@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +68,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: CircleAvatar(
                   backgroundColor: theme.primaryColor,
                   child: Text(
-                    ((user.name ?? user.email)?[0])?.toUpperCase() ?? 'A',
+                    ((user.name ?? user.email)?[0])?.toUpperCase() ?? '-',
                     style: TextStyle(
                       color: theme.colorScheme.onPrimary,
                     ),
@@ -87,7 +86,7 @@ class _DashboardPageState extends State<DashboardPage> {
           padding: const EdgeInsets.all(8),
           child: Wrap(
             spacing: 10,
-            runSpacing: 10,
+            runSpacing: 30,
             children: [
               // The analytics widget
               ActiveAndResolvedIssueCounters(),
