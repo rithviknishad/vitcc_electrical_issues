@@ -87,8 +87,8 @@ class MiscellaneousDialog extends StatelessWidget {
           ),
 
           // Project maintained by
-          SizedBox(height: 8),
-          ...buildProjectMaintainers(theme),
+          // SizedBox(height: 8),
+          // ...buildProjectMaintainers(theme),
 
           // Contribution pointers
           SizedBox(height: 16),
