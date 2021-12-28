@@ -121,8 +121,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget buildResolvedIssuesButton() {
     return Center(
-      child: TextButton(
-        child: Text('See resolved issues'),
+      child: OutlinedButton(
+        child: Text('View already resolved issues'),
         onPressed: () => Navigator.of(context).push(resolvedIssuesRoute),
       ),
     );
