@@ -270,22 +270,22 @@ class _IssueTileState extends State<IssueTile> {
         if (issue.isImportant)
           buildFlag(
             theme,
-            'IMPORTANT',
+            _PriorityFlags.Important,
             issue.isActiveIssue,
           ),
         if (issue.isUrgent)
           buildFlag(
             theme,
-            'URGENT',
+            _PriorityFlags.Urgent,
             issue.isActiveIssue,
           ),
       ],
     );
   }
 
-  Widget buildFlag(ThemeData theme, String flagDescription, bool animate) {
+  Widget buildFlag(ThemeData theme, _PriorityFlags flag, bool animate) {
     return Tada(
-      key: Key('flag:$flagDescription'),
+      key: Key('flag:${flag.name}'),
       preferences: AnimationPreferences(
         duration: const Duration(milliseconds: 700),
         offset: Duration(milliseconds: 3000 + widget.offset * 500),
@@ -294,15 +294,18 @@ class _IssueTileState extends State<IssueTile> {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: theme.colorScheme.onPrimary,
+          color: theme.colorScheme.error,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.red.shade900, blurRadius: 4),
+          ],
         ),
         padding: const EdgeInsets.all(8),
         child: Text(
-          flagDescription,
+          flag.name.toUpperCase(),
           style: TextStyle(
             fontSize: 12,
-            color: theme.colorScheme.primary,
+            color: theme.colorScheme.onError,
             letterSpacing: 0.5,
           ),
         ),
@@ -485,3 +488,8 @@ class _IssueTileState extends State<IssueTile> {
 }
 
 typedef _AuthorAndResolverPair = Pair<UserSnapshot?, UserSnapshot?>;
+
+enum _PriorityFlags {
+  Important,
+  Urgent,
+}
