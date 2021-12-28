@@ -406,7 +406,7 @@ class _IssueTileState extends State<IssueTile> {
   ) {
     return OutlinedButton.icon(
       icon: Icon(FontAwesomeIcons.tools, size: 16),
-      label: Text('Resolve this issue'),
+      label: Text('Mark as resolved'),
       onPressed: () =>
           onResolveThisIssuePressed(context, issueSnapshot, currentUser),
     );
@@ -471,7 +471,7 @@ class _IssueTileState extends State<IssueTile> {
             prefixIconData: FontAwesomeIcons.alignLeft,
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
-          okButtonText: 'Yes, Resolve!',
+          okButtonText: 'Confirm',
         );
       },
     );
