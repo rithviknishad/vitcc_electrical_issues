@@ -85,6 +85,28 @@ class Issue with _$Issue {
   static Stream<List<IssueSnapshot>> get activeIssues =>
       _activeRef.snapshots().map((querySnapshot) => querySnapshot.docs);
 
+  static Stream<List<IssueSnapshot>> resolvedIssues({
+    int limit = 30,
+    IssueSnapshot? afterDocument,
+  }) {
+    assert(limit > 0,
+        "Fetching last '$limit' resolved issues. Value must be greater than 0.");
+
+    // Starting point of the query being built.
+    Query<Issue> query = _resolvedRef;
+
+    // Update query if has [afterDocument] specified.
+    if (afterDocument != null) {
+      query = query.startAfterDocument(afterDocument);
+    }
+
+    // Update query to [limit] number of documents.
+    query = query.limit(limit);
+
+    // Process the query and return
+    return query.snapshots().map((querySnapshot) => querySnapshot.docs);
+  }
+
   /// Watch the specified issue reference.
   ///
   /// Throws exception if [ref] does not belong to active or resolved issue
