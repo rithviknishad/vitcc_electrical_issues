@@ -33,7 +33,7 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run build_runner build
 
-      - run: flutter build web --release --web-renderer html --tree-shake-icons --no-pub
+      - run: flutter build web --release --web-renderer html --no-tree-shake-icons --no-pub
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
