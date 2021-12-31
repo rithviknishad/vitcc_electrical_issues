@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/extensions/firestore_extensions.dart';
 import 'package:vitcc_electrical_issues/models/misc.dart';
+import 'package:vitcc_electrical_issues/shared/query_builder.dart';
 
 import 'user.dart';
 
@@ -90,8 +91,7 @@ class Issue with _$Issue {
   }
 
   static Stream<List<IssueSnapshot>> resolvedIssues([
-    Query<Issue> Function(Query<Issue> query) queryBuilder =
-        defaultResolvedIssueQuery,
+    QueryBuilder<Issue> queryBuilder = defaultResolvedIssueQuery,
   ]) {
     return queryBuilder(_resolvedRef)
         .snapshots()

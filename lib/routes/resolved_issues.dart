@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:provider/provider.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
 import 'package:vitcc_electrical_issues/shared/issue_tile.dart';
+import 'package:vitcc_electrical_issues/shared/query_builder.dart';
 
 class ResolvedIssuesPage extends StatefulWidget {
   const ResolvedIssuesPage({Key? key}) : super(key: key);
@@ -18,10 +18,7 @@ class _ResolvedIssuesPageState extends State<ResolvedIssuesPage> {
 
   Stream<List<IssueSnapshot>>? queryResultStream;
 
-  Query<Issue> Function(Query<Issue> query) query =
-      Issue.defaultResolvedIssueQuery;
-
-  Future<void> runQuery() async {
+  Future<void> updateQuery(QueryBuilder<Issue> query) async {
     setState(() => isLoading = true);
 
     queryResultStream = Issue.resolvedIssues(query);
@@ -32,20 +29,12 @@ class _ResolvedIssuesPageState extends State<ResolvedIssuesPage> {
   @override
   void initState() {
     super.initState();
-    runQuery();
+    updateQuery(Issue.defaultResolvedIssueQuery);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: FadeInRight(
-      //     preferences: const AnimationPreferences(
-      //       duration: Duration(milliseconds: 400),
-      //     ),
-      //     child: Text("Resolved Issues"),
-      //   ),
-      // ),
       body: CustomScrollView(
         slivers: [
           // App Bar
@@ -61,17 +50,9 @@ class _ResolvedIssuesPageState extends State<ResolvedIssuesPage> {
 
           // Query Filter Dialog
           SliverToBoxAdapter(
-            child: SizedBox(
-              height: 20,
-              child: Text('heksjrlkjr'),
+            child: _QueryBuilderView(
+              onQueryChanged: updateQuery,
             ),
-          ),
-
-          // Queried Results View
-          StreamProvider<List<IssueSnapshot>>.value(
-            value: queryResultStream,
-            initialData: [],
-            child: _QueryResultsView(),
           ),
 
           // Queried Results View
@@ -83,6 +64,20 @@ class _ResolvedIssuesPageState extends State<ResolvedIssuesPage> {
         ],
       ),
     );
+  }
+}
+
+class _QueryBuilderView extends StatelessWidget {
+  const _QueryBuilderView({
+    required this.onQueryChanged,
+    Key? key,
+  }) : super(key: key);
+
+  final void Function(QueryBuilder<Issue> newQuery) onQueryChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
