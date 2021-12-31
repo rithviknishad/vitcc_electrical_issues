@@ -72,7 +72,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: CircleAvatar(
                   backgroundColor: theme.primaryColor,
                   child: Text(
-                    ((user.name ?? user.email)?[0])?.toUpperCase() ?? '-',
+                    ('${user.name}${user.email}-'[0]).toUpperCase(),
                     style: TextStyle(
                       color: theme.colorScheme.onPrimary,
                     ),
@@ -99,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage> {
               if (user.scope.canViewActiveIssues) ActiveIssuesSection(),
 
               if (user.scope.canViewResolvedIssues)
-                buildResolvedIssuesButton(misc),
+                buildResolvedIssuesButton(misc, user),
 
               // Raise an issue section
               if (user.scope.canCreateIssue) RaiseAnIssueSection(),
@@ -126,13 +126,23 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() => _raiseNewIssueFormIsShown = false);
   }
 
-  Widget buildResolvedIssuesButton(Misc misc) {
+  Widget buildResolvedIssuesButton(Misc misc, PlatformUser user) {
     return Center(
       child: OutlinedButton(
         child: Text('View already resolved issues'),
-        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ResolvedIssuesPage(misc: misc),
-        )),
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return MultiProvider(
+                providers: [
+                  Provider.value(value: user),
+                  Provider.value(value: misc),
+                ],
+                child: ResolvedIssuesPage(),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
