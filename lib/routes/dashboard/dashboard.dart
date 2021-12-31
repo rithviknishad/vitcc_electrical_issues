@@ -99,7 +99,7 @@ class _DashboardPageState extends State<DashboardPage> {
               if (user.scope.canViewActiveIssues) ActiveIssuesSection(),
 
               if (user.scope.canViewResolvedIssues)
-                buildResolvedIssuesButton(misc, user),
+                buildResolvedIssuesButton(misc, userSnapshot),
 
               // Raise an issue section
               if (user.scope.canCreateIssue) RaiseAnIssueSection(),
@@ -126,7 +126,7 @@ class _DashboardPageState extends State<DashboardPage> {
     setState(() => _raiseNewIssueFormIsShown = false);
   }
 
-  Widget buildResolvedIssuesButton(Misc misc, PlatformUser user) {
+  Widget buildResolvedIssuesButton(Misc misc, UserSnapshot userSnapshot) {
     return Center(
       child: OutlinedButton(
         child: Text('View already resolved issues'),
@@ -135,7 +135,7 @@ class _DashboardPageState extends State<DashboardPage> {
             builder: (context) {
               return MultiProvider(
                 providers: [
-                  Provider.value(value: user),
+                  Provider.value(value: userSnapshot),
                   Provider.value(value: misc),
                 ],
                 child: ResolvedIssuesPage(),
