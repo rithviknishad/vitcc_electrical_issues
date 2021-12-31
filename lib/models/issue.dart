@@ -85,14 +85,14 @@ class Issue with _$Issue {
   static Stream<List<IssueSnapshot>> get activeIssues =>
       _activeRef.snapshots().map((querySnapshot) => querySnapshot.docs);
 
-  static Query<Issue> _defaultResolvedIssueQuery(Query<Issue> query) {
+  static Query<Issue> defaultResolvedIssueQuery(Query<Issue> query) {
     return query.limit(50);
   }
 
-  static Stream<List<IssueSnapshot>> resolvedIssues({
+  static Stream<List<IssueSnapshot>> resolvedIssues([
     Query<Issue> Function(Query<Issue> query) queryBuilder =
-        _defaultResolvedIssueQuery,
-  }) {
+        defaultResolvedIssueQuery,
+  ]) {
     return queryBuilder(_resolvedRef)
         .snapshots()
         .map((querySnapshot) => querySnapshot.docs);
