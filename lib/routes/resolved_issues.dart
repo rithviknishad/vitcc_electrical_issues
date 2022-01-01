@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:vitcc_electrical_issues/models/issue.dart';
+import 'package:vitcc_electrical_issues/models/issue_location.dart';
 import 'package:vitcc_electrical_issues/shared/issue_tile.dart';
 import 'package:vitcc_electrical_issues/shared/query_builder.dart';
 
@@ -50,6 +52,7 @@ class _ResolvedIssuesPageState extends State<ResolvedIssuesPage> {
 
           // Query Filter Dialog
           SliverToBoxAdapter(
+            key: Key('query_view'),
             child: _QueryBuilderView(
               onQueryChanged: updateQuery,
             ),
@@ -67,7 +70,7 @@ class _ResolvedIssuesPageState extends State<ResolvedIssuesPage> {
   }
 }
 
-class _QueryBuilderView extends StatelessWidget {
+class _QueryBuilderView extends StatefulWidget {
   const _QueryBuilderView({
     required this.onQueryChanged,
     Key? key,
@@ -76,8 +79,69 @@ class _QueryBuilderView extends StatelessWidget {
   final void Function(QueryBuilder<Issue> newQuery) onQueryChanged;
 
   @override
+  State<_QueryBuilderView> createState() => _QueryBuilderViewState();
+}
+
+class _QueryBuilderViewState extends State<_QueryBuilderView> {
+  // final resolvedByController = TextEditingController();
+  // final raisedByController = TextEditingController();
+
+  final issueTitleController = TextEditingController();
+
+  var raisedOnStartDate = DateTime.now().subtract(const Duration(days: 7));
+  var raisedOnEndDate = DateTime.now();
+
+  var issueLocationFilter = IssueLocation(block: '', floor: '', room: '');
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+
+    widget.onQueryChanged((query) {
+      query = query
+          .where(IssueKeys.raisedOn, isGreaterThanOrEqualTo: raisedOnStartDate)
+          .where(IssueKeys.raisedOn, isLessThanOrEqualTo: raisedOnEndDate);
+
+      return query;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SfDateRangePicker(
+            selectionMode: DateRangePickerSelectionMode.range,
+            initialSelectedRange: PickerDateRange(
+              raisedOnStartDate,
+              raisedOnEndDate,
+            ),
+            headerHeight: 60,
+            onSelectionChanged: (args) {
+              final value = args.value;
+
+              if (value is PickerDateRange) {
+                setState(() {
+                  assert(
+                    value.startDate != null,
+                    "This shouldn't be null as per configuration of the picker.",
+                  );
+
+                  raisedOnStartDate = value.startDate ?? raisedOnStartDate;
+                  raisedOnEndDate = value.endDate ?? DateTime.now();
+                });
+              }
+            },
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => setState(() {}),
+          child: Text('Run Query'),
+        ),
+      ],
+    );
   }
 }
 
