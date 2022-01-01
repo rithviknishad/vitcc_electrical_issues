@@ -1,0 +1,27 @@
+{
+    "files.exclude": {
+        // General Excludes
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        // Generated Dart files
+        "**/*.freezed.dart": true,
+        "**/*.g.dart": true,
+        "**/generated_plugin_registrant.dart": true,
+        // Android Studio
+        "**/*.idea": true,
+        // Dart tools
+        "**/.dart_tool": true,
+        "**/.packages": true,
+        "**/pubspec.lock": true,
+        // Flutter files
+        "**/.metadata": true,
+        "**/.flutter-plugins": true,
+        "**/.flutter-plugins-dependencies": true,
+        // Build folder
+        "build/": true,
+    },
+}

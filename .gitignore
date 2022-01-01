@@ -33,5 +33,3 @@ android/app/google-services.json
 *.freezed.dart
 *.g.dart
 lib/generated_plugin_registrant.dart
-
-.vscode
